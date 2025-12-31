@@ -3,9 +3,18 @@ import { ArrowRight, TrendingUp, Users, Database } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import heroBg from "@/assets/hero-bg.jpg";
 import ContactModal from "@/components/ContactModal";
+import ServiceDetailModal from "@/components/ServiceDetailModal";
 
 const Hero = () => {
   const { t } = useLanguage();
+
+  const bgasContent = `E se sua empresa não estivesse crescendo de verdade?
+
+Você tem produto, time, mercado. Mas os resultados são instáveis. Sem método, tudo vira tentativa e erro. Isso custa caro, desgasta o time e trava seu valuation.
+
+Enquanto isso, outros já tratam crescimento como serviço.
+
+Business Growth as a Service é o que a Albatross entrega: estrutura, disciplina e resultado. O resto é ilusão de progresso.`;
 
   const stats = [
     { icon: TrendingUp, value: t("hero.stat1.value"), label: t("hero.stat1.label") },
@@ -37,12 +46,18 @@ const Hero = () => {
       <div className="container-wide relative z-10 pt-32 pb-20">
         <div className="max-w-4xl mx-auto text-center">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/50 backdrop-blur-sm border border-border/50 mb-8 opacity-0 animate-fade-up">
-            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            <span className="text-sm font-medium text-muted-foreground">
-              {t("hero.badge")}
-            </span>
-          </div>
+          <ServiceDetailModal
+            title={t("hero.badge")}
+            content={bgasContent}
+            trigger={
+              <button className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/50 backdrop-blur-sm border border-border/50 mb-8 opacity-0 animate-fade-up hover:bg-secondary/70 hover:border-primary/30 transition-all duration-300 cursor-pointer">
+                <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                <span className="text-sm font-medium text-muted-foreground">
+                  {t("hero.badge")}
+                </span>
+              </button>
+            }
+          />
 
           {/* Main Headline */}
           <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-heading font-semibold tracking-tight leading-tight text-foreground mb-6 opacity-0 animate-fade-up stagger-1 px-2 sm:px-0">
