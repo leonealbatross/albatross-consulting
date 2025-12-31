@@ -29,6 +29,8 @@ const Header = () => {
     { label: t("nav.services"), href: "#servicos" },
     { label: t("nav.methodology"), href: "#metodologia" },
     { label: t("nav.leadership"), href: "#lideranca" },
+    { label: t("nav.scheduling"), href: "#agendamento" },
+    { label: t("nav.careers"), href: "#carreiras" },
     { label: t("nav.contact"), href: "#contato" },
   ];
 

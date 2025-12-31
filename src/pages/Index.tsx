@@ -5,6 +5,8 @@ import Services from "@/components/sections/Services";
 import Clients from "@/components/sections/Clients";
 import Methodology from "@/components/sections/Methodology";
 import Leadership from "@/components/sections/Leadership";
+import Scheduling from "@/components/sections/Scheduling";
+import Careers from "@/components/sections/Careers";
 import CTA from "@/components/sections/CTA";
 import Footer from "@/components/layout/Footer";
 
@@ -19,6 +21,8 @@ const Index = () => {
         <Clients />
         <Methodology />
         <Leadership />
+        <Scheduling calendlyUrl="https://calendly.com/albatross-consulting" />
+        <Careers hubspotPortalId="YOUR_PORTAL_ID" hubspotFormId="YOUR_FORM_ID" />
         <CTA />
       </main>
       <Footer />
