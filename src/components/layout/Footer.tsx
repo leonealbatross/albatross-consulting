@@ -97,24 +97,28 @@ const Footer = () => {
             <h4 className="font-heading font-semibold text-foreground mb-4">
               Contato
             </h4>
+            <div className="mb-4">
+              <span className="text-sm text-primary font-medium">LATAM Office</span>
+            </div>
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
                 <span className="text-subtle">
-                  São Paulo, SP<br />
-                  Brasil
+                  <strong className="text-foreground">Brascan Century Offices</strong><br />
+                  R. Joaquim Floriano, 466. Cj 814<br />
+                  Itaim Bibi, São Paulo - SP, 04534-002
                 </span>
               </li>
               <li className="flex items-center gap-3">
-                <Mail className="w-5 h-5 text-primary flex-shrink-0" />
-                <a href="mailto:contato@albatross.com.br" className="text-subtle hover:text-foreground transition-colors">
-                  contato@albatross.com.br
+                <Phone className="w-5 h-5 text-primary flex-shrink-0" />
+                <a href="tel:+5511981332775" className="text-subtle hover:text-foreground transition-colors">
+                  +55 11 981332775
                 </a>
               </li>
               <li className="flex items-center gap-3">
-                <Phone className="w-5 h-5 text-primary flex-shrink-0" />
-                <a href="tel:+551199999999" className="text-subtle hover:text-foreground transition-colors">
-                  +55 11 9999-9999
+                <Mail className="w-5 h-5 text-primary flex-shrink-0" />
+                <a href="mailto:contato@albatross.consulting" className="text-subtle hover:text-foreground transition-colors">
+                  contato@albatross.consulting
                 </a>
               </li>
             </ul>
