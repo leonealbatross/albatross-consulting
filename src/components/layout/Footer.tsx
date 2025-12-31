@@ -1,5 +1,5 @@
 import { Linkedin, Mail, Phone, MapPin } from "lucide-react";
-
+import albatrossLogo from "@/assets/albatross-logo-full.jpg";
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
@@ -27,18 +27,12 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-lg bg-accent-gradient flex items-center justify-center shadow-glow-sm">
-                <span className="text-primary-foreground font-heading font-bold text-xl">A</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="font-heading font-semibold text-lg text-foreground">
-                  Albatross
-                </span>
-                <span className="text-xs text-muted-foreground tracking-widest uppercase">
-                  Consulting
-                </span>
-              </div>
+            <div className="flex items-center mb-6">
+              <img 
+                src={albatrossLogo} 
+                alt="Albatross Consulting" 
+                className="h-16 w-auto object-contain"
+              />
             </div>
             <p className="text-subtle mb-6">
               Business Growth as a Service para empresas de tecnologia que buscam 
