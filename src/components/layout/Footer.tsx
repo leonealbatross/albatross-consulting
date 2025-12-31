@@ -50,7 +50,7 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
                 <Linkedin className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
               </a>
               <a
-                href="mailto:contato@albatross.consulting"
+                href="mailto:leone@albatross.consulting"
                 className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-secondary flex items-center justify-center hover:bg-primary/20 transition-colors"
               >
                 <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
@@ -121,8 +121,8 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
               </li>
               <li className="flex items-center gap-2 sm:gap-3">
                 <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
-                <a href="mailto:contato@albatross.consulting" className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors break-all">
-                  contato@albatross.consulting
+                <a href="mailto:leone@albatross.consulting" className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors break-all">
+                  leone@albatross.consulting
                 </a>
               </li>
             </ul>

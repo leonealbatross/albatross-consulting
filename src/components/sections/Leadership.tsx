@@ -71,7 +71,7 @@ const Leadership = forwardRef<HTMLElement>((_, ref) => {
                   <Linkedin className="w-4 h-4 sm:w-5 sm:h-5" />
                 </Button>
               </a>
-              <a href="mailto:marco@albatross.consulting">
+              <a href="mailto:leone@albatross.consulting">
                 <Button variant="outline" size="icon" className="rounded-full w-10 h-10 sm:w-11 sm:h-11">
                   <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
                 </Button>
