@@ -99,12 +99,17 @@ export default {
           "0%, 100%": { opacity: "0.4" },
           "50%": { opacity: "0.8" },
         },
+        "scroll-left": {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "float": "float 6s ease-in-out infinite",
         "pulse-glow": "pulse-glow 3s ease-in-out infinite",
+        "scroll-left": "scroll-left 25s linear infinite",
       },
       backgroundImage: {
         "hero-gradient": "linear-gradient(135deg, hsl(240 45% 8%) 0%, hsl(240 45% 14%) 50%, hsl(240 45% 8%) 100%)",
