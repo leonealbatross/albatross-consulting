@@ -51,7 +51,7 @@ const Header = () => {
             <img 
               src={albatrossLogo} 
               alt="Albatross Consulting - Business Growth as a Service" 
-              className="h-10 sm:h-12 w-auto object-contain rounded"
+              className="h-20 sm:h-24 w-auto object-contain rounded"
             />
           </a>
 
