@@ -1,6 +1,10 @@
+import { forwardRef } from "react";
 import { Linkedin, Mail, Phone, MapPin } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import albatrossLogo from "@/assets/logo-albatross.png";
-const Footer = () => {
+
+const Footer = forwardRef<HTMLElement>((_, ref) => {
+  const { t } = useLanguage();
   const currentYear = new Date().getFullYear();
 
   const links = {
@@ -8,21 +12,21 @@ const Footer = () => {
       { label: "Growth Strategy", href: "#" },
       { label: "M&A Tecnologia", href: "#" },
       { label: "Business Intelligence", href: "#" },
-      { label: "Governança", href: "#" },
+      { label: t("services.s4.highlight"), href: "#" },
       { label: "GenAI & Inovação", href: "#" },
-      { label: "Mentoria Executiva", href: "#" },
+      { label: t("services.s6.title"), href: "#" },
     ],
     company: [
-      { label: "Sobre", href: "#sobre" },
-      { label: "Metodologia", href: "#metodologia" },
-      { label: "Liderança", href: "#lideranca" },
-      { label: "Carreiras", href: "#" },
-      { label: "Contato", href: "#contato" },
+      { label: t("footer.about"), href: "#sobre" },
+      { label: t("footer.methodology"), href: "#metodologia" },
+      { label: t("footer.leadership"), href: "#lideranca" },
+      { label: t("footer.careers"), href: "#" },
+      { label: t("footer.contact"), href: "#contato" },
     ],
   };
 
   return (
-    <footer className="bg-card border-t border-border">
+    <footer ref={ref} className="bg-card border-t border-border">
       <div className="container-wide py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand */}
@@ -35,8 +39,7 @@ const Footer = () => {
               />
             </div>
             <p className="text-subtle mb-6">
-              Business Growth as a Service para empresas de tecnologia que buscam 
-              crescimento sustentável e resultados mensuráveis.
+              {t("footer.brand")}
             </p>
             <div className="flex gap-3">
               <a
@@ -57,7 +60,7 @@ const Footer = () => {
           {/* Services */}
           <div>
             <h4 className="font-heading font-semibold text-foreground mb-4">
-              Serviços
+              {t("footer.services")}
             </h4>
             <ul className="space-y-3">
               {links.services.map((link) => (
@@ -76,7 +79,7 @@ const Footer = () => {
           {/* Company */}
           <div>
             <h4 className="font-heading font-semibold text-foreground mb-4">
-              Empresa
+              {t("footer.company")}
             </h4>
             <ul className="space-y-3">
               {links.company.map((link) => (
@@ -95,7 +98,7 @@ const Footer = () => {
           {/* Contact */}
           <div>
             <h4 className="font-heading font-semibold text-foreground mb-4">
-              Contato
+              {t("footer.contact")}
             </h4>
             <div className="mb-4">
               <span className="text-sm text-primary font-medium">LATAM Office</span>
@@ -128,20 +131,22 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-border/50 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-muted-foreground">
-            © {currentYear} Albatross Consulting. Todos os direitos reservados.
+            © {currentYear} Albatross Consulting. {t("footer.copyright")}
           </p>
           <div className="flex gap-6">
             <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Política de Privacidade
+              {t("footer.privacy")}
             </a>
             <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Termos de Uso
+              {t("footer.terms")}
             </a>
           </div>
         </div>
       </div>
     </footer>
   );
-};
+});
+
+Footer.displayName = "Footer";
 
 export default Footer;

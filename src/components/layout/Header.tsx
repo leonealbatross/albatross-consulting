@@ -7,12 +7,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useLanguage, Language } from "@/contexts/LanguageContext";
 import albatrossLogo from "@/assets/logo-albatross-new.jpeg";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [currentLang, setCurrentLang] = useState("PT");
+  const { language, setLanguage, t } = useLanguage();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -23,14 +24,14 @@ const Header = () => {
   }, []);
 
   const navItems = [
-    { label: "Sobre", href: "#sobre" },
-    { label: "Serviços", href: "#servicos" },
-    { label: "Metodologia", href: "#metodologia" },
-    { label: "Liderança", href: "#lideranca" },
-    { label: "Contato", href: "#contato" },
+    { label: t("nav.about"), href: "#sobre" },
+    { label: t("nav.services"), href: "#servicos" },
+    { label: t("nav.methodology"), href: "#metodologia" },
+    { label: t("nav.leadership"), href: "#lideranca" },
+    { label: t("nav.contact"), href: "#contato" },
   ];
 
-  const languages = [
+  const languages: { code: Language; label: string }[] = [
     { code: "PT", label: "Português" },
     { code: "EN", label: "English" },
     { code: "ES", label: "Español" },
@@ -75,14 +76,14 @@ const Header = () => {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground">
                   <Globe className="w-4 h-4" />
-                  {currentLang}
+                  {language}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="bg-card border-border">
                 {languages.map((lang) => (
                   <DropdownMenuItem
                     key={lang.code}
-                    onClick={() => setCurrentLang(lang.code)}
+                    onClick={() => setLanguage(lang.code)}
                     className="cursor-pointer hover:bg-secondary"
                   >
                     {lang.label}
@@ -92,7 +93,7 @@ const Header = () => {
             </DropdownMenu>
 
             <Button variant="hero" size="default">
-              Agendar Conversa
+              {t("nav.schedule")}
             </Button>
           </div>
 
@@ -153,9 +154,9 @@ const Header = () => {
                 {languages.map((lang) => (
                   <button
                     key={lang.code}
-                    onClick={() => setCurrentLang(lang.code)}
+                    onClick={() => setLanguage(lang.code)}
                     className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors ${
-                      currentLang === lang.code
+                      language === lang.code
                         ? "bg-primary text-primary-foreground"
                         : "bg-secondary/50 text-muted-foreground hover:bg-secondary"
                     }`}
@@ -166,7 +167,7 @@ const Header = () => {
               </div>
 
               <Button variant="hero" className="w-full" onClick={() => setIsMobileMenuOpen(false)}>
-                Agendar Conversa
+                {t("nav.schedule")}
               </Button>
             </div>
           </div>

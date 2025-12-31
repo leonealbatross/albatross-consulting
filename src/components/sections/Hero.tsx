@@ -1,8 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, TrendingUp, Users, Database } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import heroBg from "@/assets/hero-bg.jpg";
 
 const Hero = () => {
+  const { t } = useLanguage();
+
+  const stats = [
+    { icon: TrendingUp, value: t("hero.stat1.value"), label: t("hero.stat1.label") },
+    { icon: Users, value: t("hero.stat2.value"), label: t("hero.stat2.label") },
+    { icon: Database, value: t("hero.stat3.value"), label: t("hero.stat3.label") },
+  ];
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image */}
@@ -30,40 +39,35 @@ const Hero = () => {
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/50 backdrop-blur-sm border border-border/50 mb-8 opacity-0 animate-fade-up">
             <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
             <span className="text-sm font-medium text-muted-foreground">
-              Business Growth as a Service
+              {t("hero.badge")}
             </span>
           </div>
 
           {/* Main Headline */}
           <h1 className="heading-display text-foreground mb-6 opacity-0 animate-fade-up stagger-1">
-            Aceleramos o crescimento estratégico de{" "}
-            <span className="bg-gradient-to-r from-teal-400 to-primary bg-clip-text text-transparent">empresas de tecnologia.</span>
+            {t("hero.headline")}{" "}
+            <span className="bg-gradient-to-r from-teal-400 to-primary bg-clip-text text-transparent">{t("hero.headline.highlight")}</span>
           </h1>
 
           {/* Subheadline */}
           <p className="text-body text-muted-foreground max-w-2xl mx-auto mb-10 opacity-0 animate-fade-up stagger-2">
-            Business Growth as a Service integrando estratégia, dados, M&A e execução
-            para transformar seu negócio em uma potência de mercado.
+            {t("hero.subheadline")}
           </p>
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 opacity-0 animate-fade-up stagger-3">
             <Button variant="hero" size="xl" className="group">
-              Agendar uma conversa estratégica
+              {t("hero.cta.primary")}
               <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
             </Button>
             <Button variant="heroOutline" size="xl">
-              Conhecer nossos serviços
+              {t("hero.cta.secondary")}
             </Button>
           </div>
 
           {/* Stats */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 opacity-0 animate-fade-up stagger-4">
-            {[
-              { icon: TrendingUp, value: "25+", label: "Founder com Anos de Experiência" },
-              { icon: Users, value: "✓", label: "Resultados Comprovados" },
-              { icon: Database, value: "ONEtoONE", label: "Parceira em M&A Internacional" },
-            ].map((stat, index) => (
+            {stats.map((stat, index) => (
               <div
                 key={index}
                 className="gradient-glass rounded-2xl p-6 border-gradient hover:shadow-glow-sm transition-all duration-300"

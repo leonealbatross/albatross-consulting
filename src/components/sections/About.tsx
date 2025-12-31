@@ -1,26 +1,29 @@
 import { Target, Lightbulb, BarChart3, Shield } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const About = () => {
+  const { t } = useLanguage();
+
   const features = [
     {
       icon: Target,
-      title: "Crescimento Estratégico",
-      description: "Escalamos negócios de forma sustentável com estratégias comprovadas.",
+      title: t("about.feature1.title"),
+      description: t("about.feature1.desc"),
     },
     {
       icon: Lightbulb,
-      title: "Inovação Orientada",
-      description: "Decisões orientadas por dados e inteligência artificial.",
+      title: t("about.feature2.title"),
+      description: t("about.feature2.desc"),
     },
     {
       icon: BarChart3,
-      title: "M&A Integrado",
-      description: "Crescimento orgânico e inorgânico trabalhando em harmonia.",
+      title: t("about.feature3.title"),
+      description: t("about.feature3.desc"),
     },
     {
       icon: Shield,
-      title: "Governança Sólida",
-      description: "Estruturas que atraem investidores e aceleram resultados.",
+      title: t("about.feature4.title"),
+      description: t("about.feature4.desc"),
     },
   ];
 
@@ -31,28 +34,18 @@ const About = () => {
           {/* Left Content */}
           <div>
             <span className="inline-block text-primary font-semibold text-sm tracking-wider uppercase mb-4">
-              Sobre a Albatross
+              {t("about.label")}
             </span>
             <h2 className="heading-section text-foreground mb-6">
-              Transformamos estratégia em{" "}
-              <span className="bg-gradient-to-r from-teal-400 to-primary bg-clip-text text-transparent">resultados mensuráveis</span>
+              {t("about.headline")}{" "}
+              <span className="bg-gradient-to-r from-teal-400 to-primary bg-clip-text text-transparent">{t("about.headline.highlight")}</span>
             </h2>
             <div className="space-y-4 text-body text-muted-foreground">
+              <p>{t("about.p1")}</p>
               <p>
-                A Albatross Consulting é uma consultoria estratégica sediada em São Paulo, 
-                especializada em crescimento sustentável para empresas de tecnologia e software 
-                na América Latina.
+                {t("about.p2.start")} <strong className="text-foreground">{t("about.p2.bold")}</strong> {t("about.p2.end")}
               </p>
-              <p>
-                Nosso modelo <strong className="text-foreground">Business Growth as a Service</strong> combina 
-                experiência executiva, frameworks comprovados e execução contínua para transformar 
-                estratégia em resultados mensuráveis.
-              </p>
-              <p>
-                Apoiamos CEOs, executivos e investidores a escalar negócios de forma sustentável, 
-                combinando crescimento orgânico, aquisições estratégicas, governança e decisões 
-                orientadas por dados e inteligência artificial.
-              </p>
+              <p>{t("about.p3")}</p>
             </div>
           </div>
 
