@@ -7,6 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import albatrossLogo from "@/assets/albatross-logo-full.jpg";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -46,20 +47,12 @@ const Header = () => {
       <div className="container-wide">
         <nav className="flex items-center justify-between">
           {/* Logo */}
-          <a href="/" className="flex items-center gap-3 group">
-            <div className="relative">
-              <div className="w-10 h-10 rounded-lg bg-accent-gradient flex items-center justify-center shadow-glow-sm group-hover:shadow-glow transition-all duration-300">
-                <span className="text-primary-foreground font-heading font-bold text-xl">A</span>
-              </div>
-            </div>
-            <div className="flex flex-col">
-              <span className="font-heading font-semibold text-lg text-foreground tracking-tight">
-                Albatross
-              </span>
-              <span className="text-xs text-muted-foreground -mt-0.5 tracking-widest uppercase">
-                Consulting
-              </span>
-            </div>
+          <a href="/" className="flex items-center group">
+            <img 
+              src={albatrossLogo} 
+              alt="Albatross Consulting - Business Growth as a Service" 
+              className="h-10 sm:h-12 w-auto object-contain rounded"
+            />
           </a>
 
           {/* Desktop Navigation */}
