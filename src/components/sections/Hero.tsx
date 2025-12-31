@@ -62,7 +62,7 @@ const Hero = () => {
             {[
               { icon: TrendingUp, value: "25+", label: "Anos de Experiência" },
               { icon: Users, value: "100+", label: "Empresas Impactadas" },
-              { icon: Database, value: "R$ 5B+", label: "em Transações de M&A" },
+              { icon: Database, value: "ONEtoONE", label: "Parceira em M&A Internacional" },
             ].map((stat, index) => (
               <div
                 key={index}
