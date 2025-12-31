@@ -144,6 +144,23 @@ const translations: Record<Language, Record<string, string>> = {
     "footer.copyright": "Todos os direitos reservados.",
     "footer.privacy": "Política de Privacidade",
     "footer.terms": "Termos de Uso",
+
+    // Contact Modal
+    "header.cta": "Agendar Conversa",
+    "contact.title": "Agendar uma Conversa",
+    "contact.description": "Preencha o formulário abaixo e entraremos em contato em breve para agendar uma conversa estratégica.",
+    "contact.name": "Nome",
+    "contact.name.placeholder": "Seu nome completo",
+    "contact.email": "E-mail",
+    "contact.email.placeholder": "seu@email.com",
+    "contact.company": "Empresa",
+    "contact.company.placeholder": "Nome da sua empresa",
+    "contact.message": "Mensagem",
+    "contact.message.placeholder": "Como podemos ajudar sua empresa?",
+    "contact.submit": "Enviar mensagem",
+    "contact.sending": "Enviando...",
+    "contact.success.title": "Mensagem enviada!",
+    "contact.success.description": "Entraremos em contato em breve para agendar sua conversa.",
   },
 
   EN: {
@@ -270,6 +287,23 @@ const translations: Record<Language, Record<string, string>> = {
     "footer.copyright": "All rights reserved.",
     "footer.privacy": "Privacy Policy",
     "footer.terms": "Terms of Use",
+
+    // Contact Modal
+    "header.cta": "Schedule a Call",
+    "contact.title": "Schedule a Conversation",
+    "contact.description": "Fill out the form below and we'll get in touch soon to schedule a strategic conversation.",
+    "contact.name": "Name",
+    "contact.name.placeholder": "Your full name",
+    "contact.email": "Email",
+    "contact.email.placeholder": "your@email.com",
+    "contact.company": "Company",
+    "contact.company.placeholder": "Your company name",
+    "contact.message": "Message",
+    "contact.message.placeholder": "How can we help your company?",
+    "contact.submit": "Send message",
+    "contact.sending": "Sending...",
+    "contact.success.title": "Message sent!",
+    "contact.success.description": "We'll get in touch soon to schedule your conversation.",
   },
 
   ES: {
@@ -396,6 +430,23 @@ const translations: Record<Language, Record<string, string>> = {
     "footer.copyright": "Todos los derechos reservados.",
     "footer.privacy": "Política de Privacidad",
     "footer.terms": "Términos de Uso",
+
+    // Contact Modal
+    "header.cta": "Agendar una Llamada",
+    "contact.title": "Agendar una Conversación",
+    "contact.description": "Complete el formulario a continuación y nos pondremos en contacto pronto para agendar una conversación estratégica.",
+    "contact.name": "Nombre",
+    "contact.name.placeholder": "Su nombre completo",
+    "contact.email": "Correo electrónico",
+    "contact.email.placeholder": "su@correo.com",
+    "contact.company": "Empresa",
+    "contact.company.placeholder": "Nombre de su empresa",
+    "contact.message": "Mensaje",
+    "contact.message.placeholder": "¿Cómo podemos ayudar a su empresa?",
+    "contact.submit": "Enviar mensaje",
+    "contact.sending": "Enviando...",
+    "contact.success.title": "¡Mensaje enviado!",
+    "contact.success.description": "Nos pondremos en contacto pronto para agendar su conversación.",
   },
 };
 
