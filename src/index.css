@@ -6,44 +6,52 @@
 
 @layer base {
   :root {
-    /* Deep Navy Blue Theme */
-    --background: 222 47% 8%;
-    --foreground: 210 40% 98%;
+    /* Albatross Brand Colors - Based on Official Logo */
+    /* Deep Indigo Blue (primary brand color from triangle) */
+    --background: 240 45% 8%;
+    --foreground: 60 30% 96%;
 
-    --card: 222 47% 11%;
-    --card-foreground: 210 40% 98%;
+    --card: 240 40% 12%;
+    --card-foreground: 60 30% 96%;
 
-    --popover: 222 47% 11%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 240 40% 12%;
+    --popover-foreground: 60 30% 96%;
 
-    /* Emerald Green Accent */
-    --primary: 160 84% 39%;
-    --primary-foreground: 210 40% 98%;
+    /* Teal/Cyan Green (from logo text and icon) */
+    --primary: 175 70% 45%;
+    --primary-foreground: 240 45% 8%;
 
-    --secondary: 222 47% 15%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 240 35% 16%;
+    --secondary-foreground: 60 30% 96%;
 
-    --muted: 222 30% 20%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 240 30% 20%;
+    --muted-foreground: 230 15% 60%;
 
-    --accent: 160 84% 39%;
-    --accent-foreground: 210 40% 98%;
+    /* Accent - Golden Yellow (from tagline) */
+    --accent: 45 90% 55%;
+    --accent-foreground: 240 45% 8%;
 
     --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 60 30% 96%;
 
-    --border: 222 30% 18%;
-    --input: 222 30% 18%;
-    --ring: 160 84% 39%;
+    --border: 240 30% 18%;
+    --input: 240 30% 18%;
+    --ring: 175 70% 45%;
 
     --radius: 0.75rem;
 
     /* Custom Design Tokens */
-    --gradient-hero: linear-gradient(135deg, hsl(222 47% 8%) 0%, hsl(222 47% 12%) 50%, hsl(222 47% 8%) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(160 84% 39%) 0%, hsl(160 84% 30%) 100%);
+    --brand-indigo: 240 60% 30%;
+    --brand-teal: 175 70% 45%;
+    --brand-gold: 45 90% 55%;
+    
+    --gradient-hero: linear-gradient(135deg, hsl(240 45% 8%) 0%, hsl(240 45% 14%) 50%, hsl(240 45% 8%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(175 70% 45%) 0%, hsl(175 70% 35%) 100%);
+    --gradient-brand: linear-gradient(135deg, hsl(240 60% 30%) 0%, hsl(240 60% 20%) 100%);
     --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
     
-    --shadow-glow: 0 0 60px rgba(16, 185, 129, 0.15);
+    --shadow-glow: 0 0 60px rgba(45, 212, 191, 0.15);
+    --shadow-glow-gold: 0 0 60px rgba(234, 179, 8, 0.15);
     --shadow-card: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     --shadow-elevated: 0 20px 40px -15px rgba(0, 0, 0, 0.3);
     
@@ -54,36 +62,36 @@
     --font-heading: 'Playfair Display', Georgia, serif;
     --font-body: 'Inter', system-ui, sans-serif;
 
-    --sidebar-background: 222 47% 8%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 160 84% 39%;
-    --sidebar-primary-foreground: 210 40% 98%;
-    --sidebar-accent: 222 47% 15%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 222 30% 18%;
-    --sidebar-ring: 160 84% 39%;
+    --sidebar-background: 240 45% 8%;
+    --sidebar-foreground: 60 30% 96%;
+    --sidebar-primary: 175 70% 45%;
+    --sidebar-primary-foreground: 240 45% 8%;
+    --sidebar-accent: 240 40% 16%;
+    --sidebar-accent-foreground: 60 30% 96%;
+    --sidebar-border: 240 30% 18%;
+    --sidebar-ring: 175 70% 45%;
   }
 
   .dark {
-    --background: 222 47% 8%;
-    --foreground: 210 40% 98%;
-    --card: 222 47% 11%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222 47% 11%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 160 84% 39%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 222 47% 15%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 222 30% 20%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 160 84% 39%;
-    --accent-foreground: 210 40% 98%;
+    --background: 240 45% 8%;
+    --foreground: 60 30% 96%;
+    --card: 240 40% 12%;
+    --card-foreground: 60 30% 96%;
+    --popover: 240 40% 12%;
+    --popover-foreground: 60 30% 96%;
+    --primary: 175 70% 45%;
+    --primary-foreground: 240 45% 8%;
+    --secondary: 240 35% 16%;
+    --secondary-foreground: 60 30% 96%;
+    --muted: 240 30% 20%;
+    --muted-foreground: 230 15% 60%;
+    --accent: 45 90% 55%;
+    --accent-foreground: 240 45% 8%;
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 222 30% 18%;
-    --input: 222 30% 18%;
-    --ring: 160 84% 39%;
+    --destructive-foreground: 60 30% 96%;
+    --border: 240 30% 18%;
+    --input: 240 30% 18%;
+    --ring: 175 70% 45%;
   }
 }
 
@@ -115,6 +123,10 @@
     background: var(--gradient-accent);
   }
 
+  .gradient-brand {
+    background: var(--gradient-brand);
+  }
+
   .gradient-glass {
     background: var(--gradient-glass);
     backdrop-filter: blur(20px);
@@ -125,13 +137,22 @@
     box-shadow: var(--shadow-glow);
   }
 
+  .shadow-glow-gold {
+    box-shadow: var(--shadow-glow-gold);
+  }
+
   .shadow-card {
     box-shadow: var(--shadow-card);
   }
 
   .text-gradient {
     @apply bg-clip-text text-transparent;
-    background: linear-gradient(135deg, hsl(160 84% 50%) 0%, hsl(160 84% 39%) 100%);
+    background: linear-gradient(135deg, hsl(175 70% 55%) 0%, hsl(175 70% 40%) 100%);
+  }
+
+  .text-gradient-gold {
+    @apply bg-clip-text text-transparent;
+    background: linear-gradient(135deg, hsl(45 90% 60%) 0%, hsl(45 90% 50%) 100%);
   }
 
   .border-gradient {
@@ -143,7 +164,7 @@
     position: absolute;
     inset: 0;
     padding: 1px;
-    background: linear-gradient(135deg, hsl(160 84% 39% / 0.3) 0%, transparent 50%);
+    background: linear-gradient(135deg, hsl(175 70% 45% / 0.3) 0%, transparent 50%);
     border-radius: inherit;
     mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     mask-composite: xor;

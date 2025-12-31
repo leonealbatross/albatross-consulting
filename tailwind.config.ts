@@ -18,9 +18,20 @@ export default {
         body: ['Inter', 'system-ui', 'sans-serif'],
       },
       colors: {
-        emerald: {
-          400: "#34d399",
-          500: "#10b981",
+        // Brand colors from Albatross logo
+        brand: {
+          indigo: "hsl(240 60% 30%)",
+          teal: "hsl(175 70% 45%)",
+          gold: "hsl(45 90% 55%)",
+        },
+        teal: {
+          400: "#2dd4bf",
+          500: "#14b8a6",
+          600: "#0d9488",
+        },
+        gold: {
+          400: "#facc15",
+          500: "#eab308",
         },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -96,13 +107,15 @@ export default {
         "pulse-glow": "pulse-glow 3s ease-in-out infinite",
       },
       backgroundImage: {
-        "hero-gradient": "linear-gradient(135deg, hsl(222 47% 8%) 0%, hsl(222 47% 12%) 50%, hsl(222 47% 8%) 100%)",
-        "accent-gradient": "linear-gradient(135deg, hsl(160 84% 39%) 0%, hsl(160 84% 30%) 100%)",
+        "hero-gradient": "linear-gradient(135deg, hsl(240 45% 8%) 0%, hsl(240 45% 14%) 50%, hsl(240 45% 8%) 100%)",
+        "accent-gradient": "linear-gradient(135deg, hsl(175 70% 45%) 0%, hsl(175 70% 35%) 100%)",
+        "brand-gradient": "linear-gradient(135deg, hsl(240 60% 30%) 0%, hsl(240 60% 20%) 100%)",
         "glass-gradient": "linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)",
       },
       boxShadow: {
-        "glow": "0 0 60px rgba(16, 185, 129, 0.15)",
-        "glow-sm": "0 0 30px rgba(16, 185, 129, 0.1)",
+        "glow": "0 0 60px rgba(45, 212, 191, 0.15)",
+        "glow-sm": "0 0 30px rgba(45, 212, 191, 0.1)",
+        "glow-gold": "0 0 60px rgba(234, 179, 8, 0.15)",
         "elevated": "0 20px 40px -15px rgba(0, 0, 0, 0.3)",
       },
     },

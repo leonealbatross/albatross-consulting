@@ -46,7 +46,7 @@ const Methodology = () => {
             </span>
             <h2 className="heading-section text-foreground mb-6">
               Da estratégia à execução com{" "}
-              <span className="bg-gradient-to-r from-primary to-emerald-400 bg-clip-text text-transparent">resultados comprovados</span>
+              <span className="bg-gradient-to-r from-teal-400 to-primary bg-clip-text text-transparent">resultados comprovados</span>
             </h2>
             <p className="text-body text-muted-foreground mb-8">
               Nosso processo estruturado garante que cada decisão seja baseada em dados, 

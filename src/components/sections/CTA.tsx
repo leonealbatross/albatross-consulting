@@ -21,7 +21,7 @@ const CTA = () => {
           {/* Headline */}
           <h2 className="heading-section text-foreground mb-6">
             Pronto para acelerar o crescimento do{" "}
-            <span className="bg-gradient-to-r from-primary to-emerald-400 bg-clip-text text-transparent">seu negócio?</span>
+            <span className="bg-gradient-to-r from-teal-400 to-primary bg-clip-text text-transparent">seu negócio?</span>
           </h2>
 
           <p className="text-body text-muted-foreground max-w-2xl mx-auto mb-10">

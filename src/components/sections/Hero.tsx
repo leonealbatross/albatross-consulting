@@ -37,7 +37,7 @@ const Hero = () => {
           {/* Main Headline */}
           <h1 className="heading-display text-foreground mb-6 opacity-0 animate-fade-up stagger-1">
             Aceleramos o crescimento estratégico de{" "}
-            <span className="bg-gradient-to-r from-primary to-emerald-400 bg-clip-text text-transparent">empresas de tecnologia.</span>
+            <span className="bg-gradient-to-r from-teal-400 to-primary bg-clip-text text-transparent">empresas de tecnologia.</span>
           </h1>
 
           {/* Subheadline */}

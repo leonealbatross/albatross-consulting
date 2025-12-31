@@ -35,7 +35,7 @@ const About = () => {
             </span>
             <h2 className="heading-section text-foreground mb-6">
               Transformamos estratégia em{" "}
-              <span className="bg-gradient-to-r from-primary to-emerald-400 bg-clip-text text-transparent">resultados mensuráveis</span>
+              <span className="bg-gradient-to-r from-teal-400 to-primary bg-clip-text text-transparent">resultados mensuráveis</span>
             </h2>
             <div className="space-y-4 text-body text-muted-foreground">
               <p>
