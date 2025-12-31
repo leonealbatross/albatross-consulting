@@ -22,10 +22,9 @@ const Leadership = () => {
 
             {/* Floating Card */}
             <div className="absolute -bottom-6 -right-6 lg:right-6 gradient-glass rounded-2xl p-6 border-gradient shadow-elevated max-w-xs">
-              <div className="text-3xl font-heading font-bold text-foreground mb-1">25+</div>
-              <div className="text-sm text-muted-foreground">
-                Anos de experiência em tecnologia e transformação digital
-              </div>
+              <div className="text-sm text-muted-foreground uppercase tracking-wider mb-1">Fundador com</div>
+              <div className="text-3xl font-heading font-bold text-foreground">25+ Anos</div>
+              <div className="text-sm text-muted-foreground">de Experiência</div>
             </div>
           </div>
 
