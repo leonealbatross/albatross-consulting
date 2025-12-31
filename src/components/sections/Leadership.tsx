@@ -22,11 +22,11 @@ const Leadership = forwardRef<HTMLElement>((_, ref) => {
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           {/* Left - Image */}
           <div className="relative flex justify-center lg:justify-start">
-            <div className="aspect-[4/5] rounded-2xl sm:rounded-3xl overflow-hidden w-2/3 sm:w-1/2">
+            <div className="aspect-[3/4] sm:aspect-[4/5] rounded-2xl sm:rounded-3xl overflow-hidden w-3/4 sm:w-1/2">
               <img 
                 src={marcoLeonePhoto} 
                 alt="Marco Leone - Founder & Strategic Advisor" 
-                className="w-full h-full object-cover object-top"
+                className="w-full h-full object-cover object-[center_20%]"
               />
             </div>
           </div>
