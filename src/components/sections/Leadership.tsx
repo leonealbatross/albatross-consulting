@@ -1,25 +1,21 @@
 import { Linkedin, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import marcoLeonePhoto from "@/assets/marco-leone.jpeg";
 
 const Leadership = () => {
   return (
     <section id="lideranca" className="py-24 lg:py-32 bg-secondary/30 relative">
       <div className="container-wide">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
-          {/* Left - Image Placeholder */}
+          {/* Left - Image */}
           <div className="relative">
-            <div className="aspect-[4/5] rounded-3xl bg-gradient-to-br from-card to-secondary border border-border overflow-hidden">
-              {/* Decorative Elements */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-32 h-32 rounded-full bg-primary/10 flex items-center justify-center">
-                  <span className="text-6xl font-heading font-bold text-primary/30">ML</span>
-                </div>
-              </div>
-              
-              {/* Gradient Overlay */}
-              <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-background/80 to-transparent" />
+            <div className="aspect-[4/5] rounded-3xl overflow-hidden">
+              <img 
+                src={marcoLeonePhoto} 
+                alt="Marco Leone - Founder & Strategic Advisor" 
+                className="w-full h-full object-cover object-top"
+              />
             </div>
-
           </div>
 
           {/* Right - Content */}
