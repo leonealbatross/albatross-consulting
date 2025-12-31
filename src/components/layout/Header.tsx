@@ -105,47 +105,72 @@ const Header = () => {
           </button>
         </nav>
 
-        {/* Mobile Menu */}
-        {isMobileMenuOpen && (
-          <div className="lg:hidden absolute top-full left-0 right-0 bg-background/98 backdrop-blur-xl border-b border-border animate-fade-in">
-            <div className="container-wide py-6 flex flex-col gap-4">
-              {navItems.map((item) => (
+        {/* Mobile Menu Overlay */}
+        <div
+          className={`lg:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity duration-300 ${
+            isMobileMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+
+        {/* Mobile Menu Slide-in */}
+        <div
+          className={`lg:hidden fixed top-0 right-0 h-full w-[280px] max-w-[85vw] bg-background z-50 shadow-2xl transition-transform duration-300 ease-out ${
+            isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
+          }`}
+        >
+          <div className="flex flex-col h-full">
+            {/* Mobile Menu Header */}
+            <div className="flex items-center justify-between p-6 border-b border-border/30">
+              <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Menu</span>
+              <button
+                className="p-2 text-muted-foreground hover:text-foreground transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Navigation Links */}
+            <nav className="flex-1 overflow-y-auto py-6 px-6">
+              {navItems.map((item, index) => (
                 <a
                   key={item.href}
                   href={item.href}
-                  className="py-3 text-lg font-medium text-muted-foreground hover:text-foreground transition-colors border-b border-border/30"
+                  className="flex items-center py-4 text-lg font-medium text-foreground/80 hover:text-primary transition-colors border-b border-border/20"
                   onClick={() => setIsMobileMenuOpen(false)}
+                  style={{ animationDelay: `${index * 50}ms` }}
                 >
                   {item.label}
                 </a>
               ))}
-              <div className="flex items-center gap-4 pt-4">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm" className="gap-2">
-                      <Globe className="w-4 h-4" />
-                      {currentLang}
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="bg-card border-border">
-                    {languages.map((lang) => (
-                      <DropdownMenuItem
-                        key={lang.code}
-                        onClick={() => setCurrentLang(lang.code)}
-                        className="cursor-pointer"
-                      >
-                        {lang.label}
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-                <Button variant="hero" className="flex-1">
-                  Agendar Conversa
-                </Button>
+            </nav>
+
+            {/* Mobile Menu Footer */}
+            <div className="p-6 border-t border-border/30 space-y-4">
+              {/* Language Selector */}
+              <div className="flex gap-2">
+                {languages.map((lang) => (
+                  <button
+                    key={lang.code}
+                    onClick={() => setCurrentLang(lang.code)}
+                    className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors ${
+                      currentLang === lang.code
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-secondary/50 text-muted-foreground hover:bg-secondary"
+                    }`}
+                  >
+                    {lang.code}
+                  </button>
+                ))}
               </div>
+
+              <Button variant="hero" className="w-full" onClick={() => setIsMobileMenuOpen(false)}>
+                Agendar Conversa
+              </Button>
             </div>
           </div>
-        )}
+        </div>
       </div>
     </header>
   );
