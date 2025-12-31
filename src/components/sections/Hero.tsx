@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, TrendingUp, Users, Database } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import heroBg from "@/assets/hero-bg.jpg";
+import ContactModal from "@/components/ContactModal";
 
 const Hero = () => {
   const { t } = useLanguage();
@@ -56,11 +57,20 @@ const Hero = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-16 opacity-0 animate-fade-up stagger-3 px-4 sm:px-0">
-            <Button variant="hero" size="lg" className="group w-full sm:w-auto text-sm sm:text-base">
-              {t("hero.cta.primary")}
-              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:translate-x-1" />
-            </Button>
-            <Button variant="heroOutline" size="lg" className="w-full sm:w-auto text-sm sm:text-base">
+            <ContactModal 
+              trigger={
+                <Button variant="hero" size="lg" className="group w-full sm:w-auto text-sm sm:text-base">
+                  {t("hero.cta.primary")}
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:translate-x-1" />
+                </Button>
+              }
+            />
+            <Button 
+              variant="heroOutline" 
+              size="lg" 
+              className="w-full sm:w-auto text-sm sm:text-base"
+              onClick={() => document.getElementById('sobre')?.scrollIntoView({ behavior: 'smooth' })}
+            >
               {t("hero.cta.secondary")}
             </Button>
           </div>
