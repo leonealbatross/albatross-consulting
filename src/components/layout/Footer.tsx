@@ -9,18 +9,17 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
 
   const links = {
     services: [
-      { label: "Growth Strategy", href: "#" },
-      { label: "M&A Tecnologia", href: "#" },
-      { label: "Business Intelligence", href: "#" },
-      { label: t("services.s4.highlight"), href: "#" },
-      { label: "GenAI & Inovação", href: "#" },
-      { label: t("services.s6.title"), href: "#" },
+      { label: "Growth Strategy", href: "#servicos" },
+      { label: "M&A Tecnologia", href: "#servicos" },
+      { label: "Business Intelligence", href: "#servicos" },
+      { label: t("services.s4.highlight"), href: "#servicos" },
+      { label: "GenAI & Inovação", href: "#servicos" },
+      { label: t("services.s6.title"), href: "#servicos" },
     ],
     company: [
       { label: t("footer.about"), href: "#sobre" },
       { label: t("footer.methodology"), href: "#metodologia" },
       { label: t("footer.leadership"), href: "#lideranca" },
-      { label: t("footer.careers"), href: "#" },
       { label: t("footer.contact"), href: "#contato" },
     ],
   };
@@ -43,13 +42,15 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
             </p>
             <div className="flex gap-3">
               <a
-                href="#"
+                href="https://www.linkedin.com/in/marcoleone/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-secondary flex items-center justify-center hover:bg-primary/20 transition-colors"
               >
                 <Linkedin className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
               </a>
               <a
-                href="#"
+                href="mailto:contato@albatross.consulting"
                 className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-secondary flex items-center justify-center hover:bg-primary/20 transition-colors"
               >
                 <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
@@ -134,12 +135,12 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
             © {currentYear} Albatross Consulting. {t("footer.copyright")}
           </p>
           <div className="flex gap-4 sm:gap-6">
-            <a href="#" className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors">
+            <span className="text-xs sm:text-sm text-muted-foreground cursor-default">
               {t("footer.privacy")}
-            </a>
-            <a href="#" className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors">
+            </span>
+            <span className="text-xs sm:text-sm text-muted-foreground cursor-default">
               {t("footer.terms")}
-            </a>
+            </span>
           </div>
         </div>
       </div>
