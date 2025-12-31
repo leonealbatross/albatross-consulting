@@ -1,31 +1,42 @@
 import { ExternalLink } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
+// Import client logos
+import ecoreLogo from "@/assets/clients/ecore-logo.png";
+import laborLogo from "@/assets/clients/labor-logo.svg";
+import bhsLogo from "@/assets/clients/bhs-logo.png";
+import ecotrustLogo from "@/assets/clients/ecotrust-logo.svg";
+
 const clients = [
   {
     name: "e-core",
     url: "https://www.e-core.com",
     description: "Digital Consulting Services",
+    logo: ecoreLogo,
   },
   {
     name: "nuvini",
     url: "https://www.nuvini.co",
     description: "B2B SaaS Ecosystem",
+    logo: null, // No logo available, will use text
   },
   {
     name: "Labor",
     url: "https://labor.org.br",
     description: "Educacional",
+    logo: laborLogo,
   },
   {
     name: "BHS",
     url: "https://www.bhs.com.br",
     description: "Soluções de TI para Empresas",
+    logo: bhsLogo,
   },
   {
     name: "EcoTrust",
     url: "https://ecotrust.io",
     description: "Cybersecurity",
+    logo: ecotrustLogo,
   },
 ];
 
@@ -66,13 +77,21 @@ const Clients = () => {
               href={client.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative flex-shrink-0 flex flex-col items-center justify-center p-6 mx-4 w-[200px] md:w-[240px] rounded-xl bg-background/50 backdrop-blur-sm border border-border/30 hover:border-primary/50 hover:shadow-glow hover:scale-105 hover:bg-background/80 transition-all duration-300 ease-out"
+              className="group relative flex-shrink-0 flex flex-col items-center justify-center p-6 mx-4 w-[200px] md:w-[240px] h-[140px] rounded-xl bg-background/50 backdrop-blur-sm border border-border/30 hover:border-primary/50 hover:shadow-glow hover:scale-105 hover:bg-background/80 transition-all duration-300 ease-out"
             >
-              {/* Client Name as Logo */}
-              <div className="text-2xl md:text-3xl font-heading font-bold text-foreground/80 group-hover:text-primary transition-colors duration-300">
-                {client.name}
-              </div>
-              <div className="text-xs text-muted-foreground mt-2 text-center">
+              {/* Client Logo or Name */}
+              {client.logo ? (
+                <img 
+                  src={client.logo} 
+                  alt={`${client.name} logo`}
+                  className="max-h-12 md:max-h-16 w-auto object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300"
+                />
+              ) : (
+                <div className="text-2xl md:text-3xl font-heading font-bold text-foreground/80 group-hover:text-primary transition-colors duration-300">
+                  {client.name}
+                </div>
+              )}
+              <div className="text-xs text-muted-foreground mt-3 text-center">
                 {client.description}
               </div>
               
