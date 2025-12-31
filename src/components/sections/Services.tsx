@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
+import ContactModal from "@/components/ContactModal";
 
 const Services = () => {
   const { t } = useLanguage();
@@ -104,13 +105,17 @@ const Services = () => {
               <p className="text-xs sm:text-sm text-muted-foreground mb-4 sm:mb-6">{service.description}</p>
 
               {/* CTA */}
-              <Button 
-                variant="ghost" 
-                className="p-0 h-auto text-sm text-primary hover:text-primary/80 group/btn"
-              >
-                {t("services.learnMore")}
-                <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 ml-2 transition-transform group-hover/btn:translate-x-1" />
-              </Button>
+              <ContactModal 
+                trigger={
+                  <Button 
+                    variant="ghost" 
+                    className="p-0 h-auto text-sm text-primary hover:text-primary/80 group/btn"
+                  >
+                    {t("services.learnMore")}
+                    <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 ml-2 transition-transform group-hover/btn:translate-x-1" />
+                  </Button>
+                }
+              />
             </div>
           ))}
         </div>
