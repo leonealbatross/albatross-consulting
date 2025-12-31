@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useLanguage, Language } from "@/contexts/LanguageContext";
 import albatrossLogo from "@/assets/logo-albatross-new.jpeg";
+import ContactModal from "@/components/ContactModal";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -92,9 +93,7 @@ const Header = () => {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <Button variant="hero" size="default">
-              {t("nav.schedule")}
-            </Button>
+            <ContactModal />
           </div>
 
           {/* Mobile Menu Button */}
@@ -166,9 +165,11 @@ const Header = () => {
                 ))}
               </div>
 
-              <Button variant="hero" className="w-full" onClick={() => setIsMobileMenuOpen(false)}>
-                {t("nav.schedule")}
-              </Button>
+              <ContactModal trigger={
+                <Button variant="hero" className="w-full" onClick={() => setIsMobileMenuOpen(false)}>
+                  {t("header.cta")}
+                </Button>
+              } />
             </div>
           </div>
         </div>
