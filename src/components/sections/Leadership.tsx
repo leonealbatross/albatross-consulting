@@ -8,8 +8,8 @@ const Leadership = () => {
       <div className="container-wide">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Left - Image */}
-          <div className="relative">
-            <div className="aspect-[4/5] rounded-3xl overflow-hidden">
+          <div className="relative flex justify-center lg:justify-start">
+            <div className="aspect-[4/5] rounded-3xl overflow-hidden w-1/2">
               <img 
                 src={marcoLeonePhoto} 
                 alt="Marco Leone - Founder & Strategic Advisor" 
