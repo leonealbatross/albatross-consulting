@@ -60,8 +60,8 @@ const Hero = () => {
           {/* Stats */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 opacity-0 animate-fade-up stagger-4">
             {[
-              { icon: TrendingUp, value: "25+", label: "Anos de Experiência" },
-              { icon: Users, value: "100+", label: "Empresas Impactadas" },
+              { icon: TrendingUp, value: "25+", label: "Founder com Anos de Experiência" },
+              { icon: Users, value: "✓", label: "Resultados Comprovados" },
               { icon: Database, value: "ONEtoONE", label: "Parceira em M&A Internacional" },
             ].map((stat, index) => (
               <div
