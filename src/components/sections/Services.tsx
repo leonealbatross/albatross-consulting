@@ -10,9 +10,18 @@ import {
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import ContactModal from "@/components/ContactModal";
+import ServiceDetailModal from "@/components/ServiceDetailModal";
 
 const Services = () => {
   const { t } = useLanguage();
+
+  const bgasContent = `E se sua empresa não estivesse crescendo de verdade?
+
+Você tem produto, time, mercado. Mas os resultados são instáveis. Sem método, tudo vira tentativa e erro. Isso custa caro, desgasta o time e trava seu valuation.
+
+Enquanto isso, outros já tratam crescimento como serviço.
+
+Business Growth as a Service é o que a Albatross entrega: estrutura, disciplina e resultado. O resto é ilusão de progresso.`;
 
   const services = [
     {
@@ -20,6 +29,7 @@ const Services = () => {
       title: t("services.s1.title"),
       description: t("services.s1.desc"),
       highlight: t("services.s1.highlight"),
+      detailContent: bgasContent,
     },
     {
       icon: GitMerge,
@@ -105,17 +115,33 @@ const Services = () => {
               <p className="text-xs sm:text-sm text-muted-foreground mb-4 sm:mb-6">{service.description}</p>
 
               {/* CTA */}
-              <ContactModal 
-                trigger={
-                  <Button 
-                    variant="ghost" 
-                    className="p-0 h-auto text-sm text-primary hover:text-primary/80 group/btn"
-                  >
-                    {t("services.learnMore")}
-                    <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 ml-2 transition-transform group-hover/btn:translate-x-1" />
-                  </Button>
-                }
-              />
+              {service.detailContent ? (
+                <ServiceDetailModal
+                  title={service.title}
+                  content={service.detailContent}
+                  trigger={
+                    <Button 
+                      variant="ghost" 
+                      className="p-0 h-auto text-sm text-primary hover:text-primary/80 group/btn"
+                    >
+                      {t("services.learnMore")}
+                      <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 ml-2 transition-transform group-hover/btn:translate-x-1" />
+                    </Button>
+                  }
+                />
+              ) : (
+                <ContactModal 
+                  trigger={
+                    <Button 
+                      variant="ghost" 
+                      className="p-0 h-auto text-sm text-primary hover:text-primary/80 group/btn"
+                    >
+                      {t("services.learnMore")}
+                      <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 ml-2 transition-transform group-hover/btn:translate-x-1" />
+                    </Button>
+                  }
+                />
+              )}
             </div>
           ))}
         </div>
