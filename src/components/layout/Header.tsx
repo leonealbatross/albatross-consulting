@@ -7,7 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import albatrossLogo from "@/assets/logo-albatross.png";
+import albatrossLogo from "@/assets/logo-albatross-new.jpeg";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -51,7 +51,7 @@ const Header = () => {
             <img 
               src={albatrossLogo} 
               alt="Albatross Consulting - Business Growth as a Service" 
-              className="h-20 sm:h-24 w-auto object-contain rounded"
+              className="h-32 sm:h-40 w-auto object-contain rounded"
             />
           </a>
 
