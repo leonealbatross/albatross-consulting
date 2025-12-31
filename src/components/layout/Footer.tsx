@@ -20,6 +20,7 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
       { label: t("footer.about"), href: "#sobre" },
       { label: t("footer.methodology"), href: "#metodologia" },
       { label: t("footer.leadership"), href: "#lideranca" },
+      { label: t("footer.careers"), href: "#carreiras" },
       { label: t("footer.contact"), href: "#contato" },
     ],
   };
