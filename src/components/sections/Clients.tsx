@@ -19,7 +19,7 @@ const clients = [
   {
     name: "BHS",
     url: "https://www.bhs.com.br",
-    description: "Inteligência Artificial",
+    description: "Soluções de TI para Empresas",
   },
   {
     name: "EcoTrust",
