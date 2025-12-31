@@ -20,12 +20,6 @@ const Leadership = () => {
               <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-background/80 to-transparent" />
             </div>
 
-            {/* Floating Card */}
-            <div className="absolute -bottom-6 -right-6 lg:right-6 gradient-glass rounded-2xl p-6 border-gradient shadow-elevated max-w-xs">
-              <div className="text-sm text-muted-foreground uppercase tracking-wider mb-1">Fundador com</div>
-              <div className="text-3xl font-heading font-bold text-foreground">25+ Anos</div>
-              <div className="text-sm text-muted-foreground">de Experiência</div>
-            </div>
           </div>
 
           {/* Right - Content */}
