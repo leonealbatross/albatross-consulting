@@ -27,47 +27,47 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
 
   return (
     <footer ref={ref} className="bg-card border-t border-border">
-      <div className="container-wide py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+      <div className="container-wide py-10 sm:py-12 lg:py-16 px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           {/* Brand */}
-          <div className="lg:col-span-1">
-            <div className="flex items-center mb-6">
+          <div className="col-span-2 md:col-span-2 lg:col-span-1">
+            <div className="flex items-center mb-4 sm:mb-6">
               <img 
                 src={albatrossLogo} 
                 alt="Albatross Consulting" 
-                className="h-16 w-auto object-contain"
+                className="h-12 sm:h-16 w-auto object-contain"
               />
             </div>
-            <p className="text-subtle mb-6">
+            <p className="text-xs sm:text-sm text-muted-foreground mb-4 sm:mb-6">
               {t("footer.brand")}
             </p>
             <div className="flex gap-3">
               <a
                 href="#"
-                className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center hover:bg-primary/20 transition-colors"
+                className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-secondary flex items-center justify-center hover:bg-primary/20 transition-colors"
               >
-                <Linkedin className="w-5 h-5 text-muted-foreground" />
+                <Linkedin className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
               </a>
               <a
                 href="#"
-                className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center hover:bg-primary/20 transition-colors"
+                className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-secondary flex items-center justify-center hover:bg-primary/20 transition-colors"
               >
-                <Mail className="w-5 h-5 text-muted-foreground" />
+                <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
               </a>
             </div>
           </div>
 
           {/* Services */}
           <div>
-            <h4 className="font-heading font-semibold text-foreground mb-4">
+            <h4 className="font-heading font-semibold text-sm sm:text-base text-foreground mb-3 sm:mb-4">
               {t("footer.services")}
             </h4>
-            <ul className="space-y-3">
+            <ul className="space-y-2 sm:space-y-3">
               {links.services.map((link) => (
                 <li key={link.label}>
                   <a
                     href={link.href}
-                    className="text-subtle hover:text-foreground transition-colors"
+                    className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {link.label}
                   </a>
@@ -78,15 +78,15 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
 
           {/* Company */}
           <div>
-            <h4 className="font-heading font-semibold text-foreground mb-4">
+            <h4 className="font-heading font-semibold text-sm sm:text-base text-foreground mb-3 sm:mb-4">
               {t("footer.company")}
             </h4>
-            <ul className="space-y-3">
+            <ul className="space-y-2 sm:space-y-3">
               {links.company.map((link) => (
                 <li key={link.label}>
                   <a
                     href={link.href}
-                    className="text-subtle hover:text-foreground transition-colors"
+                    className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {link.label}
                   </a>
@@ -96,31 +96,31 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
           </div>
 
           {/* Contact */}
-          <div>
-            <h4 className="font-heading font-semibold text-foreground mb-4">
+          <div className="col-span-2 lg:col-span-1">
+            <h4 className="font-heading font-semibold text-sm sm:text-base text-foreground mb-3 sm:mb-4">
               {t("footer.contact")}
             </h4>
-            <div className="mb-4">
-              <span className="text-sm text-primary font-medium">LATAM Office</span>
+            <div className="mb-3 sm:mb-4">
+              <span className="text-xs sm:text-sm text-primary font-medium">LATAM Office</span>
             </div>
-            <ul className="space-y-4">
-              <li className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                <span className="text-subtle">
+            <ul className="space-y-3 sm:space-y-4">
+              <li className="flex items-start gap-2 sm:gap-3">
+                <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0 mt-0.5" />
+                <span className="text-xs sm:text-sm text-muted-foreground">
                   <strong className="text-foreground">Brascan Century Offices</strong><br />
                   R. Joaquim Floriano, 466. Cj 814<br />
-                  Itaim Bibi, São Paulo - SP, 04534-002
+                  Itaim Bibi, São Paulo - SP
                 </span>
               </li>
-              <li className="flex items-center gap-3">
-                <Phone className="w-5 h-5 text-primary flex-shrink-0" />
-                <a href="tel:+5511981332775" className="text-subtle hover:text-foreground transition-colors">
+              <li className="flex items-center gap-2 sm:gap-3">
+                <Phone className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
+                <a href="tel:+5511981332775" className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors">
                   +55 11 981332775
                 </a>
               </li>
-              <li className="flex items-center gap-3">
-                <Mail className="w-5 h-5 text-primary flex-shrink-0" />
-                <a href="mailto:contato@albatross.consulting" className="text-subtle hover:text-foreground transition-colors">
+              <li className="flex items-center gap-2 sm:gap-3">
+                <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
+                <a href="mailto:contato@albatross.consulting" className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors break-all">
                   contato@albatross.consulting
                 </a>
               </li>
@@ -129,15 +129,15 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-12 pt-8 border-t border-border/50 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-muted-foreground">
+        <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-border/50 flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-xs sm:text-sm text-muted-foreground text-center md:text-left">
             © {currentYear} Albatross Consulting. {t("footer.copyright")}
           </p>
-          <div className="flex gap-6">
-            <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <div className="flex gap-4 sm:gap-6">
+            <a href="#" className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors">
               {t("footer.privacy")}
             </a>
-            <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+            <a href="#" className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors">
               {t("footer.terms")}
             </a>
           </div>

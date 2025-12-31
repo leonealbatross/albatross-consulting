@@ -44,43 +44,43 @@ const Hero = () => {
           </div>
 
           {/* Main Headline */}
-          <h1 className="heading-display text-foreground mb-6 opacity-0 animate-fade-up stagger-1">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-heading font-semibold tracking-tight leading-tight text-foreground mb-6 opacity-0 animate-fade-up stagger-1 px-2 sm:px-0">
             {t("hero.headline")}{" "}
             <span className="bg-gradient-to-r from-teal-400 to-primary bg-clip-text text-transparent">{t("hero.headline.highlight")}</span>
           </h1>
 
           {/* Subheadline */}
-          <p className="text-body text-muted-foreground max-w-2xl mx-auto mb-10 opacity-0 animate-fade-up stagger-2">
+          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto mb-8 sm:mb-10 opacity-0 animate-fade-up stagger-2 px-4 sm:px-0">
             {t("hero.subheadline")}
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 opacity-0 animate-fade-up stagger-3">
-            <Button variant="hero" size="xl" className="group">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-16 opacity-0 animate-fade-up stagger-3 px-4 sm:px-0">
+            <Button variant="hero" size="lg" className="group w-full sm:w-auto text-sm sm:text-base">
               {t("hero.cta.primary")}
-              <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:translate-x-1" />
             </Button>
-            <Button variant="heroOutline" size="xl">
+            <Button variant="heroOutline" size="lg" className="w-full sm:w-auto text-sm sm:text-base">
               {t("hero.cta.secondary")}
             </Button>
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 opacity-0 animate-fade-up stagger-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 opacity-0 animate-fade-up stagger-4 px-4 sm:px-0">
             {stats.map((stat, index) => (
               <div
                 key={index}
-                className="gradient-glass rounded-2xl p-6 border-gradient hover:shadow-glow-sm transition-all duration-300"
+                className="gradient-glass rounded-xl sm:rounded-2xl p-4 sm:p-6 border-gradient hover:shadow-glow-sm transition-all duration-300"
               >
-                <div className="flex items-center justify-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                    <stat.icon className="w-6 h-6 text-primary" />
+                <div className="flex items-center justify-center gap-3 sm:gap-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-primary/10 flex items-center justify-center">
+                    <stat.icon className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                   </div>
                   <div className="text-left">
-                    <div className="text-2xl font-heading font-bold text-foreground">
+                    <div className="text-xl sm:text-2xl font-heading font-bold text-foreground">
                       {stat.value}
                     </div>
-                    <div className="text-sm text-muted-foreground">{stat.label}</div>
+                    <div className="text-xs sm:text-sm text-muted-foreground">{stat.label}</div>
                   </div>
                 </div>
               </div>
