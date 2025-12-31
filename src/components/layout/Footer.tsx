@@ -1,5 +1,5 @@
 import { Linkedin, Mail, Phone, MapPin } from "lucide-react";
-import albatrossLogo from "@/assets/albatross-logo-full.jpg";
+import albatrossLogo from "@/assets/logo-albatross.png";
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 

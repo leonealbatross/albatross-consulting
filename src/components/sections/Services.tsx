@@ -76,7 +76,7 @@ const Services = () => {
           </span>
           <h2 className="heading-section text-foreground mb-6">
             Soluções completas para{" "}
-            <span className="bg-gradient-to-r from-primary to-emerald-400 bg-clip-text text-transparent">acelerar seu negócio</span>
+            <span className="bg-gradient-to-r from-teal-400 to-primary bg-clip-text text-transparent">acelerar seu negócio</span>
           </h2>
           <p className="text-body text-muted-foreground">
             Do planejamento estratégico à execução, oferecemos uma suíte completa de 

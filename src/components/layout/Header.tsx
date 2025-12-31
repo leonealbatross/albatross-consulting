@@ -7,7 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import albatrossLogo from "@/assets/albatross-logo-full.jpg";
+import albatrossLogo from "@/assets/logo-albatross.png";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
