@@ -45,21 +45,9 @@ const CTA = forwardRef<HTMLElement>((_, ref) => {
 
           {/* Trust Indicators */}
           <div className="mt-16 pt-16 border-t border-border/30">
-            <p className="text-sm text-muted-foreground mb-8">
+            <p className="text-sm text-muted-foreground">
               {t("cta.trust")}
             </p>
-            
-            {/* Client Logos Placeholder */}
-            <div className="flex flex-wrap items-center justify-center gap-8">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <div
-                  key={i}
-                  className="w-32 h-12 rounded-lg bg-secondary/50 flex items-center justify-center"
-                >
-                  <span className="text-xs text-muted-foreground">{t("clients.logoPlaceholder")}</span>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
       </div>

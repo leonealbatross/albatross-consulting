@@ -1,9 +1,10 @@
+import { forwardRef } from "react";
 import { Linkedin, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import marcoLeonePhoto from "@/assets/marco-leone.jpeg";
 
-const Leadership = () => {
+const Leadership = forwardRef<HTMLElement>((_, ref) => {
   const { t } = useLanguage();
 
   const tags = [
@@ -16,7 +17,7 @@ const Leadership = () => {
   ];
 
   return (
-    <section id="lideranca" className="py-24 lg:py-32 bg-secondary/30 relative">
+    <section ref={ref} id="lideranca" className="py-24 lg:py-32 bg-secondary/30 relative">
       <div className="container-wide">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Left - Image */}
@@ -61,18 +62,28 @@ const Leadership = () => {
 
             {/* Social Links */}
             <div className="flex gap-4">
-              <Button variant="outline" size="icon" className="rounded-full">
-                <Linkedin className="w-5 h-5" />
-              </Button>
-              <Button variant="outline" size="icon" className="rounded-full">
-                <Mail className="w-5 h-5" />
-              </Button>
+              <a 
+                href="https://www.linkedin.com/in/marcoleone/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
+                <Button variant="outline" size="icon" className="rounded-full">
+                  <Linkedin className="w-5 h-5" />
+                </Button>
+              </a>
+              <a href="mailto:marco@albatross.consulting">
+                <Button variant="outline" size="icon" className="rounded-full">
+                  <Mail className="w-5 h-5" />
+                </Button>
+              </a>
             </div>
           </div>
         </div>
       </div>
     </section>
   );
-};
+});
+
+Leadership.displayName = "Leadership";
 
 export default Leadership;
