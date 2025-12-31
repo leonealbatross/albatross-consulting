@@ -47,14 +47,14 @@ const Clients = () => {
   const { t } = useLanguage();
 
   return (
-    <section className="py-16 bg-secondary/30 overflow-hidden">
-      <div className="container-wide">
+    <section className="py-12 sm:py-16 bg-secondary/30 overflow-hidden">
+      <div className="container-wide px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-12">
-          <span className="text-sm font-semibold text-primary uppercase tracking-wider">
+        <div className="text-center mb-8 sm:mb-12">
+          <span className="text-xs sm:text-sm font-semibold text-primary uppercase tracking-wider">
             {t("clients.label")}
           </span>
-          <h2 className="text-2xl md:text-3xl font-heading font-bold text-foreground mt-2">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-heading font-bold text-foreground mt-2">
             {t("clients.headline")}{" "}
             <span className="bg-gradient-to-r from-teal-400 to-primary bg-clip-text text-transparent">
               {t("clients.headline.highlight")}
@@ -66,8 +66,8 @@ const Clients = () => {
       {/* Infinite Scroll Carousel */}
       <div className="relative">
         {/* Gradient fade on edges */}
-        <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-secondary/30 to-transparent z-10 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-secondary/30 to-transparent z-10 pointer-events-none" />
+        <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-r from-secondary/30 to-transparent z-10 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-l from-secondary/30 to-transparent z-10 pointer-events-none" />
         
         {/* Scrolling container */}
         <div className="flex animate-scroll-left hover:[animation-play-state:paused]">
@@ -77,26 +77,26 @@ const Clients = () => {
               href={client.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative flex-shrink-0 flex flex-col items-center justify-center p-6 mx-4 w-[200px] md:w-[240px] h-[140px] rounded-xl bg-background/50 backdrop-blur-sm border border-border/30 hover:border-primary/50 hover:shadow-glow hover:scale-105 hover:bg-background/80 transition-all duration-300 ease-out"
+              className="group relative flex-shrink-0 flex flex-col items-center justify-center p-4 sm:p-6 mx-2 sm:mx-4 w-[160px] sm:w-[200px] md:w-[240px] h-[120px] sm:h-[140px] rounded-lg sm:rounded-xl bg-background/50 backdrop-blur-sm border border-border/30 hover:border-primary/50 hover:shadow-glow hover:scale-105 hover:bg-background/80 transition-all duration-300 ease-out"
             >
               {/* Client Logo or Name */}
               {client.logo ? (
                 <img 
                   src={client.logo} 
                   alt={`${client.name} logo`}
-                  className="max-h-12 md:max-h-16 w-auto object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300"
+                  className="max-h-8 sm:max-h-12 md:max-h-16 w-auto object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300"
                 />
               ) : (
-                <div className="text-2xl md:text-3xl font-heading font-bold text-foreground/80 group-hover:text-primary transition-colors duration-300">
+                <div className="text-lg sm:text-2xl md:text-3xl font-heading font-bold text-foreground/80 group-hover:text-primary transition-colors duration-300">
                   {client.name}
                 </div>
               )}
-              <div className="text-xs text-muted-foreground mt-3 text-center">
+              <div className="text-[10px] sm:text-xs text-muted-foreground mt-2 sm:mt-3 text-center">
                 {client.description}
               </div>
               
               {/* External Link Icon */}
-              <ExternalLink className="absolute top-3 right-3 w-4 h-4 text-muted-foreground/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <ExternalLink className="absolute top-2 right-2 sm:top-3 sm:right-3 w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </a>
           ))}
         </div>

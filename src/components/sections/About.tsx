@@ -28,19 +28,19 @@ const About = () => {
   ];
 
   return (
-    <section id="sobre" className="py-24 lg:py-32 relative">
-      <div className="container-wide">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+    <section id="sobre" className="py-16 lg:py-24 xl:py-32 relative">
+      <div className="container-wide px-4 sm:px-6 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           {/* Left Content */}
           <div>
-            <span className="inline-block text-primary font-semibold text-sm tracking-wider uppercase mb-4">
+            <span className="inline-block text-primary font-semibold text-xs sm:text-sm tracking-wider uppercase mb-3 sm:mb-4">
               {t("about.label")}
             </span>
-            <h2 className="heading-section text-foreground mb-6">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-heading font-semibold tracking-tight text-foreground mb-4 sm:mb-6">
               {t("about.headline")}{" "}
               <span className="bg-gradient-to-r from-teal-400 to-primary bg-clip-text text-transparent">{t("about.headline.highlight")}</span>
             </h2>
-            <div className="space-y-4 text-body text-muted-foreground">
+            <div className="space-y-3 sm:space-y-4 text-sm sm:text-base lg:text-lg leading-relaxed text-muted-foreground">
               <p>{t("about.p1")}</p>
               <p>
                 {t("about.p2.start")} <strong className="text-foreground">{t("about.p2.bold")}</strong> {t("about.p2.end")}
@@ -50,17 +50,17 @@ const About = () => {
           </div>
 
           {/* Right - Feature Cards */}
-          <div className="grid sm:grid-cols-2 gap-6">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
             {features.map((feature, index) => (
               <div
                 key={index}
-                className="group gradient-glass rounded-2xl p-6 border-gradient hover:shadow-glow-sm transition-all duration-500 hover:-translate-y-1"
+                className="group gradient-glass rounded-xl sm:rounded-2xl p-4 sm:p-6 border-gradient hover:shadow-glow-sm transition-all duration-500 hover:-translate-y-1"
               >
-                <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors duration-300">
-                  <feature.icon className="w-7 h-7 text-primary" />
+                <div className="w-10 h-10 sm:w-12 lg:w-14 sm:h-12 lg:h-14 rounded-lg sm:rounded-xl bg-primary/10 flex items-center justify-center mb-3 sm:mb-4 group-hover:bg-primary/20 transition-colors duration-300">
+                  <feature.icon className="w-5 h-5 sm:w-6 lg:w-7 sm:h-6 lg:h-7 text-primary" />
                 </div>
-                <h3 className="heading-card text-foreground mb-2">{feature.title}</h3>
-                <p className="text-subtle">{feature.description}</p>
+                <h3 className="text-base sm:text-lg lg:text-xl font-heading font-medium text-foreground mb-1 sm:mb-2">{feature.title}</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground">{feature.description}</p>
               </div>
             ))}
           </div>
