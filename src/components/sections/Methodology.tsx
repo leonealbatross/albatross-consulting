@@ -1,35 +1,41 @@
 import { Search, Compass, Play, BarChart } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Methodology = () => {
+  const { t } = useLanguage();
+
   const steps = [
     {
       icon: Search,
       step: "01",
-      title: "Diagnóstico",
-      description:
-        "Análise profunda de performance, mercado e oportunidades estratégicas.",
+      title: t("methodology.step1.title"),
+      description: t("methodology.step1.desc"),
     },
     {
       icon: Compass,
       step: "02",
-      title: "Definição",
-      description:
-        "Identificação das principais alavancas de crescimento e priorização.",
+      title: t("methodology.step2.title"),
+      description: t("methodology.step2.desc"),
     },
     {
       icon: Play,
       step: "03",
-      title: "Execução",
-      description:
-        "Implementação orientada por dados com acompanhamento contínuo.",
+      title: t("methodology.step3.title"),
+      description: t("methodology.step3.desc"),
     },
     {
       icon: BarChart,
       step: "04",
-      title: "Escala",
-      description:
-        "Monitoramento, otimização e expansão sustentável dos resultados.",
+      title: t("methodology.step4.title"),
+      description: t("methodology.step4.desc"),
     },
+  ];
+
+  const differentiators = [
+    t("methodology.diff1"),
+    t("methodology.diff2"),
+    t("methodology.diff3"),
+    t("methodology.diff4"),
   ];
 
   return (
@@ -42,26 +48,19 @@ const Methodology = () => {
           {/* Left Content */}
           <div>
             <span className="inline-block text-primary font-semibold text-sm tracking-wider uppercase mb-4">
-              Nossa Metodologia
+              {t("methodology.label")}
             </span>
             <h2 className="heading-section text-foreground mb-6">
-              Da estratégia à execução com{" "}
-              <span className="bg-gradient-to-r from-teal-400 to-primary bg-clip-text text-transparent">resultados comprovados</span>
+              {t("methodology.headline")}{" "}
+              <span className="bg-gradient-to-r from-teal-400 to-primary bg-clip-text text-transparent">{t("methodology.headline.highlight")}</span>
             </h2>
             <p className="text-body text-muted-foreground mb-8">
-              Nosso processo estruturado garante que cada decisão seja baseada em dados, 
-              cada ação seja orientada por resultados e cada investimento gere retorno 
-              mensurável para sua empresa.
+              {t("methodology.subheadline")}
             </p>
 
             {/* Differentiators */}
             <div className="space-y-4">
-              {[
-                "Experiência executiva em tecnologia e crescimento",
-                "Crescimento orgânico e inorgânico integrados",
-                "Forte orientação a dados, governança e resultados",
-                "Modelo contínuo (as a service), não projetos pontuais",
-              ].map((item, index) => (
+              {differentiators.map((item, index) => (
                 <div key={index} className="flex items-center gap-3">
                   <div className="w-2 h-2 rounded-full bg-primary" />
                   <span className="text-foreground">{item}</span>

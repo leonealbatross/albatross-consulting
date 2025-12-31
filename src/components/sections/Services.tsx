@@ -8,50 +8,47 @@ import {
   ArrowRight 
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Services = () => {
+  const { t } = useLanguage();
+
   const services = [
     {
       icon: TrendingUp,
-      title: "Growth Strategy & Go-to-Market",
-      description:
-        "Estruturamos estratégias de crescimento, modelos comerciais e execução de vendas para acelerar receita com previsibilidade.",
-      highlight: "Crescimento Acelerado",
+      title: t("services.s1.title"),
+      description: t("services.s1.desc"),
+      highlight: t("services.s1.highlight"),
     },
     {
       icon: GitMerge,
-      title: "M&A para Empresas de Tecnologia",
-      description:
-        "Atuação end-to-end em fusões e aquisições, do deal sourcing à integração pós-fusão, com foco em criação de valor.",
-      highlight: "Fusões & Aquisições",
+      title: t("services.s2.title"),
+      description: t("services.s2.desc"),
+      highlight: t("services.s2.highlight"),
     },
     {
       icon: BarChart3,
-      title: "Business Intelligence & Data-Driven Decisions",
-      description:
-        "Transformamos dados em decisões estratégicas, performance e governança escalável.",
-      highlight: "Inteligência de Dados",
+      title: t("services.s3.title"),
+      description: t("services.s3.desc"),
+      highlight: t("services.s3.highlight"),
     },
     {
       icon: Building2,
-      title: "Governança Corporativa & Advisory Board",
-      description:
-        "Estruturamos modelos de governança e conselhos consultivos alinhados à escala e atração de investidores.",
-      highlight: "Governança",
+      title: t("services.s4.title"),
+      description: t("services.s4.desc"),
+      highlight: t("services.s4.highlight"),
     },
     {
       icon: Sparkles,
-      title: "GenAI & Inovação",
-      description:
-        "Ajudamos empresas a utilizar IA generativa como alavanca real de eficiência, crescimento e vantagem competitiva.",
-      highlight: "Inteligência Artificial",
+      title: t("services.s5.title"),
+      description: t("services.s5.desc"),
+      highlight: t("services.s5.highlight"),
     },
     {
       icon: Users,
-      title: "Mentoria Executiva",
-      description:
-        "Mentoria estratégica, confidencial e personalizada para líderes que precisam decidir melhor, executar mais rápido e escalar com consistência.",
-      highlight: "Liderança Executiva",
+      title: t("services.s6.title"),
+      description: t("services.s6.desc"),
+      highlight: t("services.s6.highlight"),
     },
   ];
 
@@ -72,15 +69,14 @@ const Services = () => {
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <span className="inline-block text-primary font-semibold text-sm tracking-wider uppercase mb-4">
-            Nossos Serviços
+            {t("services.label")}
           </span>
           <h2 className="heading-section text-foreground mb-6">
-            Soluções completas para{" "}
-            <span className="bg-gradient-to-r from-teal-400 to-primary bg-clip-text text-transparent">acelerar seu negócio</span>
+            {t("services.headline")}{" "}
+            <span className="bg-gradient-to-r from-teal-400 to-primary bg-clip-text text-transparent">{t("services.headline.highlight")}</span>
           </h2>
           <p className="text-body text-muted-foreground">
-            Do planejamento estratégico à execução, oferecemos uma suíte completa de 
-            serviços para impulsionar o crescimento sustentável da sua empresa.
+            {t("services.subheadline")}
           </p>
         </div>
 
@@ -112,7 +108,7 @@ const Services = () => {
                 variant="ghost" 
                 className="p-0 h-auto text-primary hover:text-primary/80 group/btn"
               >
-                Saiba mais
+                {t("services.learnMore")}
                 <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover/btn:translate-x-1" />
               </Button>
             </div>

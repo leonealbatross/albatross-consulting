@@ -1,4 +1,5 @@
 import { ExternalLink } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const clients = [
   {
@@ -32,18 +33,20 @@ const clients = [
 const duplicatedClients = [...clients, ...clients];
 
 const Clients = () => {
+  const { t } = useLanguage();
+
   return (
     <section className="py-16 bg-secondary/30 overflow-hidden">
       <div className="container-wide">
         {/* Header */}
         <div className="text-center mb-12">
           <span className="text-sm font-semibold text-primary uppercase tracking-wider">
-            Clientes & Parceiros
+            {t("clients.label")}
           </span>
           <h2 className="text-2xl md:text-3xl font-heading font-bold text-foreground mt-2">
-            Empresas que confiam na{" "}
+            {t("clients.headline")}{" "}
             <span className="bg-gradient-to-r from-teal-400 to-primary bg-clip-text text-transparent">
-              Albatross
+              {t("clients.headline.highlight")}
             </span>
           </h2>
         </div>
