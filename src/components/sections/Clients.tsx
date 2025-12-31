@@ -63,7 +63,7 @@ const Clients = () => {
               href={client.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative flex-shrink-0 flex flex-col items-center justify-center p-6 mx-4 w-[200px] md:w-[240px] rounded-xl bg-background/50 backdrop-blur-sm border border-border/30 hover:border-primary/50 hover:shadow-glow-sm transition-all duration-300"
+              className="group relative flex-shrink-0 flex flex-col items-center justify-center p-6 mx-4 w-[200px] md:w-[240px] rounded-xl bg-background/50 backdrop-blur-sm border border-border/30 hover:border-primary/50 hover:shadow-glow hover:scale-105 hover:bg-background/80 transition-all duration-300 ease-out"
             >
               {/* Client Name as Logo */}
               <div className="text-2xl md:text-3xl font-heading font-bold text-foreground/80 group-hover:text-primary transition-colors duration-300">
