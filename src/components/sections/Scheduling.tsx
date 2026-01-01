@@ -1,5 +1,5 @@
 import { forwardRef } from "react";
-import { Calendar, Clock, Video } from "lucide-react";
+import { Calendar, Video } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface SchedulingProps {
@@ -11,16 +11,6 @@ const Scheduling = forwardRef<HTMLElement, SchedulingProps>(
     const { t } = useLanguage();
 
     const features = [
-      {
-        icon: Calendar,
-        title: t("scheduling.feature1.title"),
-        desc: t("scheduling.feature1.desc"),
-      },
-      {
-        icon: Clock,
-        title: t("scheduling.feature2.title"),
-        desc: t("scheduling.feature2.desc"),
-      },
       {
         icon: Video,
         title: t("scheduling.feature3.title"),
