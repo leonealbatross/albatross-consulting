@@ -37,7 +37,7 @@ const translations: Record<Language, Record<string, string>> = {
     "hero.cta.primary": "Agendar uma conversa estratégica",
     "hero.cta.secondary": "Conhecer nossos serviços",
     "hero.stat1.value": "25+",
-    "hero.stat1.label": "anos de experiência executiva",
+    "hero.stat1.label": "Anos de experiência executiva",
     "hero.stat1.sublabel": "Atuação prática em estratégia, crescimento e execução.",
     "hero.stat2.value": "✓",
     "hero.stat2.label": "Resultados comprovados",
