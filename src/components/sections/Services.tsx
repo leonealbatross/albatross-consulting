@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
-import ContactModal from "@/components/ContactModal";
+
 import ServiceDetailModal from "@/components/ServiceDetailModal";
 
 const Services = () => {
@@ -161,18 +161,15 @@ Voltada a CEOs, CROs e líderes comerciais, a mentoria apoia decisões estratég
                       }
                     />
                   ) : (
-                    <ContactModal 
-                      sectionTitle={`Serviço: ${service.title}`}
-                      trigger={
-                        <Button 
-                          variant="ghost" 
-                          className="p-0 h-auto text-sm text-primary hover:text-primary/80 group/btn"
-                        >
-                          {t("services.learnMore")}
-                          <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 ml-2 transition-transform group-hover/btn:translate-x-1" />
-                        </Button>
-                      }
-                    />
+                    <a href="#agendamento">
+                      <Button 
+                        variant="ghost" 
+                        className="p-0 h-auto text-sm text-primary hover:text-primary/80 group/btn"
+                      >
+                        {t("services.learnMore")}
+                        <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 ml-2 transition-transform group-hover/btn:translate-x-1" />
+                      </Button>
+                    </a>
                   )}
                 </div>
                 
