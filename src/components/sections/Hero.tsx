@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, TrendingUp, Users, Database } from "lucide-react";
+import { ArrowRight, TrendingUp, Award, Handshake } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import heroBg from "@/assets/hero-bg.jpg";
 import ContactModal from "@/components/ContactModal";
@@ -19,21 +19,21 @@ Business Growth as a Service é o que a Albatross entrega: estrutura, disciplina
   const stats = [
     { 
       icon: TrendingUp, 
-      value: "25+", 
-      label: "Anos de Experiência",
-      subtitle: "Founder"
+      value: t("hero.stat1.value"),
+      label: t("hero.stat1.label"),
+      accent: "from-primary to-teal-300"
     },
     { 
-      icon: Users, 
-      value: "✓", 
-      label: "Resultados Comprovados",
-      subtitle: null
+      icon: Award, 
+      value: t("hero.stat2.value"),
+      label: t("hero.stat2.label"),
+      accent: "from-emerald-400 to-primary"
     },
     { 
-      icon: Database, 
-      value: "ONEtoONE", 
-      label: "Parceira em M&A Internacional",
-      subtitle: null
+      icon: Handshake, 
+      value: t("hero.stat3.value"),
+      label: t("hero.stat3.label"),
+      accent: "from-cyan-400 to-primary"
     },
   ];
 
@@ -105,44 +105,47 @@ Business Growth as a Service é o que a Albatross entrega: estrutura, disciplina
             </Button>
           </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 opacity-0 animate-fade-up stagger-4 px-4 sm:px-0">
+          {/* Stats - Modern Bento Style */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 opacity-0 animate-fade-up stagger-4 px-4 sm:px-0">
             {stats.map((stat, index) => (
               <div
                 key={index}
-                className="group relative overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-br from-background/80 via-background/60 to-primary/5 backdrop-blur-xl p-6 hover:border-primary/40 hover:shadow-[0_0_30px_rgba(45,212,191,0.15)] transition-all duration-500"
+                className="group relative"
               >
-                {/* Glow effect on hover */}
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                {/* Animated border gradient */}
+                <div className={`absolute -inset-[1px] rounded-2xl bg-gradient-to-r ${stat.accent} opacity-30 blur-sm group-hover:opacity-60 group-hover:blur-md transition-all duration-500`} />
                 
-                {/* Inner border glow */}
-                <div className="absolute inset-[1px] rounded-2xl bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-50 transition-opacity duration-500" />
-                
-                <div className="relative flex items-center gap-4">
-                  {/* Icon container */}
-                  <div className="w-14 h-14 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 group-hover:border-primary/30 transition-all duration-300">
-                    <stat.icon className="w-7 h-7 text-primary" />
+                {/* Card */}
+                <div className="relative overflow-hidden rounded-2xl bg-background/90 backdrop-blur-xl border border-primary/20 p-5 sm:p-6 h-full group-hover:border-primary/40 transition-all duration-300">
+                  {/* Subtle gradient background */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  
+                  {/* Decorative corner accent */}
+                  <div className={`absolute -top-12 -right-12 w-24 h-24 bg-gradient-to-br ${stat.accent} opacity-10 rounded-full blur-2xl group-hover:opacity-20 transition-opacity duration-500`} />
+                  
+                  <div className="relative flex items-center gap-4">
+                    {/* Icon with animated ring */}
+                    <div className="relative">
+                      <div className={`absolute inset-0 rounded-xl bg-gradient-to-r ${stat.accent} opacity-0 group-hover:opacity-30 blur-md transition-all duration-500`} />
+                      <div className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+                        <stat.icon className="w-6 h-6 sm:w-7 sm:h-7 text-primary" />
+                      </div>
+                    </div>
+                    
+                    {/* Content */}
+                    <div className="text-left flex-1 min-w-0">
+                      <div className={`text-xl sm:text-2xl font-heading font-bold bg-gradient-to-r ${stat.accent} bg-clip-text text-transparent`}>
+                        {stat.value}
+                      </div>
+                      <div className="text-xs sm:text-sm text-muted-foreground leading-tight mt-0.5 line-clamp-2">
+                        {stat.label}
+                      </div>
+                    </div>
                   </div>
                   
-                  {/* Content */}
-                  <div className="text-left">
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-2xl sm:text-3xl font-heading font-bold text-foreground tracking-tight">
-                        {stat.value}
-                      </span>
-                      {stat.subtitle && (
-                        <span className="text-lg font-heading font-bold text-primary">+</span>
-                      )}
-                    </div>
-                    <div className="text-sm text-muted-foreground leading-tight mt-0.5">
-                      {stat.subtitle && <span className="text-primary/80">{stat.subtitle} · </span>}
-                      {stat.label}
-                    </div>
-                  </div>
+                  {/* Bottom accent line */}
+                  <div className={`absolute bottom-0 left-4 right-4 h-[2px] bg-gradient-to-r ${stat.accent} opacity-0 group-hover:opacity-60 transition-all duration-500`} />
                 </div>
-                
-                {/* Bottom accent line */}
-                <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               </div>
             ))}
           </div>
