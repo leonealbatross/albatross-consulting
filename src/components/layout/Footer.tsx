@@ -111,17 +111,35 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
                 <span className="text-xs sm:text-sm text-muted-foreground">
                   <strong className="text-foreground">Brascan Century Offices</strong><br />
                   R. Joaquim Floriano, 466. Cj 814<br />
-                  Itaim Bibi, São Paulo - SP
+                  Itaim Bibi, São Paulo - SP<br />
+                  CEP: 04534-002
                 </span>
               </li>
               <li className="flex items-center gap-2 sm:gap-3">
-                <Phone className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
-                <a href="tel:+5511981332775" className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors">
+                <a 
+                  href="https://wa.me/5511981332775" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center hover:scale-110 transition-transform"
+                >
+                  <Phone className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
+                </a>
+                <a 
+                  href="https://wa.me/5511981332775" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
                   +55 11 981332775
                 </a>
               </li>
               <li className="flex items-center gap-2 sm:gap-3">
-                <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
+                <a 
+                  href="mailto:leone@albatross.consulting"
+                  className="flex items-center justify-center hover:scale-110 transition-transform"
+                >
+                  <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
+                </a>
                 <a href="mailto:leone@albatross.consulting" className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors break-all">
                   leone@albatross.consulting
                 </a>
