@@ -17,9 +17,24 @@ Enquanto isso, outros já tratam crescimento como serviço.
 Business Growth as a Service é o que a Albatross entrega: estrutura, disciplina e resultado. O resto é ilusão de progresso.`;
 
   const stats = [
-    { icon: TrendingUp, value: t("hero.stat1.value"), label: t("hero.stat1.label") },
-    { icon: Users, value: t("hero.stat2.value"), label: t("hero.stat2.label") },
-    { icon: Database, value: t("hero.stat3.value"), label: t("hero.stat3.label") },
+    { 
+      icon: TrendingUp, 
+      value: "25+", 
+      label: "Anos de Experiência",
+      subtitle: "Founder"
+    },
+    { 
+      icon: Users, 
+      value: "✓", 
+      label: "Resultados Comprovados",
+      subtitle: null
+    },
+    { 
+      icon: Database, 
+      value: "ONEtoONE", 
+      label: "Parceira em M&A Internacional",
+      subtitle: null
+    },
   ];
 
   return (
@@ -95,19 +110,39 @@ Business Growth as a Service é o que a Albatross entrega: estrutura, disciplina
             {stats.map((stat, index) => (
               <div
                 key={index}
-                className="gradient-glass rounded-xl sm:rounded-2xl p-4 sm:p-6 border-gradient hover:shadow-glow-sm transition-all duration-300"
+                className="group relative overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-br from-background/80 via-background/60 to-primary/5 backdrop-blur-xl p-6 hover:border-primary/40 hover:shadow-[0_0_30px_rgba(45,212,191,0.15)] transition-all duration-500"
               >
-                <div className="flex items-center justify-center gap-3 sm:gap-4">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-primary/10 flex items-center justify-center">
-                    <stat.icon className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                {/* Glow effect on hover */}
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                
+                {/* Inner border glow */}
+                <div className="absolute inset-[1px] rounded-2xl bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-50 transition-opacity duration-500" />
+                
+                <div className="relative flex items-center gap-4">
+                  {/* Icon container */}
+                  <div className="w-14 h-14 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 group-hover:border-primary/30 transition-all duration-300">
+                    <stat.icon className="w-7 h-7 text-primary" />
                   </div>
+                  
+                  {/* Content */}
                   <div className="text-left">
-                    <div className="text-xl sm:text-2xl font-heading font-bold text-foreground">
-                      {stat.value}
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-2xl sm:text-3xl font-heading font-bold text-foreground tracking-tight">
+                        {stat.value}
+                      </span>
+                      {stat.subtitle && (
+                        <span className="text-lg font-heading font-bold text-primary">+</span>
+                      )}
                     </div>
-                    <div className="text-xs sm:text-sm text-muted-foreground">{stat.label}</div>
+                    <div className="text-sm text-muted-foreground leading-tight mt-0.5">
+                      {stat.subtitle && <span className="text-primary/80">{stat.subtitle} · </span>}
+                      {stat.label}
+                    </div>
                   </div>
                 </div>
+                
+                {/* Bottom accent line */}
+                <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               </div>
             ))}
           </div>
