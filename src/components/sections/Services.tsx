@@ -162,6 +162,7 @@ Voltada a CEOs, CROs e líderes comerciais, a mentoria apoia decisões estratég
                     />
                   ) : (
                     <ContactModal 
+                      sectionTitle={`Serviço: ${service.title}`}
                       trigger={
                         <Button 
                           variant="ghost" 

@@ -91,6 +91,7 @@ Business Growth as a Service é o que a Albatross entrega: estrutura, disciplina
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-16 opacity-0 animate-fade-up stagger-3 px-4 sm:px-0">
             <ContactModal 
+              sectionTitle="Hero"
               trigger={
                 <Button variant="hero" size="lg" className="group w-full sm:w-auto text-sm sm:text-base">
                   {t("hero.cta.primary")}
