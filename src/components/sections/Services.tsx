@@ -69,6 +69,11 @@ Atuamos na composição de conselhos, recrutamento de conselheiros e executivos 
       title: t("services.s5.title"),
       description: t("services.s5.desc"),
       highlight: t("services.s5.highlight"),
+      detailContent: `Transformamos GenAI em resultados concretos de negócio.
+
+A Albatross Consulting apoia empresas na aplicação prática de IA generativa por meio da criação de automações focadas em eficiência operacional, redução de custos e ganho de produtividade.
+
+Desenvolvemos dashboards avançados de Sales Intelligence para melhorar previsibilidade, acuracidade de forecast e qualidade da tomada de decisão comercial, conectando dados, execução e crescimento sustentável.`,
       accent: "from-violet-400 to-primary",
     },
     {
