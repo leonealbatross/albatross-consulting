@@ -57,6 +57,11 @@ Conectamos dados, liderança e execução para gerar impacto mensurável e cresc
       title: t("services.s4.title"),
       description: t("services.s4.desc"),
       highlight: t("services.s4.highlight"),
+      detailContent: `Estruturamos governança que sustenta crescimento e confiança.
+
+A Albatross Consulting apoia empresas na criação e organização de modelos de governança e Advisory Boards alinhados à estratégia, escala e atração de investidores.
+
+Atuamos na composição de conselhos, recrutamento de conselheiros e executivos (GO), definição de ritos, métricas e tomada de decisão, fortalecendo liderança, transparência e geração de valor sustentável.`,
       accent: "from-blue-400 to-primary",
     },
     {
