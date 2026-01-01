@@ -109,7 +109,9 @@ const Careers = forwardRef<HTMLElement>((_, ref) => {
       `Email: ${formData.email.trim()}\n` +
       `Telefone: ${formData.phone.trim() || "Não informado"}\n` +
       `LinkedIn: ${formData.linkedin.trim() || "Não informado"}\n\n` +
-      `Mensagem:\n${formData.message.trim()}`
+      `Mensagem:\n${formData.message.trim()}\n\n` +
+      `---\n` +
+      `IMPORTANTE: Por favor, anexe seu currículo a este e-mail no formato PDF ou Word (.doc/.docx).`
     );
 
     window.open(`mailto:${emailTo}?subject=${subject}&body=${body}`, "_blank");
