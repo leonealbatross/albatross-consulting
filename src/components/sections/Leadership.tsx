@@ -62,22 +62,20 @@ const Leadership = forwardRef<HTMLElement>((_, ref) => {
 
             {/* Social Links */}
             <div className="flex justify-center lg:justify-start gap-4">
-              <Button 
-                variant="outline" 
-                size="icon" 
-                className="rounded-full w-10 h-10 sm:w-11 sm:h-11"
-                onClick={() => window.open("https://www.linkedin.com/in/marcoleone/", "_blank")}
+              <a 
+                href="https://www.linkedin.com/in/marcoleone/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center rounded-full w-10 h-10 sm:w-11 sm:h-11 border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
               >
                 <Linkedin className="w-4 h-4 sm:w-5 sm:h-5" />
-              </Button>
-              <Button 
-                variant="outline" 
-                size="icon" 
-                className="rounded-full w-10 h-10 sm:w-11 sm:h-11"
-                onClick={() => window.location.href = "mailto:leone@albatross.consulting"}
+              </a>
+              <a 
+                href="mailto:leone@albatross.consulting"
+                className="inline-flex items-center justify-center rounded-full w-10 h-10 sm:w-11 sm:h-11 border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
               >
                 <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
-              </Button>
+              </a>
             </div>
           </div>
         </div>
