@@ -81,6 +81,9 @@ Desenvolvemos dashboards avançados de Sales Intelligence para melhorar previsib
       title: t("services.s6.title"),
       description: t("services.s6.desc"),
       highlight: t("services.s6.highlight"),
+      detailContent: `Mentoria executiva da Albatross, fundamentada em práticas modernas e consagradas como ICF Core Competencies, GROW, SBI, Liderança Situacional (Hersey-Blanchard) e frameworks de performance executiva.
+
+Voltada a CEOs, CROs e líderes comerciais, a mentoria apoia decisões estratégicas, execução, liderança, performance de vendas e escala com foco em clareza, velocidade, accountability e resultados sustentáveis.`,
       accent: "from-rose-400 to-primary",
     },
   ];
