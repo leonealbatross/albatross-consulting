@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, TrendingUp, Award, Handshake } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import heroBg from "@/assets/hero-bg.jpg";
-import ContactModal from "@/components/ContactModal";
+
 import ServiceDetailModal from "@/components/ServiceDetailModal";
 
 const Hero = () => {
@@ -90,15 +90,12 @@ Business Growth as a Service é o que a Albatross entrega: estrutura, disciplina
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-16 opacity-0 animate-fade-up stagger-3 px-4 sm:px-0">
-            <ContactModal 
-              sectionTitle="Hero"
-              trigger={
-                <Button variant="hero" size="lg" className="group w-full sm:w-auto text-sm sm:text-base">
-                  {t("hero.cta.primary")}
-                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:translate-x-1" />
-                </Button>
-              }
-            />
+            <a href="#agendamento">
+              <Button variant="hero" size="lg" className="group w-full sm:w-auto text-sm sm:text-base">
+                {t("hero.cta.primary")}
+                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:translate-x-1" />
+              </Button>
+            </a>
             <Button 
               variant="heroOutline" 
               size="lg" 

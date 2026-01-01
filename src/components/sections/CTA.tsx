@@ -2,7 +2,7 @@ import { forwardRef } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import ContactModal from "@/components/ContactModal";
+
 
 const CTA = forwardRef<HTMLElement>((_, ref) => {
   const { t } = useLanguage();
@@ -35,15 +35,12 @@ const CTA = forwardRef<HTMLElement>((_, ref) => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
-            <ContactModal 
-              sectionTitle="CTA - Pronto para Crescer"
-              trigger={
-                <Button variant="hero" size="lg" className="group w-full sm:w-auto text-sm sm:text-base">
-                  {t("cta.primary")}
-                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:translate-x-1" />
-                </Button>
-              }
-            />
+            <a href="#agendamento">
+              <Button variant="hero" size="lg" className="group w-full sm:w-auto text-sm sm:text-base">
+                {t("cta.primary")}
+                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:translate-x-1" />
+              </Button>
+            </a>
             <a href="mailto:leone@albatross.consulting">
               <Button variant="heroOutline" size="lg" className="w-full sm:w-auto text-sm sm:text-base">
                 {t("cta.secondary")}

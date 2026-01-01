@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useLanguage, Language } from "@/contexts/LanguageContext";
 import albatrossLogo from "@/assets/logo-albatross-new.jpeg";
-import ContactModal from "@/components/ContactModal";
+import { Calendar } from "lucide-react";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -95,7 +95,12 @@ const Header = () => {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <ContactModal sectionTitle="Header" />
+            <a href="#agendamento">
+              <Button className="gap-2">
+                <Calendar className="w-4 h-4" />
+                {t("header.cta")}
+              </Button>
+            </a>
           </div>
 
           {/* Mobile Menu Button */}
@@ -167,14 +172,11 @@ const Header = () => {
                 ))}
               </div>
 
-              <ContactModal 
-                sectionTitle="Header Mobile"
-                trigger={
-                  <Button variant="hero" className="w-full" onClick={() => setIsMobileMenuOpen(false)}>
-                    {t("header.cta")}
-                  </Button>
-                } 
-              />
+              <a href="#agendamento" onClick={() => setIsMobileMenuOpen(false)}>
+                <Button variant="hero" className="w-full">
+                  {t("header.cta")}
+                </Button>
+              </a>
             </div>
           </div>
         </div>
