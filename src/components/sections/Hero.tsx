@@ -21,18 +21,21 @@ Business Growth as a Service é o que a Albatross entrega: estrutura, disciplina
       icon: TrendingUp, 
       value: t("hero.stat1.value"),
       label: t("hero.stat1.label"),
+      sublabel: t("hero.stat1.sublabel"),
       accent: "from-primary to-teal-300"
     },
     { 
       icon: Award, 
       value: t("hero.stat2.value"),
       label: t("hero.stat2.label"),
+      sublabel: t("hero.stat2.sublabel"),
       accent: "from-emerald-400 to-primary"
     },
     { 
       icon: Handshake, 
       value: t("hero.stat3.value"),
       label: t("hero.stat3.label"),
+      sublabel: t("hero.stat3.sublabel"),
       accent: "from-cyan-400 to-primary"
     },
   ];
@@ -106,41 +109,43 @@ Business Growth as a Service é o que a Albatross entrega: estrutura, disciplina
           </div>
 
           {/* Stats - Modern Bento Style */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 opacity-0 animate-fade-up stagger-4 px-4 sm:px-0">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 opacity-0 animate-fade-up stagger-4 px-4 sm:px-0">
             {stats.map((stat, index) => (
               <div
                 key={index}
                 className="group relative"
               >
                 {/* Animated border gradient */}
-                <div className={`absolute -inset-[1px] rounded-2xl bg-gradient-to-r ${stat.accent} opacity-30 blur-sm group-hover:opacity-60 group-hover:blur-md transition-all duration-500`} />
+                <div className={`absolute -inset-[1px] rounded-2xl bg-gradient-to-r ${stat.accent} opacity-20 group-hover:opacity-50 blur-sm group-hover:blur-md transition-all duration-500`} />
                 
                 {/* Card */}
-                <div className="relative overflow-hidden rounded-2xl bg-background/90 backdrop-blur-xl border border-primary/20 p-5 sm:p-6 h-full group-hover:border-primary/40 transition-all duration-300">
-                  {/* Subtle gradient background */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  
+                <div className="relative overflow-hidden rounded-2xl bg-background/95 backdrop-blur-xl border border-primary/20 p-5 sm:p-6 h-full group-hover:border-primary/40 transition-all duration-300">
                   {/* Decorative corner accent */}
-                  <div className={`absolute -top-12 -right-12 w-24 h-24 bg-gradient-to-br ${stat.accent} opacity-10 rounded-full blur-2xl group-hover:opacity-20 transition-opacity duration-500`} />
+                  <div className={`absolute -top-16 -right-16 w-32 h-32 bg-gradient-to-br ${stat.accent} opacity-10 rounded-full blur-3xl group-hover:opacity-20 transition-opacity duration-500`} />
                   
-                  <div className="relative flex items-center gap-4">
-                    {/* Icon with animated ring */}
-                    <div className="relative">
-                      <div className={`absolute inset-0 rounded-xl bg-gradient-to-r ${stat.accent} opacity-0 group-hover:opacity-30 blur-md transition-all duration-500`} />
-                      <div className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
-                        <stat.icon className="w-6 h-6 sm:w-7 sm:h-7 text-primary" />
+                  <div className="relative">
+                    {/* Header row: Icon + Value */}
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="relative">
+                        <div className={`absolute inset-0 rounded-xl bg-gradient-to-r ${stat.accent} opacity-0 group-hover:opacity-40 blur-md transition-all duration-500`} />
+                        <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+                          <stat.icon className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                        </div>
+                      </div>
+                      <div className={`text-2xl sm:text-3xl font-heading font-bold bg-gradient-to-r ${stat.accent} bg-clip-text text-transparent`}>
+                        {stat.value}
                       </div>
                     </div>
                     
-                    {/* Content */}
-                    <div className="text-left flex-1 min-w-0">
-                      <div className={`text-xl sm:text-2xl font-heading font-bold bg-gradient-to-r ${stat.accent} bg-clip-text text-transparent`}>
-                        {stat.value}
-                      </div>
-                      <div className="text-xs sm:text-sm text-muted-foreground leading-tight mt-0.5 line-clamp-2">
-                        {stat.label}
-                      </div>
-                    </div>
+                    {/* Title */}
+                    <h3 className="text-sm sm:text-base font-semibold text-foreground mb-1.5">
+                      {stat.label}
+                    </h3>
+                    
+                    {/* Description */}
+                    <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                      {stat.sublabel}
+                    </p>
                   </div>
                   
                   {/* Bottom accent line */}
