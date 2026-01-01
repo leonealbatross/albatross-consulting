@@ -15,21 +15,15 @@ import ServiceDetailModal from "@/components/ServiceDetailModal";
 const Services = () => {
   const { t } = useLanguage();
 
-  const bgasContent = `E se sua empresa não estivesse crescendo de verdade?
-
-Você tem produto, time, mercado. Mas os resultados são instáveis. Sem método, tudo vira tentativa e erro. Isso custa caro, desgasta o time e trava seu valuation.
-
-Enquanto isso, outros já tratam crescimento como serviço.
-
-Business Growth as a Service é o que a Albatross entrega: estrutura, disciplina e resultado. O resto é ilusão de progresso.`;
-
   const services = [
     {
       icon: TrendingUp,
       title: t("services.s1.title"),
       description: t("services.s1.desc"),
       highlight: t("services.s1.highlight"),
-      detailContent: bgasContent,
+      detailContent: `Estruturamos Growth Strategy & Go-to-Market com foco em execução e impacto mensurável.
+
+A Albatross Consulting aplica frameworks consagrados como PESTEL, SWOT por área, Ansoff, OKRs, KPIs comerciais, funil de vendas e rituais de gestão para desenhar modelos comerciais eficientes e escaláveis. Atuamos da estratégia à operação para aumentar vendas, previsibilidade e acuracidade do forecast, gerar caixa, ampliar margens, reduzir churn e diminuir níveis de desconto, sustentando crescimento consistente.`,
       accent: "from-primary to-teal-300",
     },
     {
