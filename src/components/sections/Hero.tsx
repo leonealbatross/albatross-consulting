@@ -138,7 +138,7 @@ Business Growth as a Service é o que a Albatross entrega: estrutura, disciplina
                     </div>
                     
                     {/* Title */}
-                    <h3 className="text-sm sm:text-base font-semibold text-foreground mb-1.5">
+                    <h3 className="text-base sm:text-lg font-semibold text-foreground mb-1.5">
                       {stat.label}
                     </h3>
                     
