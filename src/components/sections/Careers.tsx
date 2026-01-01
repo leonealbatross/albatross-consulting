@@ -7,6 +7,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 
+interface FormErrors {
+  name?: string;
+  email?: string;
+  phone?: string;
+  linkedin?: string;
+  message?: string;
+}
+
 const Careers = forwardRef<HTMLElement>((_, ref) => {
   const { t } = useLanguage();
   const [formData, setFormData] = useState({
@@ -16,6 +24,7 @@ const Careers = forwardRef<HTMLElement>((_, ref) => {
     linkedin: "",
     message: "",
   });
+  const [errors, setErrors] = useState<FormErrors>({});
 
   const benefits = [
     {
@@ -35,17 +44,72 @@ const Careers = forwardRef<HTMLElement>((_, ref) => {
     },
   ];
 
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
+    
+    // Name validation
+    if (!formData.name.trim()) {
+      newErrors.name = t("careers.form.error.nameRequired");
+    } else if (formData.name.trim().length < 2) {
+      newErrors.name = t("careers.form.error.nameMin");
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email.trim()) {
+      newErrors.email = t("careers.form.error.emailRequired");
+    } else if (!emailRegex.test(formData.email.trim())) {
+      newErrors.email = t("careers.form.error.emailInvalid");
+    }
+
+    // Phone validation (optional but must be valid if provided)
+    if (formData.phone.trim()) {
+      const phoneRegex = /^[\d\s\-\+\(\)]{8,20}$/;
+      if (!phoneRegex.test(formData.phone.trim())) {
+        newErrors.phone = t("careers.form.error.phoneInvalid");
+      }
+    }
+
+    // LinkedIn validation (optional but must be valid if provided)
+    if (formData.linkedin.trim()) {
+      const linkedinRegex = /^(https?:\/\/)?(www\.)?linkedin\.com\/in\/[\w\-]+\/?$/i;
+      const simpleLinkedinRegex = /^linkedin\.com\/in\/[\w\-]+\/?$/i;
+      if (!linkedinRegex.test(formData.linkedin.trim()) && !simpleLinkedinRegex.test(formData.linkedin.trim())) {
+        newErrors.linkedin = t("careers.form.error.linkedinInvalid");
+      }
+    }
+
+    // Message validation
+    if (!formData.message.trim()) {
+      newErrors.message = t("careers.form.error.messageRequired");
+    } else if (formData.message.trim().length < 20) {
+      newErrors.message = t("careers.form.error.messageMin");
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!validateForm()) {
+      toast({
+        title: t("careers.form.error.title"),
+        description: t("careers.form.error.description"),
+        variant: "destructive",
+      });
+      return;
+    }
 
     const emailTo = "leone@albatross.consulting";
     const subject = encodeURIComponent("Candidatura - Albatross Consulting");
     const body = encodeURIComponent(
-      `Nome: ${formData.name}\n` +
-      `Email: ${formData.email}\n` +
-      `Telefone: ${formData.phone || "Não informado"}\n` +
-      `LinkedIn: ${formData.linkedin || "Não informado"}\n\n` +
-      `Mensagem:\n${formData.message}`
+      `Nome: ${formData.name.trim()}\n` +
+      `Email: ${formData.email.trim()}\n` +
+      `Telefone: ${formData.phone.trim() || "Não informado"}\n` +
+      `LinkedIn: ${formData.linkedin.trim() || "Não informado"}\n\n` +
+      `Mensagem:\n${formData.message.trim()}`
     );
 
     window.open(`mailto:${emailTo}?subject=${subject}&body=${body}`, "_blank");
@@ -56,6 +120,7 @@ const Careers = forwardRef<HTMLElement>((_, ref) => {
     });
 
     setFormData({ name: "", email: "", phone: "", linkedin: "", message: "" });
+    setErrors({});
   };
 
   return (
@@ -133,29 +198,37 @@ const Careers = forwardRef<HTMLElement>((_, ref) => {
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="career-name">{t("contact.name")}</Label>
+                  <Label htmlFor="career-name">{t("contact.name")} *</Label>
                   <Input
                     id="career-name"
                     value={formData.name}
-                    onChange={(e) =>
-                      setFormData({ ...formData, name: e.target.value })
-                    }
+                    onChange={(e) => {
+                      setFormData({ ...formData, name: e.target.value });
+                      if (errors.name) setErrors({ ...errors, name: undefined });
+                    }}
                     placeholder={t("contact.name.placeholder")}
-                    required
+                    className={errors.name ? "border-destructive" : ""}
                   />
+                  {errors.name && (
+                    <p className="text-xs text-destructive">{errors.name}</p>
+                  )}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="career-email">{t("contact.email")}</Label>
+                  <Label htmlFor="career-email">{t("contact.email")} *</Label>
                   <Input
                     id="career-email"
                     type="email"
                     value={formData.email}
-                    onChange={(e) =>
-                      setFormData({ ...formData, email: e.target.value })
-                    }
+                    onChange={(e) => {
+                      setFormData({ ...formData, email: e.target.value });
+                      if (errors.email) setErrors({ ...errors, email: undefined });
+                    }}
                     placeholder={t("contact.email.placeholder")}
-                    required
+                    className={errors.email ? "border-destructive" : ""}
                   />
+                  {errors.email && (
+                    <p className="text-xs text-destructive">{errors.email}</p>
+                  )}
                 </div>
               </div>
               <div className="grid sm:grid-cols-2 gap-4">
@@ -165,37 +238,50 @@ const Careers = forwardRef<HTMLElement>((_, ref) => {
                     id="career-phone"
                     type="tel"
                     value={formData.phone}
-                    onChange={(e) =>
-                      setFormData({ ...formData, phone: e.target.value })
-                    }
+                    onChange={(e) => {
+                      setFormData({ ...formData, phone: e.target.value });
+                      if (errors.phone) setErrors({ ...errors, phone: undefined });
+                    }}
                     placeholder={t("careers.form.phone.placeholder")}
+                    className={errors.phone ? "border-destructive" : ""}
                   />
+                  {errors.phone && (
+                    <p className="text-xs text-destructive">{errors.phone}</p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="career-linkedin">{t("careers.form.linkedin")}</Label>
                   <Input
                     id="career-linkedin"
-                    type="url"
                     value={formData.linkedin}
-                    onChange={(e) =>
-                      setFormData({ ...formData, linkedin: e.target.value })
-                    }
+                    onChange={(e) => {
+                      setFormData({ ...formData, linkedin: e.target.value });
+                      if (errors.linkedin) setErrors({ ...errors, linkedin: undefined });
+                    }}
                     placeholder={t("careers.form.linkedin.placeholder")}
+                    className={errors.linkedin ? "border-destructive" : ""}
                   />
+                  {errors.linkedin && (
+                    <p className="text-xs text-destructive">{errors.linkedin}</p>
+                  )}
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="career-message">{t("careers.form.motivation")}</Label>
+                <Label htmlFor="career-message">{t("careers.form.motivation")} *</Label>
                 <Textarea
                   id="career-message"
                   value={formData.message}
-                  onChange={(e) =>
-                    setFormData({ ...formData, message: e.target.value })
-                  }
+                  onChange={(e) => {
+                    setFormData({ ...formData, message: e.target.value });
+                    if (errors.message) setErrors({ ...errors, message: undefined });
+                  }}
                   placeholder={t("careers.form.motivation.placeholder")}
                   rows={4}
-                  required
+                  className={errors.message ? "border-destructive" : ""}
                 />
+                {errors.message && (
+                  <p className="text-xs text-destructive">{errors.message}</p>
+                )}
               </div>
               <Button type="submit" className="w-full gap-2">
                 <Send className="w-4 h-4" />
