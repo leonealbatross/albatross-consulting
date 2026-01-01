@@ -18,12 +18,12 @@ import { Calendar, Send } from "lucide-react";
 interface ContactModalProps {
   trigger?: React.ReactNode;
   variant?: "header" | "cta";
+  sectionTitle?: string;
 }
 
-const ContactModal = ({ trigger, variant = "header" }: ContactModalProps) => {
+const ContactModal = ({ trigger, variant = "header", sectionTitle = "Albatross Consulting" }: ContactModalProps) => {
   const { t } = useLanguage();
   const [open, setOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -31,12 +31,20 @@ const ContactModal = ({ trigger, variant = "header" }: ContactModalProps) => {
     message: "",
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    const emailTo = "leone@albatross.consulting";
+    const subject = encodeURIComponent(`Contato via ${sectionTitle} - Albatross Consulting`);
+    const body = encodeURIComponent(
+      `Seção: ${sectionTitle}\n\n` +
+      `Nome: ${formData.name}\n` +
+      `Email: ${formData.email}\n` +
+      `Empresa: ${formData.company || "Não informada"}\n\n` +
+      `Mensagem:\n${formData.message}`
+    );
+
+    window.open(`mailto:${emailTo}?subject=${subject}&body=${body}`, "_blank");
 
     toast({
       title: t("contact.success.title"),
@@ -44,7 +52,6 @@ const ContactModal = ({ trigger, variant = "header" }: ContactModalProps) => {
     });
 
     setFormData({ name: "", email: "", company: "", message: "" });
-    setIsSubmitting(false);
     setOpen(false);
   };
 
@@ -117,9 +124,9 @@ const ContactModal = ({ trigger, variant = "header" }: ContactModalProps) => {
               required
             />
           </div>
-          <Button type="submit" className="w-full gap-2" disabled={isSubmitting}>
+          <Button type="submit" className="w-full gap-2">
             <Send className="w-4 h-4" />
-            {isSubmitting ? t("contact.sending") : t("contact.submit")}
+            {t("contact.submit")}
           </Button>
         </form>
       </DialogContent>

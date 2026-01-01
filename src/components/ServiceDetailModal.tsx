@@ -36,6 +36,7 @@ const ServiceDetailModal = ({ trigger, title, content }: ServiceDetailModalProps
           </p>
           <div className="mt-6 pt-4 border-t border-border">
             <ContactModal 
+              sectionTitle={`Serviço: ${title}`}
               trigger={
                 <Button className="w-full group">
                   {t("cta.primary")}

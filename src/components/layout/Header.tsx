@@ -95,7 +95,7 @@ const Header = () => {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <ContactModal />
+            <ContactModal sectionTitle="Header" />
           </div>
 
           {/* Mobile Menu Button */}
@@ -167,11 +167,14 @@ const Header = () => {
                 ))}
               </div>
 
-              <ContactModal trigger={
-                <Button variant="hero" className="w-full" onClick={() => setIsMobileMenuOpen(false)}>
-                  {t("header.cta")}
-                </Button>
-              } />
+              <ContactModal 
+                sectionTitle="Header Mobile"
+                trigger={
+                  <Button variant="hero" className="w-full" onClick={() => setIsMobileMenuOpen(false)}>
+                    {t("header.cta")}
+                  </Button>
+                } 
+              />
             </div>
           </div>
         </div>

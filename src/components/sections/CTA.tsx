@@ -36,6 +36,7 @@ const CTA = forwardRef<HTMLElement>((_, ref) => {
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
             <ContactModal 
+              sectionTitle="CTA - Pronto para Crescer"
               trigger={
                 <Button variant="hero" size="lg" className="group w-full sm:w-auto text-sm sm:text-base">
                   {t("cta.primary")}
