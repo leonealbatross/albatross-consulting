@@ -22,7 +22,7 @@ const Index = () => {
         <Methodology />
         <Leadership />
         <Scheduling calendlyUrl="https://calendly.com/leone-albatross" />
-        <Careers hubspotPortalId="YOUR_PORTAL_ID" hubspotFormId="YOUR_FORM_ID" />
+        <Careers />
         <CTA />
       </main>
       <Footer />
