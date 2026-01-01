@@ -45,6 +45,11 @@ Business Growth as a Service é o que a Albatross entrega: estrutura, disciplina
       title: t("services.s3.title"),
       description: t("services.s3.desc"),
       highlight: t("services.s3.highlight"),
+      detailContent: `Transformamos dados em decisões que aceleram crescimento e execução.
+
+A Albatross Consulting combina frameworks consagrados de estratégia, métricas avançadas de performance e metodologia própria de Growth e Go-to-Market para estruturar governança, previsibilidade comercial e eficiência operacional.
+
+Conectamos dados, liderança e execução para gerar impacto mensurável e crescimento sustentável.`,
       accent: "from-cyan-400 to-primary",
     },
     {
