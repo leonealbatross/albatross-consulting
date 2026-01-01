@@ -176,7 +176,7 @@ const translations: Record<Language, Record<string, string>> = {
     "scheduling.feature2.title": "Reunião de 30 Minutos",
     "scheduling.feature2.desc": "Conversa objetiva para entender seus desafios e apresentar soluções.",
     "scheduling.feature3.title": "Videoconferência",
-    "scheduling.feature3.desc": "Reunião online via Google Meet ou Zoom.",
+    "scheduling.feature3.desc": "Reunião online via Google Meet.",
     "scheduling.calendar.title": "Selecione um horário",
 
     // Careers
@@ -355,7 +355,7 @@ const translations: Record<Language, Record<string, string>> = {
     "scheduling.feature2.title": "30-Minute Meeting",
     "scheduling.feature2.desc": "Objective conversation to understand your challenges and present solutions.",
     "scheduling.feature3.title": "Video Conference",
-    "scheduling.feature3.desc": "Online meeting via Google Meet or Zoom.",
+    "scheduling.feature3.desc": "Online meeting via Google Meet.",
     "scheduling.calendar.title": "Select a time",
 
     // Careers
@@ -531,7 +531,7 @@ const translations: Record<Language, Record<string, string>> = {
     "scheduling.feature2.title": "Reunión de 30 Minutos",
     "scheduling.feature2.desc": "Conversación objetiva para entender sus desafíos y presentar soluciones.",
     "scheduling.feature3.title": "Videoconferencia",
-    "scheduling.feature3.desc": "Reunión online vía Google Meet o Zoom.",
+    "scheduling.feature3.desc": "Reunión online vía Google Meet.",
     "scheduling.calendar.title": "Seleccione un horario",
 
     // Careers
