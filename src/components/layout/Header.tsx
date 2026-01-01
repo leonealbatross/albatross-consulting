@@ -130,12 +130,34 @@ const Header = () => {
             {/* Mobile Menu Header */}
             <div className="flex items-center justify-between p-6 border-b border-border/30">
               <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Menu</span>
-              <button
-                className="p-2 text-muted-foreground hover:text-foreground transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <X className="w-5 h-5" />
-              </button>
+              <div className="flex items-center gap-3">
+                {/* Language Selector - Simple like desktop */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground h-9 px-3">
+                      <Globe className="w-4 h-4" />
+                      {language}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="bg-card border-border">
+                    {languages.map((lang) => (
+                      <DropdownMenuItem
+                        key={lang.code}
+                        onClick={() => setLanguage(lang.code)}
+                        className="cursor-pointer hover:bg-secondary"
+                      >
+                        {lang.label}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <button
+                  className="p-2 text-muted-foreground hover:text-foreground transition-colors"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
             {/* Navigation Links */}
@@ -154,24 +176,7 @@ const Header = () => {
             </nav>
 
             {/* Mobile Menu Footer */}
-            <div className="p-6 border-t border-border/30 space-y-4">
-              {/* Language Selector */}
-              <div className="flex gap-2">
-                {languages.map((lang) => (
-                  <button
-                    key={lang.code}
-                    onClick={() => setLanguage(lang.code)}
-                    className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors ${
-                      language === lang.code
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-secondary/50 text-muted-foreground hover:bg-secondary"
-                    }`}
-                  >
-                    {lang.code}
-                  </button>
-                ))}
-              </div>
-
+            <div className="p-6 border-t border-border/30">
               <a href="#agendamento" onClick={() => setIsMobileMenuOpen(false)}>
                 <Button variant="hero" className="w-full">
                   {t("header.cta")}
