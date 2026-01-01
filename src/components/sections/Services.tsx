@@ -36,6 +36,7 @@ Business Growth as a Service é o que a Albatross entrega: estrutura, disciplina
       title: t("services.s2.title"),
       description: t("services.s2.desc"),
       highlight: t("services.s2.highlight"),
+      detailContent: `A Albatross Consulting, em parceria com a ONEtoONE Corporate Finance, atua de forma end-to-end em fusões e aquisições para empresas de tecnologia, combinando deal sourcing com alcance internacional e execução estratégica. Após a transação, a Albatross lidera a fase de pós-M&A, apoiando integração, governança, execução estratégica e captura de sinergias para garantir geração de valor sustentável no longo prazo.`,
     },
     {
       icon: BarChart3,
