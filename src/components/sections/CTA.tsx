@@ -2,10 +2,12 @@ import { forwardRef } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSmoothScroll } from "@/hooks/use-smooth-scroll";
 
 
 const CTA = forwardRef<HTMLElement>((_, ref) => {
   const { t } = useLanguage();
+  const { handleClick } = useSmoothScroll();
 
   return (
     <section ref={ref} id="contato" className="py-16 lg:py-24 xl:py-32 relative overflow-hidden">
@@ -35,7 +37,7 @@ const CTA = forwardRef<HTMLElement>((_, ref) => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
-            <a href="#agendamento">
+            <a href="#agendamento" onClick={(e) => handleClick(e, 'agendamento')}>
               <Button variant="hero" size="lg" className="group w-full sm:w-auto text-sm sm:text-base">
                 {t("cta.primary")}
                 <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:translate-x-1" />

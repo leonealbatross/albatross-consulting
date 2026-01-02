@@ -10,11 +10,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSectionHighlight } from "@/hooks/use-section-highlight";
+import { useSmoothScroll } from "@/hooks/use-smooth-scroll";
 import ServiceDetailModal from "@/components/ServiceDetailModal";
 
 const Services = () => {
   const { t } = useLanguage();
   const { sectionRef, isVisible } = useSectionHighlight();
+  const { handleClick } = useSmoothScroll();
 
   const services = [
     {
@@ -166,7 +168,7 @@ Voltada a CEOs, CROs e líderes comerciais, a mentoria apoia decisões estratég
                       }
                     />
                   ) : (
-                    <a href="#agendamento">
+                    <a href="#agendamento" onClick={(e) => handleClick(e, 'agendamento')}>
                       <Button 
                         variant="ghost" 
                         className="p-0 h-auto text-sm text-primary hover:text-primary/80 group/btn"
