@@ -6,7 +6,7 @@ export const useSmoothScroll = () => {
     const header = document.querySelector('header');
     
     if (element && header) {
-      const headerHeight = header.getBoundingClientRect().height + 20;
+      const headerHeight = header.getBoundingClientRect().height + 40;
       const elementPosition = element.getBoundingClientRect().top + window.scrollY;
       window.scrollTo({
         top: elementPosition - headerHeight,
