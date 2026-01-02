@@ -9,11 +9,12 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
-
+import { useSectionHighlight } from "@/hooks/use-section-highlight";
 import ServiceDetailModal from "@/components/ServiceDetailModal";
 
 const Services = () => {
   const { t } = useLanguage();
+  const { sectionRef, isVisible } = useSectionHighlight();
 
   const services = [
     {
@@ -83,7 +84,11 @@ Voltada a CEOs, CROs e líderes comerciais, a mentoria apoia decisões estratég
   ];
 
   return (
-    <section id="servicos" className="py-16 lg:py-24 xl:py-32 bg-secondary/30 relative">
+    <section 
+      ref={sectionRef}
+      id="servicos" 
+      className={`py-16 lg:py-24 xl:py-32 bg-secondary/30 relative section-highlight ${isVisible ? 'visible' : ''}`}
+    >
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
         <div 
