@@ -72,8 +72,9 @@ const Header = () => {
                 onClick={(e) => {
                   e.preventDefault();
                   const element = document.getElementById(item.id);
-                  if (element) {
-                    const headerHeight = 100;
+                  const header = document.querySelector('header');
+                  if (element && header) {
+                    const headerHeight = header.getBoundingClientRect().height + 20;
                     const elementPosition = element.getBoundingClientRect().top + window.scrollY;
                     window.scrollTo({
                       top: elementPosition - headerHeight,
@@ -193,8 +194,9 @@ const Header = () => {
                     setIsMobileMenuOpen(false);
                     setTimeout(() => {
                       const element = document.getElementById(item.id);
-                      if (element) {
-                        const headerHeight = 80;
+                      const header = document.querySelector('header');
+                      if (element && header) {
+                        const headerHeight = header.getBoundingClientRect().height + 20;
                         const elementPosition = element.getBoundingClientRect().top + window.scrollY;
                         window.scrollTo({
                           top: elementPosition - headerHeight,
