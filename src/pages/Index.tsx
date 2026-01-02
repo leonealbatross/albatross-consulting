@@ -9,7 +9,7 @@ import Scheduling from "@/components/sections/Scheduling";
 import Careers from "@/components/sections/Careers";
 import CTA from "@/components/sections/CTA";
 import Footer from "@/components/layout/Footer";
-
+import AlbaChatbot from "@/components/AlbaChatbot";
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
@@ -26,6 +26,7 @@ const Index = () => {
         <CTA />
       </main>
       <Footer />
+      <AlbaChatbot />
     </div>
   );
 };
