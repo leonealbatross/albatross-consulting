@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { careersFormSchema } from "@/lib/form-sanitization";
 
 interface FormErrors {
   name?: string;
@@ -106,21 +107,35 @@ const Careers = () => {
       return;
     }
 
+    // Validate and sanitize form data using zod schema
+    const validationResult = careersFormSchema.safeParse(formData);
+    
+    if (!validationResult.success) {
+      toast({
+        title: t("careers.form.error.title"),
+        description: validationResult.error.errors[0]?.message || t("careers.form.error.description"),
+        variant: "destructive",
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
+    // Use sanitized data from zod transform
+    const sanitizedData = validationResult.data;
+
     setIsSubmitting(true);
 
     // Send automatic response email to candidate
     try {
       const { error } = await supabase.functions.invoke("send-candidate-email", {
         body: {
-          name: formData.name.trim(),
-          email: formData.email.trim(),
+          name: sanitizedData.name,
+          email: sanitizedData.email,
         },
       });
 
       if (error) {
         console.error("Error sending confirmation email:", error);
-      } else {
-        console.log("Confirmation email sent successfully");
       }
     } catch (err) {
       console.error("Error calling send-candidate-email function:", err);
@@ -130,11 +145,11 @@ const Careers = () => {
     const emailTo = "leone@albatross.consulting";
     const subject = encodeURIComponent("Candidatura - Albatross Consulting");
     const body = encodeURIComponent(
-      `Nome: ${formData.name.trim()}\n` +
-      `Email: ${formData.email.trim()}\n` +
-      `Telefone: ${formData.phone.trim() || "Não informado"}\n` +
-      `LinkedIn: ${formData.linkedin.trim() || "Não informado"}\n\n` +
-      `Mensagem:\n${formData.message.trim()}\n\n` +
+      `Nome: ${sanitizedData.name}\n` +
+      `Email: ${sanitizedData.email}\n` +
+      `Telefone: ${sanitizedData.phone || "Não informado"}\n` +
+      `LinkedIn: ${sanitizedData.linkedin || "Não informado"}\n\n` +
+      `Mensagem:\n${sanitizedData.message}\n\n` +
       `---\n` +
       `IMPORTANTE: Por favor, anexe seu currículo a este e-mail no formato PDF ou Word (.doc/.docx).`
     );
