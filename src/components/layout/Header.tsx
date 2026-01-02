@@ -69,6 +69,18 @@ const Header = () => {
               <a
                 key={item.href}
                 href={item.href}
+                onClick={(e) => {
+                  e.preventDefault();
+                  const element = document.getElementById(item.id);
+                  if (element) {
+                    const headerHeight = 100;
+                    const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+                    window.scrollTo({
+                      top: elementPosition - headerHeight,
+                      behavior: 'smooth'
+                    });
+                  }
+                }}
                 className={`relative px-4 py-2 text-sm font-medium transition-colors duration-300 ${
                   activeSection === item.id
                     ? "text-primary"
@@ -176,7 +188,21 @@ const Header = () => {
                       ? "text-primary"
                       : "text-foreground/80 hover:text-primary"
                   }`}
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setIsMobileMenuOpen(false);
+                    setTimeout(() => {
+                      const element = document.getElementById(item.id);
+                      if (element) {
+                        const headerHeight = 80;
+                        const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+                        window.scrollTo({
+                          top: elementPosition - headerHeight,
+                          behavior: 'smooth'
+                        });
+                      }
+                    }, 300);
+                  }}
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
                   {activeSection === item.id && (
