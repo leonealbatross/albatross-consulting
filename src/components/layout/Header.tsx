@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useLanguage, Language } from "@/contexts/LanguageContext";
 import albatrossLogo from "@/assets/logo-albatross-new.jpeg";
-import { Calendar } from "lucide-react";
+
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -95,12 +95,6 @@ const Header = () => {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <a href="#agendamento">
-              <Button className="gap-2">
-                <Calendar className="w-4 h-4" />
-                {t("header.cta")}
-              </Button>
-            </a>
           </div>
 
           {/* Mobile Menu Button */}
