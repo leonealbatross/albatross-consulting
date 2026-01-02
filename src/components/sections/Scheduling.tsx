@@ -1,14 +1,14 @@
-import { forwardRef } from "react";
 import { Calendar, Video } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSectionHighlight } from "@/hooks/use-section-highlight";
 
 interface SchedulingProps {
   calendlyUrl?: string;
 }
 
-const Scheduling = forwardRef<HTMLElement, SchedulingProps>(
-  ({ calendlyUrl = "https://calendly.com/albatross-consulting" }, ref) => {
-    const { t } = useLanguage();
+const Scheduling = ({ calendlyUrl = "https://calendly.com/albatross-consulting" }: SchedulingProps) => {
+  const { t } = useLanguage();
+  const { sectionRef, isVisible } = useSectionHighlight();
 
     const features = [
       {
@@ -18,12 +18,12 @@ const Scheduling = forwardRef<HTMLElement, SchedulingProps>(
       },
     ];
 
-    return (
-      <section
-        ref={ref}
-        id="agendamento"
-        className="py-20 sm:py-24 lg:py-32 bg-secondary/30 relative overflow-hidden"
-      >
+  return (
+    <section
+      ref={sectionRef}
+      id="agendamento"
+      className={`py-20 sm:py-24 lg:py-32 bg-secondary/30 relative overflow-hidden section-highlight ${isVisible ? 'visible' : ''}`}
+    >
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-30">
           <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
@@ -89,11 +89,8 @@ const Scheduling = forwardRef<HTMLElement, SchedulingProps>(
             </div>
           </div>
         </div>
-      </section>
-    );
-  }
-);
-
-Scheduling.displayName = "Scheduling";
+    </section>
+  );
+};
 
 export default Scheduling;

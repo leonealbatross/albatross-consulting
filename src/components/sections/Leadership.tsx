@@ -1,11 +1,11 @@
-import { forwardRef } from "react";
 import { Linkedin, Mail } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSectionHighlight } from "@/hooks/use-section-highlight";
 import marcoLeonePhoto from "@/assets/marco-leone.jpeg";
 
-const Leadership = forwardRef<HTMLElement>((_, ref) => {
+const Leadership = () => {
   const { t } = useLanguage();
+  const { sectionRef, isVisible } = useSectionHighlight();
 
   const tags = [
     t("leadership.tag1"),
@@ -17,7 +17,11 @@ const Leadership = forwardRef<HTMLElement>((_, ref) => {
   ];
 
   return (
-    <section ref={ref} id="lideranca" className="py-16 lg:py-24 xl:py-32 bg-secondary/30 relative">
+    <section 
+      ref={sectionRef}
+      id="lideranca" 
+      className={`py-16 lg:py-24 xl:py-32 bg-secondary/30 relative section-highlight ${isVisible ? 'visible' : ''}`}
+    >
       <div className="container-wide px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           {/* Left - Image */}
@@ -82,8 +86,6 @@ const Leadership = forwardRef<HTMLElement>((_, ref) => {
       </div>
     </section>
   );
-});
-
-Leadership.displayName = "Leadership";
+};
 
 export default Leadership;

@@ -1,8 +1,10 @@
 import { Target, Lightbulb, BarChart3, Shield } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSectionHighlight } from "@/hooks/use-section-highlight";
 
 const About = () => {
   const { t } = useLanguage();
+  const { sectionRef, isVisible } = useSectionHighlight();
 
   const features = [
     {
@@ -28,7 +30,11 @@ const About = () => {
   ];
 
   return (
-    <section id="sobre" className="py-16 lg:py-24 xl:py-32 relative">
+    <section 
+      ref={sectionRef}
+      id="sobre" 
+      className={`py-16 lg:py-24 xl:py-32 relative section-highlight ${isVisible ? 'visible' : ''}`}
+    >
       <div className="container-wide px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           {/* Left Content */}

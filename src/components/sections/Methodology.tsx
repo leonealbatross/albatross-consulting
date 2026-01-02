@@ -1,8 +1,10 @@
 import { Search, Compass, Play, BarChart } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSectionHighlight } from "@/hooks/use-section-highlight";
 
 const Methodology = () => {
   const { t } = useLanguage();
+  const { sectionRef, isVisible } = useSectionHighlight();
 
   const steps = [
     {
@@ -39,7 +41,11 @@ const Methodology = () => {
   ];
 
   return (
-    <section id="metodologia" className="py-16 lg:py-24 xl:py-32 relative overflow-hidden">
+    <section 
+      ref={sectionRef}
+      id="metodologia" 
+      className={`py-16 lg:py-24 xl:py-32 relative overflow-hidden section-highlight ${isVisible ? 'visible' : ''}`}
+    >
       {/* Background Gradient */}
       <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-primary/5 to-transparent" />
 

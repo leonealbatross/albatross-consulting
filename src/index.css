@@ -189,6 +189,46 @@
     animation: scaleIn 0.5s ease-out forwards;
   }
 
+  /* Section highlight animation */
+  .section-highlight {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), 
+                transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .section-highlight.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .section-highlight.visible::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, hsl(175 70% 45% / 0.5), transparent);
+    animation: highlightPulse 1.5s ease-out;
+    pointer-events: none;
+  }
+
+  @keyframes highlightPulse {
+    0% {
+      opacity: 0;
+      transform: scaleX(0);
+    }
+    50% {
+      opacity: 1;
+      transform: scaleX(1);
+    }
+    100% {
+      opacity: 0;
+      transform: scaleX(1);
+    }
+  }
+
   @keyframes fadeUp {
     from {
       opacity: 0;

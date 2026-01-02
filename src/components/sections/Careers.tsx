@@ -1,6 +1,7 @@
-import { forwardRef, useState } from "react";
+import { useState } from "react";
 import { Briefcase, Upload, Users, Rocket, Heart, Send, Loader2 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSectionHighlight } from "@/hooks/use-section-highlight";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,8 +17,9 @@ interface FormErrors {
   message?: string;
 }
 
-const Careers = forwardRef<HTMLElement>((_, ref) => {
+const Careers = () => {
   const { t } = useLanguage();
+  const { sectionRef, isVisible } = useSectionHighlight();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -151,9 +153,9 @@ const Careers = forwardRef<HTMLElement>((_, ref) => {
 
   return (
     <section
-      ref={ref}
+      ref={sectionRef}
       id="carreiras"
-      className="py-20 sm:py-24 lg:py-32 bg-background relative overflow-hidden"
+      className={`py-20 sm:py-24 lg:py-32 bg-background relative overflow-hidden section-highlight ${isVisible ? 'visible' : ''}`}
     >
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-20">
@@ -326,8 +328,6 @@ const Careers = forwardRef<HTMLElement>((_, ref) => {
       </div>
     </section>
   );
-});
-
-Careers.displayName = "Careers";
+};
 
 export default Careers;
