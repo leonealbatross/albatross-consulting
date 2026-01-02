@@ -1,10 +1,12 @@
 import { forwardRef } from "react";
 import { Linkedin, Mail, Phone, MapPin } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSmoothScroll } from "@/hooks/use-smooth-scroll";
 import albatrossLogo from "@/assets/logo-albatross.png";
 
 const Footer = forwardRef<HTMLElement>((_, ref) => {
   const { t } = useLanguage();
+  const { handleClick } = useSmoothScroll();
   const currentYear = new Date().getFullYear();
 
   const links = {
@@ -69,6 +71,7 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
                 <li key={link.label}>
                   <a
                     href={link.href}
+                    onClick={(e) => handleClick(e, link.href.replace('#', ''))}
                     className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {link.label}
@@ -88,6 +91,7 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
                 <li key={link.label}>
                   <a
                     href={link.href}
+                    onClick={(e) => handleClick(e, link.href.replace('#', ''))}
                     className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {link.label}
