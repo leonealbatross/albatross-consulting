@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Globe } from "lucide-react";
 import {
@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useLanguage, Language } from "@/contexts/LanguageContext";
+import { useActiveSection } from "@/hooks/use-active-section";
 import albatrossLogo from "@/assets/logo-albatross-new.jpeg";
 
 
@@ -25,14 +26,17 @@ const Header = () => {
   }, []);
 
   const navItems = [
-    { label: t("nav.about"), href: "#sobre" },
-    { label: t("nav.services"), href: "#servicos" },
-    { label: t("nav.methodology"), href: "#metodologia" },
-    { label: t("nav.leadership"), href: "#lideranca" },
-    { label: t("nav.scheduling"), href: "#agendamento" },
-    { label: t("nav.careers"), href: "#carreiras" },
-    { label: t("nav.contact"), href: "#contato" },
+    { label: t("nav.about"), href: "#sobre", id: "sobre" },
+    { label: t("nav.services"), href: "#servicos", id: "servicos" },
+    { label: t("nav.methodology"), href: "#metodologia", id: "metodologia" },
+    { label: t("nav.leadership"), href: "#lideranca", id: "lideranca" },
+    { label: t("nav.scheduling"), href: "#agendamento", id: "agendamento" },
+    { label: t("nav.careers"), href: "#carreiras", id: "carreiras" },
+    { label: t("nav.contact"), href: "#contato", id: "contato" },
   ];
+
+  const sectionIds = useMemo(() => navItems.map((item) => item.id), []);
+  const activeSection = useActiveSection(sectionIds);
 
   const languages: { code: Language; label: string }[] = [
     { code: "PT", label: "Português" },
@@ -65,9 +69,16 @@ const Header = () => {
               <a
                 key={item.href}
                 href={item.href}
-                className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors duration-300"
+                className={`relative px-4 py-2 text-sm font-medium transition-colors duration-300 ${
+                  activeSection === item.id
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
               >
                 {item.label}
+                {activeSection === item.id && (
+                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary" />
+                )}
               </a>
             ))}
           </div>
@@ -160,10 +171,17 @@ const Header = () => {
                 <a
                   key={item.href}
                   href={item.href}
-                  className="flex items-center py-4 text-lg font-medium text-foreground/80 hover:text-primary transition-colors border-b border-border/20"
+                  className={`flex items-center py-4 text-lg font-medium transition-colors border-b border-border/20 ${
+                    activeSection === item.id
+                      ? "text-primary"
+                      : "text-foreground/80 hover:text-primary"
+                  }`}
                   onClick={() => setIsMobileMenuOpen(false)}
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
+                  {activeSection === item.id && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary mr-3" />
+                  )}
                   {item.label}
                 </a>
               ))}
