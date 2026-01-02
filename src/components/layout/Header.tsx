@@ -169,14 +169,6 @@ const Header = () => {
               ))}
             </nav>
 
-            {/* Mobile Menu Footer */}
-            <div className="p-6 border-t border-border/30">
-              <a href="#agendamento" onClick={() => setIsMobileMenuOpen(false)}>
-                <Button variant="hero" className="w-full">
-                  {t("header.cta")}
-                </Button>
-              </a>
-            </div>
           </div>
         </div>
       </div>
