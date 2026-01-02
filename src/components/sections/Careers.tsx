@@ -1,11 +1,12 @@
 import { forwardRef, useState } from "react";
-import { Briefcase, Upload, Users, Rocket, Heart, Send } from "lucide-react";
+import { Briefcase, Upload, Users, Rocket, Heart, Send, Loader2 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface FormErrors {
   name?: string;
@@ -25,6 +26,7 @@ const Careers = forwardRef<HTMLElement>((_, ref) => {
     message: "",
   });
   const [errors, setErrors] = useState<FormErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const benefits = [
     {
@@ -90,7 +92,7 @@ const Careers = forwardRef<HTMLElement>((_, ref) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!validateForm()) {
@@ -102,6 +104,27 @@ const Careers = forwardRef<HTMLElement>((_, ref) => {
       return;
     }
 
+    setIsSubmitting(true);
+
+    // Send automatic response email to candidate
+    try {
+      const { error } = await supabase.functions.invoke("send-candidate-email", {
+        body: {
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+        },
+      });
+
+      if (error) {
+        console.error("Error sending confirmation email:", error);
+      } else {
+        console.log("Confirmation email sent successfully");
+      }
+    } catch (err) {
+      console.error("Error calling send-candidate-email function:", err);
+    }
+
+    // Open mailto for the company to receive the application
     const emailTo = "leone@albatross.consulting";
     const subject = encodeURIComponent("Candidatura - Albatross Consulting");
     const body = encodeURIComponent(
@@ -123,6 +146,7 @@ const Careers = forwardRef<HTMLElement>((_, ref) => {
 
     setFormData({ name: "", email: "", phone: "", linkedin: "", message: "" });
     setErrors({});
+    setIsSubmitting(false);
   };
 
   return (
@@ -285,9 +309,13 @@ const Careers = forwardRef<HTMLElement>((_, ref) => {
                   <p className="text-xs text-destructive">{errors.message}</p>
                 )}
               </div>
-              <Button type="submit" className="w-full gap-2">
-                <Send className="w-4 h-4" />
-                {t("careers.form.submit")}
+              <Button type="submit" className="w-full gap-2" disabled={isSubmitting}>
+                {isSubmitting ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Send className="w-4 h-4" />
+                )}
+                {isSubmitting ? t("careers.form.sending") || "Enviando..." : t("careers.form.submit")}
               </Button>
               <p className="text-xs text-muted-foreground text-center">
                 {t("careers.form.note")}
