@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useLanguage, Language } from "@/contexts/LanguageContext";
 import { useActiveSection } from "@/hooks/use-active-section";
+import { useSmoothScroll } from "@/hooks/use-smooth-scroll";
 import albatrossLogo from "@/assets/logo-albatross-new.jpeg";
 
 
@@ -16,6 +17,7 @@ const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { language, setLanguage, t } = useLanguage();
+  const { scrollToSection } = useSmoothScroll();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -71,16 +73,7 @@ const Header = () => {
                 href={item.href}
                 onClick={(e) => {
                   e.preventDefault();
-                  const element = document.getElementById(item.id);
-                  const header = document.querySelector('header');
-                  if (element && header) {
-                    const headerHeight = header.getBoundingClientRect().height + 20;
-                    const elementPosition = element.getBoundingClientRect().top + window.scrollY;
-                    window.scrollTo({
-                      top: elementPosition - headerHeight,
-                      behavior: 'smooth'
-                    });
-                  }
+                  scrollToSection(item.id);
                 }}
                 className={`relative px-4 py-2 text-sm font-medium transition-colors duration-300 ${
                   activeSection === item.id
@@ -193,16 +186,7 @@ const Header = () => {
                     e.preventDefault();
                     setIsMobileMenuOpen(false);
                     setTimeout(() => {
-                      const element = document.getElementById(item.id);
-                      const header = document.querySelector('header');
-                      if (element && header) {
-                        const headerHeight = header.getBoundingClientRect().height + 20;
-                        const elementPosition = element.getBoundingClientRect().top + window.scrollY;
-                        window.scrollTo({
-                          top: elementPosition - headerHeight,
-                          behavior: 'smooth'
-                        });
-                      }
+                      scrollToSection(item.id);
                     }, 300);
                   }}
                   style={{ animationDelay: `${index * 50}ms` }}
