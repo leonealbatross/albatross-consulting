@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "@/hooks/use-toast";
 import { Calendar, Send } from "lucide-react";
+import { contactFormSchema } from "@/lib/form-sanitization";
 
 interface ContactModalProps {
   trigger?: React.ReactNode;
@@ -34,14 +35,29 @@ const ContactModal = ({ trigger, variant = "header", sectionTitle = "Albatross C
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Validate and sanitize form data using zod schema
+    const validationResult = contactFormSchema.safeParse(formData);
+    
+    if (!validationResult.success) {
+      toast({
+        title: t("contact.error.title") || "Validation Error",
+        description: validationResult.error.errors[0]?.message || t("contact.error.description") || "Please check your input",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Use sanitized data from zod transform
+    const sanitizedData = validationResult.data;
+
     const emailTo = "leone@albatross.consulting";
     const subject = encodeURIComponent(`Contato via ${sectionTitle} - Albatross Consulting`);
     const body = encodeURIComponent(
       `Seção: ${sectionTitle}\n\n` +
-      `Nome: ${formData.name}\n` +
-      `Email: ${formData.email}\n` +
-      `Empresa: ${formData.company || "Não informada"}\n\n` +
-      `Mensagem:\n${formData.message}`
+      `Nome: ${sanitizedData.name}\n` +
+      `Email: ${sanitizedData.email}\n` +
+      `Empresa: ${sanitizedData.company || "Não informada"}\n\n` +
+      `Mensagem:\n${sanitizedData.message}`
     );
 
     window.open(`mailto:${emailTo}?subject=${subject}&body=${body}`, "_blank");
