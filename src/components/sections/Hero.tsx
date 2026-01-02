@@ -61,7 +61,7 @@ Business Growth as a Service é o que a Albatross entrega: estrutura, disciplina
         <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-primary/10 rounded-full blur-3xl animate-float" style={{ animationDelay: "-3s" }} />
       </div>
 
-      <div className="container-wide relative z-10 pt-32 pb-20">
+      <div className="container-wide relative z-10 pt-48 sm:pt-56 md:pt-64 lg:pt-72 pb-20">
         <div className="max-w-4xl mx-auto text-center">
           {/* Badge */}
           <ServiceDetailModal
