@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Globe } from "lucide-react";
+import { Menu, X, Globe, Accessibility } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,6 +11,7 @@ import { useLanguage, Language } from "@/contexts/LanguageContext";
 import { useActiveSection } from "@/hooks/use-active-section";
 import { useSmoothScroll } from "@/hooks/use-smooth-scroll";
 import albatrossLogo from "@/assets/logo-albatross-new.jpeg";
+import { Link } from "react-router-dom";
 
 
 const Header = () => {
@@ -101,7 +102,17 @@ const Header = () => {
           </div>
 
           {/* Right Section */}
-          <div className="hidden lg:flex items-center gap-4">
+          <div className="hidden lg:flex items-center gap-2">
+            {/* Accessibility Link */}
+            <Link
+              to="/accessibility"
+              className="p-2 text-muted-foreground hover:text-primary transition-colors rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background min-w-[44px] min-h-[44px] flex items-center justify-center"
+              aria-label="Acessibilidade"
+              title="Acessibilidade"
+            >
+              <Accessibility className="w-5 h-5" aria-hidden="true" />
+            </Link>
+
             {/* Language Selector */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -166,7 +177,16 @@ const Header = () => {
             {/* Mobile Menu Header */}
             <div className="flex items-center justify-between p-6 border-b border-border/30">
               <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Menu</span>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                {/* Accessibility Link - Mobile */}
+                <Link
+                  to="/accessibility"
+                  className="p-2 text-muted-foreground hover:text-primary transition-colors rounded-lg focus:outline-none focus:ring-2 focus:ring-primary min-w-[44px] min-h-[44px] flex items-center justify-center"
+                  aria-label="Acessibilidade"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <Accessibility className="w-5 h-5" aria-hidden="true" />
+                </Link>
                 {/* Language Selector - Simple like desktop */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
