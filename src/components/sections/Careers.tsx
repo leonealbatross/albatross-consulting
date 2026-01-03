@@ -125,6 +125,27 @@ const Careers = () => {
 
     setIsSubmitting(true);
 
+    // Send to HubSpot
+    try {
+      const { data, error: hubspotError } = await supabase.functions.invoke("hubspot-candidate", {
+        body: {
+          name: sanitizedData.name,
+          email: sanitizedData.email,
+          phone: sanitizedData.phone,
+          linkedin: sanitizedData.linkedin,
+          message: sanitizedData.message,
+        },
+      });
+
+      if (hubspotError) {
+        console.error("Error sending to HubSpot:", hubspotError);
+      } else {
+        console.log("HubSpot candidate response:", data);
+      }
+    } catch (err) {
+      console.error("Error calling hubspot-candidate function:", err);
+    }
+
     // Send automatic response email to candidate
     try {
       const { error } = await supabase.functions.invoke("send-candidate-email", {
