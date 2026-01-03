@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { 
   Accessibility, 
@@ -529,39 +529,45 @@ interface ToggleOptionProps {
   disabled?: boolean;
 }
 
-const ToggleOption = ({ icon: Icon, label, description, checked, onChange, disabled }: ToggleOptionProps) => (
-  <div className="flex items-start justify-between gap-4 p-3 rounded-lg bg-secondary/30 hover:bg-secondary/50 transition-colors">
-    <div className="flex items-start gap-3">
-      <Icon className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" aria-hidden="true" />
-      <div>
-        <span className="text-sm font-medium text-foreground block">{label}</span>
-        <span className="text-xs text-muted-foreground">{description}</span>
-      </div>
-    </div>
-    <button
-      onClick={() => !disabled && onChange(!checked)}
-      disabled={disabled}
-      className={cn(
-        "relative w-11 h-6 rounded-full transition-colors flex-shrink-0",
-        "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-card",
-        "min-w-[44px]",
-        checked ? "bg-primary" : "bg-muted",
-        disabled && "opacity-50 cursor-not-allowed"
-      )}
-      role="switch"
-      aria-checked={checked}
-      aria-label={label}
-      aria-disabled={disabled}
+const ToggleOption = React.forwardRef<HTMLDivElement, ToggleOptionProps>(
+  ({ icon: Icon, label, description, checked, onChange, disabled }, ref) => (
+    <div 
+      ref={ref}
+      className="flex items-start justify-between gap-4 p-3 rounded-lg bg-secondary/30 hover:bg-secondary/50 transition-colors"
     >
-      <span
+      <div className="flex items-start gap-3">
+        <Icon className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" aria-hidden="true" />
+        <div>
+          <span className="text-sm font-medium text-foreground block">{label}</span>
+          <span className="text-xs text-muted-foreground">{description}</span>
+        </div>
+      </div>
+      <button
+        onClick={() => !disabled && onChange(!checked)}
+        disabled={disabled}
         className={cn(
-          "absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white transition-transform",
-          checked && "translate-x-5"
+          "relative w-11 h-6 rounded-full transition-colors flex-shrink-0",
+          "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-card",
+          "min-w-[44px]",
+          checked ? "bg-primary" : "bg-muted",
+          disabled && "opacity-50 cursor-not-allowed"
         )}
-        aria-hidden="true"
-      />
-    </button>
-  </div>
+        role="switch"
+        aria-checked={checked}
+        aria-label={label}
+        aria-disabled={disabled}
+      >
+        <span
+          className={cn(
+            "absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white transition-transform",
+            checked && "translate-x-5"
+          )}
+          aria-hidden="true"
+        />
+      </button>
+    </div>
+  )
 );
+ToggleOption.displayName = "ToggleOption";
 
 export default AccessibilityPanel;
