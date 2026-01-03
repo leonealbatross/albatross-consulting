@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -24,6 +25,49 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "@/hooks/use-toast";
 import { ArrowRight, ArrowLeft, Loader2, Search, CheckCircle2, Copy, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+
+// Animation variants
+const slideVariants = {
+  enterFromRight: {
+    x: 50,
+    opacity: 0,
+  },
+  enterFromLeft: {
+    x: -50,
+    opacity: 0,
+  },
+  center: {
+    x: 0,
+    opacity: 1,
+  },
+  exitToLeft: {
+    x: -50,
+    opacity: 0,
+  },
+  exitToRight: {
+    x: 50,
+    opacity: 0,
+  },
+};
+
+const fadeInUp = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -20 },
+};
+
+const staggerContainer = {
+  animate: {
+    transition: {
+      staggerChildren: 0.05,
+    },
+  },
+};
+
+const staggerItem = {
+  initial: { opacity: 0, y: 10 },
+  animate: { opacity: 1, y: 0 },
+};
 
 interface DueDiligenceFormModalProps {
   trigger?: React.ReactNode;
@@ -898,17 +942,38 @@ ${formData.concerns}
             </DialogHeader>
 
             {/* Progress Bar */}
-            <div className="mt-4 space-y-2">
+            <motion.div 
+              className="mt-4 space-y-2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.1 }}
+            >
               <div className="flex justify-between text-xs text-muted-foreground">
                 <span>{t("duediligence.step")} {step} {t("duediligence.of")} 2</span>
                 <span>{step === 1 ? "50%" : "100%"}</span>
               </div>
-              <Progress value={step === 1 ? 50 : 100} className="h-2" />
-            </div>
+              <motion.div
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+                style={{ originX: 0 }}
+              >
+                <Progress value={step === 1 ? 50 : 100} className="h-2" />
+              </motion.div>
+            </motion.div>
 
-            {step === 1 ? (
-              /* Step 1 - Identification + Initial Qualification */
-              <div className="space-y-4 mt-6">
+            <AnimatePresence mode="wait">
+              {step === 1 ? (
+                /* Step 1 - Identification + Initial Qualification */
+                <motion.div
+                  key="step1"
+                  initial="enterFromLeft"
+                  animate="center"
+                  exit="exitToLeft"
+                  variants={slideVariants}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  className="space-y-4 mt-6"
+                >
                 {/* Name + Email */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
@@ -1109,10 +1174,18 @@ ${formData.concerns}
                   {t("duediligence.continue")}
                   <ArrowRight className="w-4 h-4" />
                 </Button>
-              </div>
-            ) : (
-              /* Step 2 - Investment Context + Deep Qualification */
-              <div className="space-y-4 mt-6">
+              </motion.div>
+              ) : (
+                /* Step 2 - Investment Context + Deep Qualification */
+                <motion.div
+                  key="step2"
+                  initial="enterFromRight"
+                  animate="center"
+                  exit="exitToRight"
+                  variants={slideVariants}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  className="space-y-4 mt-6"
+                >
                 {/* Requester Profile + Job Title */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
@@ -1412,12 +1485,18 @@ ${formData.concerns}
                     {isSubmitting ? t("duediligence.sending") : t("duediligence.submit")}
                   </Button>
                 </div>
-              </div>
-            )}
+              </motion.div>
+              )}
+            </AnimatePresence>
           </>
         ) : (
           /* Success State */
-          <div className="py-6 text-center space-y-6">
+          <motion.div 
+            className="py-6 text-center space-y-6"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+          >
             <div className="flex justify-center">
               <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
                 <CheckCircle2 className="w-8 h-8 text-primary" />
@@ -1479,7 +1558,7 @@ ${formData.concerns}
             >
               {t("duediligence.success.close")}
             </Button>
-          </div>
+          </motion.div>
         )}
       </DialogContent>
     </Dialog>
