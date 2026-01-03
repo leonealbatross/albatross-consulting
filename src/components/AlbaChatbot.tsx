@@ -844,19 +844,21 @@ Consentimento LGPD: Sim (${new Date().toISOString()})
             </div>
 
             {/* Quick Actions - Fixed at top */}
-            <div className="px-3 py-2 border-b border-border/30 bg-muted/30 flex gap-2 overflow-x-auto scrollbar-hide">
-              {QUICK_ACTIONS.map((action) => (
-                <Button
-                  key={action.id}
-                  variant="ghost"
-                  size="sm"
-                  className="flex-shrink-0 text-xs gap-1.5 h-8 px-3 bg-background/50 hover:bg-primary/10"
-                  onClick={() => handleQuickAction(action)}
-                >
-                  <action.icon className="w-3.5 h-3.5" />
-                  {action.label}
-                </Button>
-              ))}
+            <div className="px-3 py-2 border-b border-border/30 bg-muted/30">
+              <div className="grid grid-cols-2 gap-1.5">
+                {QUICK_ACTIONS.map((action) => (
+                  <Button
+                    key={action.id}
+                    variant="ghost"
+                    size="sm"
+                    className="text-xs gap-1.5 h-8 px-2 bg-background/50 hover:bg-primary/10 justify-start"
+                    onClick={() => handleQuickAction(action)}
+                  >
+                    <action.icon className="w-3.5 h-3.5 flex-shrink-0" />
+                    <span className="truncate">{action.label}</span>
+                  </Button>
+                ))}
+              </div>
             </div>
 
             {/* Messages */}
