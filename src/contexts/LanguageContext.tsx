@@ -165,6 +165,8 @@ ENTREGÁVEIS:
     "footer.copyright": "Todos os direitos reservados.",
     "footer.privacy": "Política de Privacidade",
     "footer.terms": "Termos de Uso",
+    "footer.cookies": "Preferências de Cookies",
+    "footer.accessibility": "Acessibilidade",
 
     // Contact Modal
     "header.cta": "Agendar Conversa",
@@ -540,6 +542,8 @@ DELIVERABLES:
     "footer.copyright": "All rights reserved.",
     "footer.privacy": "Privacy Policy",
     "footer.terms": "Terms of Use",
+    "footer.cookies": "Cookie Preferences",
+    "footer.accessibility": "Accessibility",
 
     // Contact Modal
     "header.cta": "Schedule a Call",
@@ -915,6 +919,8 @@ ENTREGABLES:
     "footer.copyright": "Todos los derechos reservados.",
     "footer.privacy": "Política de Privacidad",
     "footer.terms": "Términos de Uso",
+    "footer.cookies": "Preferencias de Cookies",
+    "footer.accessibility": "Accesibilidad",
 
     // Contact Modal
     "header.cta": "Agendar una Llamada",
