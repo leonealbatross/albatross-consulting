@@ -1,21 +1,16 @@
+import { useState } from "react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, TrendingUp, Award, Handshake } from "lucide-react";
+import { ArrowRight, TrendingUp, Award, Handshake, Sparkles } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSmoothScroll } from "@/hooks/use-smooth-scroll";
 import heroBg from "@/assets/hero-bg.jpg";
-import ServiceDetailModal from "@/components/ServiceDetailModal";
+import BGaaSModal from "@/components/BGaaSModal";
 
 const Hero = () => {
   const { t } = useLanguage();
   const { scrollToSection, handleClick } = useSmoothScroll();
-
-  const bgasContent = `E se sua empresa não estivesse crescendo de verdade?
-
-Você tem produto, time, mercado. Mas os resultados são instáveis. Sem método, tudo vira tentativa e erro. Isso custa caro, desgasta o time e trava seu valuation.
-
-Enquanto isso, outros já tratam crescimento como serviço.
-
-Business Growth as a Service é o que a Albatross entrega: estrutura, disciplina e resultado. O resto é ilusão de progresso.`;
+  const [bgaasModalOpen, setBgaasModalOpen] = useState(false);
 
   const stats = [
     { 
@@ -64,19 +59,46 @@ Business Growth as a Service é o que a Albatross entrega: estrutura, disciplina
 
       <div className="container-wide relative z-10 pt-48 sm:pt-56 md:pt-64 lg:pt-72 pb-20">
         <div className="max-w-4xl mx-auto text-center">
-          {/* Badge */}
-          <ServiceDetailModal
-            title={t("hero.badge")}
-            content={bgasContent}
-            trigger={
-              <button className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/50 backdrop-blur-sm border border-border/50 mb-8 opacity-0 animate-fade-up hover:bg-secondary/70 hover:border-primary/30 transition-all duration-300 cursor-pointer">
-                <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                <span className="text-sm font-medium text-muted-foreground">
-                  {t("hero.badge")}
-                </span>
-              </button>
-            }
-          />
+          {/* Badge - Enhanced BGaaS Button */}
+          <motion.button
+            onClick={() => setBgaasModalOpen(true)}
+            className="inline-flex items-center gap-2.5 px-5 py-3 rounded-full bg-gradient-to-r from-primary/20 to-primary/10 backdrop-blur-sm border border-primary/40 mb-8 opacity-0 animate-fade-up cursor-pointer group relative overflow-hidden"
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.98 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            style={{ minWidth: "280px" }}
+          >
+            {/* Glow effect on hover */}
+            <motion.div 
+              className="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            />
+            
+            {/* Animated pulse dot */}
+            <span className="relative flex h-3 w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-primary" />
+            </span>
+            
+            <span className="relative text-sm sm:text-base font-semibold text-foreground group-hover:text-primary transition-colors duration-200">
+              {t("hero.badge")}
+            </span>
+            
+            <Sparkles className="relative w-4 h-4 text-primary opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+            
+            {/* Shadow glow */}
+            <motion.div
+              className="absolute inset-0 rounded-full"
+              style={{ 
+                boxShadow: "0 0 20px rgba(45, 212, 191, 0.3)",
+                opacity: 0 
+              }}
+              whileHover={{ opacity: 1 }}
+              transition={{ duration: 0.2 }}
+            />
+          </motion.button>
+
+          {/* BGaaS Modal */}
+          <BGaaSModal open={bgaasModalOpen} onOpenChange={setBgaasModalOpen} />
 
           {/* Main Headline */}
           <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-heading font-semibold tracking-tight leading-tight text-foreground mb-6 opacity-0 animate-fade-up stagger-1 px-2 sm:px-0">
