@@ -85,6 +85,7 @@ const AlbaChatbot = () => {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const [interactionCount, setInteractionCount] = useState(0);
   const [failureCount, setFailureCount] = useState(0);
+  const [dynamicSuggestions, setDynamicSuggestions] = useState<string[]>([]);
   
   // Lead capture state
   const [leadStep, setLeadStep] = useState<LeadStep>("idle");
@@ -351,6 +352,7 @@ Consentimento LGPD: Sim (${new Date().toISOString()})
     setInput("");
     setIsLoading(true);
     setInteractionCount(prev => prev + 1);
+    setDynamicSuggestions([]); // Clear previous suggestions
 
     // Check for commercial intent
     if (detectCommercialIntent(input) || interactionCount >= 1) {
@@ -514,9 +516,34 @@ Consentimento LGPD: Sim (${new Date().toISOString()})
 
   const pulseClass = prefersReducedMotion ? "" : "animate-pulse";
 
-  // Render message content with CTAs
+  // Extract suggestions from message content
+  const extractSuggestions = useCallback((content: string): { cleanContent: string; suggestions: string[] } => {
+    const suggestionsMatch = content.match(/\[SUGESTOES\]\s*([\s\S]*?)\s*\[\/SUGESTOES\]/);
+    if (suggestionsMatch) {
+      const suggestionsText = suggestionsMatch[1].trim();
+      const suggestions = suggestionsText.split("|").map(s => s.trim()).filter(s => s.length > 0);
+      const cleanContent = content.replace(/\[SUGESTOES\][\s\S]*?\[\/SUGESTOES\]/g, "").trim();
+      return { cleanContent, suggestions };
+    }
+    return { cleanContent: content, suggestions: [] };
+  }, []);
+
+  // Update suggestions when last assistant message changes
+  useEffect(() => {
+    const lastMessage = messages[messages.length - 1];
+    if (lastMessage?.role === "assistant" && !isLoading) {
+      const { suggestions } = extractSuggestions(lastMessage.content);
+      if (suggestions.length > 0) {
+        setDynamicSuggestions(suggestions);
+      }
+    }
+  }, [messages, isLoading, extractSuggestions]);
+
+  // Render message content with CTAs (excludes suggestions block)
   const renderMessageContent = (content: string) => {
-    const parts = content.split(/(\*\*[^*]+\*\*|\[CTA:AGENDAR\]|\[CTA:EMAIL\]|\[CTA:LEAD\]|\[NAV:[^\]]+\])/g);
+    // Remove suggestions block from display
+    const { cleanContent } = extractSuggestions(content);
+    const parts = cleanContent.split(/(\*\*[^*]+\*\*|\[CTA:AGENDAR\]|\[CTA:EMAIL\]|\[CTA:LEAD\]|\[NAV:[^\]]+\])/g);
     
     return parts.map((part, index) => {
       if (part.startsWith("**") && part.endsWith("**")) {
@@ -583,6 +610,17 @@ Consentimento LGPD: Sim (${new Date().toISOString()})
       return part;
     });
   };
+
+  // Handle suggestion click
+  const handleSuggestionClick = useCallback((suggestion: string) => {
+    setInput(suggestion);
+    setDynamicSuggestions([]);
+    // Trigger send after setting input
+    setTimeout(() => {
+      const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
+      sendMessage();
+    }, 50);
+  }, []);
 
   return (
     <>
@@ -705,9 +743,9 @@ Consentimento LGPD: Sim (${new Date().toISOString()})
                   </p>
                   <div className="flex flex-wrap justify-center gap-2">
                     {[
-                      "Quero saber sobre M&A",
-                      "O que é GenAI?",
-                      "Agendar conversa",
+                      "Como acelerar vendas B2B?",
+                      "M&A faz sentido pra mim?",
+                      "Preciso de governança agora?",
                     ].map((suggestion) => (
                       <button
                         key={suggestion}
@@ -758,6 +796,26 @@ Consentimento LGPD: Sim (${new Date().toISOString()})
                   </div>
                 </motion.div>
               ))}
+
+              {/* Dynamic Suggestions - after messages */}
+              {dynamicSuggestions.length > 0 && !isLoading && leadStep === "idle" && messages.length > 0 && (
+                <motion.div
+                  variants={messageVariants}
+                  initial="hidden"
+                  animate="visible"
+                  className="flex flex-wrap gap-2 ml-10 mt-2"
+                >
+                  {dynamicSuggestions.map((suggestion, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleSuggestionClick(suggestion)}
+                      className="px-3 py-1.5 text-xs rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors border border-primary/20"
+                    >
+                      {suggestion}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
 
               {/* Lead capture UI */}
               {leadStep === "interest" && (
