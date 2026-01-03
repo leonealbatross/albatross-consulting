@@ -10,7 +10,7 @@ import Careers from "@/components/sections/Careers";
 import CTA from "@/components/sections/CTA";
 import Footer from "@/components/layout/Footer";
 import AlbaChatbot from "@/components/AlbaChatbot";
-import AccessibilityPanel from "@/components/AccessibilityPanel";
+
 
 const Index = () => {
   return (
@@ -37,7 +37,7 @@ const Index = () => {
       </main>
       <Footer />
       <AlbaChatbot />
-      <AccessibilityPanel />
+      
     </div>
   );
 };
