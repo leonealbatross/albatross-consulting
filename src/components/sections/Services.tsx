@@ -26,9 +26,48 @@ const Services = () => {
       title: t("services.s1.title"),
       description: t("services.s1.desc"),
       highlight: t("services.s1.highlight"),
-      detailContent: `Estruturamos Growth Strategy & Go-to-Market com foco em execução e impacto mensurável.
+      detailContent: `GROWTH STRATEGY & GO-TO-MARKET
+Estruturamos estratégias de crescimento e modelos comerciais com foco em execução e impacto mensurável.
 
-A Albatross Consulting aplica frameworks consagrados como PESTEL, SWOT por área, Ansoff, OKRs, KPIs comerciais, funil de vendas e rituais de gestão para desenhar modelos comerciais eficientes e escaláveis. Atuamos da estratégia à operação para aumentar vendas, previsibilidade e acuracidade do forecast, gerar caixa, ampliar margens, reduzir churn e diminuir níveis de desconto, sustentando crescimento consistente.`,
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 O QUE FAZEMOS
+
+A Albatross Consulting aplica frameworks consagrados como PESTEL, SWOT por área, Ansoff, OKRs, KPIs comerciais, funil de vendas e rituais de gestão para desenhar modelos comerciais eficientes e escaláveis.
+
+Atuamos da estratégia à operação, conectando planejamento estratégico com execução comercial para gerar resultados tangíveis.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ BENEFÍCIOS ENTREGUES
+
+• Aumento consistente de vendas e receita
+• Maior previsibilidade e acuracidade do forecast
+• Geração de caixa e ampliação de margens
+• Redução de churn e níveis de desconto
+• Modelos comerciais escaláveis e replicáveis
+• Ritmos de gestão eficientes (daily, weekly, monthly reviews)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📋 CASOS DE USO TÍPICOS
+
+• Scale-ups buscando estruturar área comercial para crescimento acelerado
+• Empresas em transição de founder-led sales para sales team estruturado
+• Negócios precisando melhorar conversão e encurtar ciclo de vendas
+• Organizações buscando expandir para novos mercados ou segmentos
+• Empresas preparando-se para rodadas de investimento ou M&A
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔧 ENTREGÁVEIS
+
+• Diagnóstico comercial completo (processos, pessoas, tecnologia)
+• Estratégia Go-to-Market com playbooks de vendas
+• Definição de OKRs e KPIs comerciais
+• Estruturação de funil de vendas e métricas
+• Rituais de gestão e cadências de acompanhamento
+• Treinamento e capacitação da equipe comercial`,
       accent: "from-primary to-teal-300",
     },
     // 2. Governança Corporativa & Advisory Board
@@ -37,11 +76,48 @@ A Albatross Consulting aplica frameworks consagrados como PESTEL, SWOT por área
       title: t("services.s4.title"),
       description: t("services.s4.desc"),
       highlight: t("services.s4.highlight"),
-      detailContent: `Estruturamos governança que sustenta crescimento e confiança.
+      detailContent: `GOVERNANÇA CORPORATIVA & ADVISORY BOARD
+Estruturamos governança que sustenta crescimento e confiança institucional.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 O QUE FAZEMOS
 
 A Albatross Consulting apoia empresas na criação e organização de modelos de governança e Advisory Boards alinhados à estratégia, escala e atração de investidores.
 
-Atuamos na composição de conselhos, recrutamento de conselheiros e executivos (GO), definição de ritos, métricas e tomada de decisão, fortalecendo liderança, transparência e geração de valor sustentável.`,
+Atuamos na composição de conselhos, recrutamento de conselheiros e executivos (GO), definição de ritos, métricas e tomada de decisão, fortalecendo liderança, transparência e geração de valor sustentável.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ BENEFÍCIOS ENTREGUES
+
+• Governança estruturada e profissionalizada
+• Maior atratividade para investidores e parceiros
+• Tomada de decisão mais ágil e fundamentada
+• Transparência e accountability em todos os níveis
+• Sucessão planejada e gestão de talentos executivos
+• Compliance e gestão de riscos corporativos
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📋 CASOS DE USO TÍPICOS
+
+• Empresas familiares em processo de profissionalização
+• Scale-ups recebendo investimento institucional
+• Empresas preparando-se para IPO ou venda estratégica
+• Organizações buscando atrair executivos de alto nível
+• Negócios precisando de mentoria estratégica externa
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔧 ENTREGÁVEIS
+
+• Diagnóstico de maturidade de governança
+• Estruturação de Advisory Board ou Conselho
+• Recrutamento de conselheiros e executivos
+• Definição de estatutos, regimentos e políticas
+• Implementação de rituais de governança
+• Dashboards de indicadores e reporting executivo`,
       accent: "from-blue-400 to-primary",
     },
     // 3. Mentoria Executiva
@@ -50,9 +126,48 @@ Atuamos na composição de conselhos, recrutamento de conselheiros e executivos 
       title: t("services.s6.title"),
       description: t("services.s6.desc"),
       highlight: t("services.s6.highlight"),
-      detailContent: `Mentoria executiva da Albatross, fundamentada em práticas modernas e consagradas como ICF Core Competencies, GROW, SBI, Liderança Situacional (Hersey-Blanchard) e frameworks de performance executiva.
+      detailContent: `MENTORIA EXECUTIVA
+Desenvolvimento de líderes com foco em resultados e alta performance.
 
-Voltada a CEOs, CROs e líderes comerciais, a mentoria apoia decisões estratégicas, execução, liderança, performance de vendas e escala com foco em clareza, velocidade, accountability e resultados sustentáveis.`,
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 O QUE FAZEMOS
+
+Mentoria executiva da Albatross, fundamentada em práticas modernas e consagradas como ICF Core Competencies, GROW, SBI, Liderança Situacional (Hersey-Blanchard) e frameworks de performance executiva.
+
+Voltada a CEOs, CROs e líderes comerciais, a mentoria apoia decisões estratégicas, execução, liderança, performance de vendas e escala com foco em clareza, velocidade, accountability e resultados sustentáveis.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ BENEFÍCIOS ENTREGUES
+
+• Clareza estratégica e foco nas prioridades certas
+• Desenvolvimento de competências de liderança
+• Melhoria na tomada de decisão sob pressão
+• Aumento de performance individual e do time
+• Gestão eficaz de conflitos e stakeholders
+• Equilíbrio entre vida profissional e pessoal
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📋 CASOS DE USO TÍPICOS
+
+• CEOs e fundadores em transição de papel (operacional → estratégico)
+• CROs e VPs de Vendas buscando acelerar resultados
+• Executivos assumindo novos desafios ou promoções
+• Líderes enfrentando momentos críticos (turnaround, M&A, IPO)
+• Gestores desenvolvendo próxima geração de liderança
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔧 FORMATO & METODOLOGIA
+
+• Sessões individuais quinzenais ou mensais (90 min)
+• Plano de desenvolvimento personalizado
+• Feedback 360° e assessment de competências
+• Ferramentas práticas e frameworks aplicáveis
+• Acompanhamento de metas e accountability
+• Acesso a network exclusivo de executivos`,
       accent: "from-rose-400 to-primary",
     },
     // 4. M&A para Empresas de Tecnologia
@@ -61,7 +176,48 @@ Voltada a CEOs, CROs e líderes comerciais, a mentoria apoia decisões estratég
       title: t("services.s2.title"),
       description: t("services.s2.desc"),
       highlight: t("services.s2.highlight"),
-      detailContent: `A Albatross Consulting, em parceria com a ONEtoONE Corporate Finance, atua de forma end-to-end em fusões e aquisições para empresas de tecnologia, combinando deal sourcing com alcance internacional e execução estratégica. Após a transação, a Albatross lidera a fase de pós-M&A, apoiando integração, governança, execução estratégica e captura de sinergias para garantir geração de valor sustentável no longo prazo.`,
+      detailContent: `M&A INTEGRADO PARA EMPRESAS DE TECNOLOGIA
+Fusões e aquisições end-to-end com foco em geração de valor sustentável.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 O QUE FAZEMOS
+
+A Albatross Consulting, em parceria com a ONEtoONE Corporate Finance, atua de forma end-to-end em fusões e aquisições para empresas de tecnologia, combinando deal sourcing com alcance internacional e execução estratégica.
+
+Após a transação, a Albatross lidera a fase de pós-M&A, apoiando integração, governança, execução estratégica e captura de sinergias para garantir geração de valor sustentável no longo prazo.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ BENEFÍCIOS ENTREGUES
+
+• Acesso a deal flow internacional qualificado
+• Valuation fundamentado e negociação profissional
+• Integração pós-M&A estruturada e eficiente
+• Captura efetiva de sinergias operacionais e comerciais
+• Governança de integração com KPIs claros
+• Retenção de talentos e cultura organizacional
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📋 CASOS DE USO TÍPICOS
+
+• Empresas de tecnologia buscando compradores estratégicos
+• Scale-ups preparando-se para venda ou fusão
+• Corporates buscando aquisições para crescimento inorgânico
+• Private Equity realizando add-ons em portfólio
+• Empresas recém-adquiridas precisando de suporte de integração
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔧 ENTREGÁVEIS
+
+• Deal sourcing e screening de oportunidades
+• Preparação de empresa para venda (sell-side)
+• Suporte a due diligence comercial e operacional
+• Estruturação e negociação de deals
+• PMI (Post-Merger Integration) completo
+• Acompanhamento de 100 dias e captura de sinergias`,
       accent: "from-emerald-400 to-primary",
     },
     // 5. Due Diligence Comercial para M&A
@@ -70,7 +226,48 @@ Voltada a CEOs, CROs e líderes comerciais, a mentoria apoia decisões estratég
       title: t("services.s7.title"),
       description: t("services.s7.desc"),
       highlight: t("services.s7.highlight"),
-      detailContent: t("services.s7.detailContent"),
+      detailContent: `DUE DILIGENCE COMERCIAL PARA M&A
+Análise profunda da operação comercial para suportar decisões de investimento.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 O QUE FAZEMOS
+
+A Albatross Consulting realiza due diligence comercial especializada para investidores e empresas em processos de M&A, avaliando a qualidade da operação comercial, sustentabilidade da receita e riscos do negócio.
+
+Nossa análise vai além dos números, mergulhando em processos, pessoas, tecnologia e cultura comercial para dar visibilidade completa ao investidor.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ BENEFÍCIOS ENTREGUES
+
+• Visão clara da qualidade e sustentabilidade da receita
+• Identificação de riscos comerciais e operacionais
+• Avaliação de dependência de clientes e concentração
+• Análise de churn, LTV, CAC e unit economics
+• Validação de pipeline e forecast
+• Recomendações para captura de valor pós-deal
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📋 CASOS DE USO TÍPICOS
+
+• Private Equity avaliando aquisições de empresas de tecnologia
+• Venture Capital em rodadas de investimento
+• Corporates em processos de M&A estratégico
+• Family Offices analisando oportunidades de investimento
+• Fundos de investimento realizando add-ons
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔧 ENTREGÁVEIS
+
+• Relatório executivo de due diligence comercial
+• Análise de modelo comercial e go-to-market
+• Avaliação de processos de vendas e CS
+• Análise de métricas (ARR, churn, NRR, CAC, LTV)
+• Assessment de time comercial e liderança
+• Red flags e recomendações para negociação`,
       accent: "from-amber-400 to-primary",
       isDueDiligence: true,
     },
@@ -80,11 +277,49 @@ Voltada a CEOs, CROs e líderes comerciais, a mentoria apoia decisões estratég
       title: t("services.s5.title"),
       description: t("services.s5.desc"),
       highlight: t("services.s5.highlight"),
-      detailContent: `Transformamos GenAI em resultados concretos de negócio.
+      detailContent: `GENAI & INOVAÇÃO
+Transformamos IA generativa em resultados concretos de negócio.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 O QUE FAZEMOS
 
 A Albatross Consulting apoia empresas na aplicação prática de IA generativa por meio da criação de automações focadas em eficiência operacional, redução de custos e ganho de produtividade.
 
-Desenvolvemos dashboards avançados de Sales Intelligence para melhorar previsibilidade, acuracidade de forecast e qualidade da tomada de decisão comercial, conectando dados, execução e crescimento sustentável.`,
+Desenvolvemos dashboards avançados de Sales Intelligence para melhorar previsibilidade, acuracidade de forecast e qualidade da tomada de decisão comercial, conectando dados, execução e crescimento sustentável.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ BENEFÍCIOS ENTREGUES
+
+• Automação de tarefas repetitivas e operacionais
+• Redução significativa de custos operacionais
+• Ganhos de produtividade em toda organização
+• Insights acionáveis com Sales Intelligence
+• Melhor previsibilidade e acuracidade de forecast
+• Vantagem competitiva através de inovação
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📋 CASOS DE USO TÍPICOS
+
+• Automação de propostas comerciais e contratos
+• Chatbots inteligentes para atendimento e vendas
+• Análise automatizada de calls de vendas
+• Dashboards de Sales Intelligence e forecasting
+• Enriquecimento automático de leads e dados
+• Automação de relatórios e análises recorrentes
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔧 ENTREGÁVEIS
+
+• Diagnóstico de oportunidades de automação
+• MVP de solução GenAI customizada
+• Dashboards de Sales Intelligence
+• Integração com CRM e ferramentas existentes
+• Treinamento de times para adoção
+• Suporte e evolução contínua da solução`,
       accent: "from-violet-400 to-primary",
     },
   ];
