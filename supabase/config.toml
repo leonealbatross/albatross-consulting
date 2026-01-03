@@ -8,3 +8,9 @@ verify_jwt = false
 
 [functions.hubspot-candidate]
 verify_jwt = false
+
+[functions.hubspot-duediligence]
+verify_jwt = false
+
+[functions.alba-chat]
+verify_jwt = false

@@ -5,13 +5,15 @@ import {
   Building2, 
   Sparkles, 
   Users,
-  ArrowRight 
+  ArrowRight,
+  Search
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSectionHighlight } from "@/hooks/use-section-highlight";
 import { useSmoothScroll } from "@/hooks/use-smooth-scroll";
 import ServiceDetailModal from "@/components/ServiceDetailModal";
+import DueDiligenceModal from "@/components/DueDiligenceModal";
 
 const Services = () => {
   const { t } = useLanguage();
@@ -83,6 +85,15 @@ Desenvolvemos dashboards avançados de Sales Intelligence para melhorar previsib
 Voltada a CEOs, CROs e líderes comerciais, a mentoria apoia decisões estratégicas, execução, liderança, performance de vendas e escala com foco em clareza, velocidade, accountability e resultados sustentáveis.`,
       accent: "from-rose-400 to-primary",
     },
+    {
+      icon: Search,
+      title: t("services.s7.title"),
+      description: t("services.s7.desc"),
+      highlight: t("services.s7.highlight"),
+      detailContent: t("services.s7.detailContent"),
+      accent: "from-amber-400 to-primary",
+      isDueDiligence: true,
+    },
   ];
 
   return (
@@ -153,7 +164,19 @@ Voltada a CEOs, CROs e líderes comerciais, a mentoria apoia decisões estratég
 
                 {/* CTA */}
                 <div className="relative">
-                  {service.detailContent ? (
+                  {service.isDueDiligence ? (
+                    <DueDiligenceModal
+                      trigger={
+                        <Button 
+                          variant="ghost" 
+                          className="p-0 h-auto text-sm text-primary hover:text-primary/80 group/btn"
+                        >
+                          {t("duediligence.cta")}
+                          <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 ml-2 transition-transform group-hover/btn:translate-x-1" />
+                        </Button>
+                      }
+                    />
+                  ) : service.detailContent ? (
                     <ServiceDetailModal
                       title={service.title}
                       content={service.detailContent}
