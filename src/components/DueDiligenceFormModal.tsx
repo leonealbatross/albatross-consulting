@@ -12,6 +12,7 @@ import {
 import { AnimatedInput } from "@/components/ui/animated-input";
 import { AnimatedTextarea } from "@/components/ui/animated-textarea";
 import { AnimatedSelect } from "@/components/ui/animated-select";
+import { AnimatedCheckbox, FormProgressIndicator } from "@/components/ui/animated-checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -1431,57 +1432,101 @@ ${formData.concerns}
                 </div>
 
                 {/* Objectives - Multiple choice */}
-                <div className="space-y-3">
-                  <Label className={errors.objectives ? "text-destructive" : ""}>
-                    {t("duediligence.objectives.title")} *
-                    <span className="text-muted-foreground text-xs ml-1">({t("duediligence.objectives.selectMultiple")})</span>
-                  </Label>
-                  <div className="grid gap-2">
-                    {objectiveOptions.map((option) => (
-                      <div key={option.value} className="flex items-start space-x-2">
-                        <Checkbox
+                <motion.div 
+                  className="space-y-3"
+                  variants={staggerItem}
+                >
+                  <div className="flex items-center justify-between">
+                    <Label className={errors.objectives ? "text-destructive" : ""}>
+                      {t("duediligence.objectives.title")} *
+                      <span className="text-muted-foreground text-xs ml-1">({t("duediligence.objectives.selectMultiple")})</span>
+                    </Label>
+                    <FormProgressIndicator 
+                      current={formData.objectives.length} 
+                      total={objectiveOptions.length}
+                      label=""
+                    />
+                  </div>
+                  <motion.div 
+                    className="grid gap-2"
+                    variants={staggerContainer}
+                    initial="initial"
+                    animate="animate"
+                  >
+                    {objectiveOptions.map((option, index) => (
+                      <motion.div
+                        key={option.value}
+                        variants={staggerItem}
+                        transition={{ delay: index * 0.05 }}
+                      >
+                        <AnimatedCheckbox
                           id={`obj-${option.value}`}
                           checked={formData.objectives.includes(option.value)}
                           onCheckedChange={() => handleObjectiveToggle(option.value)}
-                          className="mt-0.5"
+                          label={option.label}
+                          hasError={!!errors.objectives}
                         />
-                        <label
-                          htmlFor={`obj-${option.value}`}
-                          className="text-sm leading-tight cursor-pointer"
-                        >
-                          {option.label}
-                        </label>
-                      </div>
+                      </motion.div>
                     ))}
-                  </div>
-                  {errors.objectives && <p className="text-xs text-destructive">{errors.objectives}</p>}
-                </div>
+                  </motion.div>
+                  {errors.objectives && (
+                    <motion.p 
+                      className="text-xs text-destructive"
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                    >
+                      {errors.objectives}
+                    </motion.p>
+                  )}
+                </motion.div>
 
                 {/* Available Data - Required checkbox */}
-                <div className="space-y-3">
-                  <Label className={errors.availableData ? "text-destructive" : ""}>
-                    {t("duediligence.availableData.title")} *
-                  </Label>
-                  <div className="grid gap-2">
-                    {availableDataOptions.map((option) => (
-                      <div key={option.value} className="flex items-start space-x-2">
-                        <Checkbox
+                <motion.div 
+                  className="space-y-3"
+                  variants={staggerItem}
+                >
+                  <div className="flex items-center justify-between">
+                    <Label className={errors.availableData ? "text-destructive" : ""}>
+                      {t("duediligence.availableData.title")} *
+                    </Label>
+                    <FormProgressIndicator 
+                      current={formData.availableData.length} 
+                      total={availableDataOptions.length}
+                      label=""
+                    />
+                  </div>
+                  <motion.div 
+                    className="grid gap-2"
+                    variants={staggerContainer}
+                    initial="initial"
+                    animate="animate"
+                  >
+                    {availableDataOptions.map((option, index) => (
+                      <motion.div
+                        key={option.value}
+                        variants={staggerItem}
+                        transition={{ delay: index * 0.05 }}
+                      >
+                        <AnimatedCheckbox
                           id={`data-${option.value}`}
                           checked={formData.availableData.includes(option.value)}
                           onCheckedChange={() => handleDataToggle(option.value)}
-                          className="mt-0.5"
+                          label={option.label}
+                          hasError={!!errors.availableData}
                         />
-                        <label
-                          htmlFor={`data-${option.value}`}
-                          className="text-sm leading-tight cursor-pointer"
-                        >
-                          {option.label}
-                        </label>
-                      </div>
+                      </motion.div>
                     ))}
-                  </div>
-                  {errors.availableData && <p className="text-xs text-destructive">{errors.availableData}</p>}
-                </div>
+                  </motion.div>
+                  {errors.availableData && (
+                    <motion.p 
+                      className="text-xs text-destructive"
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                    >
+                      {errors.availableData}
+                    </motion.p>
+                  )}
+                </motion.div>
 
                 <div className="space-y-2">
                   <Label htmlFor="dd-concerns" className={errors.concerns ? "text-destructive" : ""}>
