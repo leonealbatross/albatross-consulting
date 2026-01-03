@@ -34,7 +34,7 @@ const handler = async (req: Request): Promise<Response> => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "Albatross Consulting <onboarding@resend.dev>",
+        from: "Albatross Consulting <noreply@albatross.consulting>",
         to: [email],
         subject: "Agradecemos sua candidatura - Albatross Consulting",
         html: `
