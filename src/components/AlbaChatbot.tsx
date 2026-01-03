@@ -13,11 +13,18 @@ const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/alba-chat`;
 
 const AlbaChatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Animação de entrada ao carregar a página
+  useEffect(() => {
+    const timer = setTimeout(() => setIsVisible(true), 1000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -176,15 +183,18 @@ const AlbaChatbot = () => {
       <button
         onClick={() => setIsOpen(true)}
         className={cn(
-          "fixed bottom-6 right-6 z-50 p-0 rounded-full shadow-2xl transition-all duration-300 hover:scale-110",
+          "fixed bottom-6 right-6 z-50 p-0 rounded-full shadow-2xl transition-all duration-500 hover:scale-110",
           "bg-gradient-to-br from-primary/20 to-primary/40 border-2 border-primary/50",
+          "transform",
+          isVisible && !isOpen ? "translate-y-0 opacity-100 scale-100" : "",
+          !isVisible ? "translate-y-16 opacity-0 scale-75" : "",
           isOpen && "scale-0 opacity-0"
         )}
-        aria-label="Abrir chat"
+        aria-label="Abrir chat com Alba"
       >
         <img 
           src={albaAvatar} 
-          alt="Alba - Assistente Virtual" 
+          alt="Alba - Assistente Virtual Albatross" 
           className="w-16 h-16 rounded-full object-cover"
         />
         <span className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-background animate-pulse" />
@@ -232,9 +242,9 @@ const AlbaChatbot = () => {
                 alt="Alba" 
                 className="w-20 h-20 rounded-full mx-auto mb-4 border-2 border-primary/30"
               />
-              <h4 className="font-medium text-foreground mb-2">Olá! Eu sou a Alba 👋</h4>
+              <h4 className="font-medium text-foreground mb-2">Olá! Eu sou o Alba 👋</h4>
               <p className="text-sm text-muted-foreground mb-4">
-                Assistente virtual da Albatross Consulting. Como posso ajudar você hoje?
+                Assistente virtual da Albatross Consulting. Como posso ajudá-lo hoje?
               </p>
               <div className="flex flex-wrap justify-center gap-2">
                 {[
