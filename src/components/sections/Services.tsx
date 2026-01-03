@@ -12,7 +12,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useSectionHighlight } from "@/hooks/use-section-highlight";
 import { useSmoothScroll } from "@/hooks/use-smooth-scroll";
 import ServiceDetailModal from "@/components/ServiceDetailModal";
-import DueDiligenceModal from "@/components/DueDiligenceModal";
+import DueDiligenceFormModal from "@/components/DueDiligenceFormModal";
 
 const Services = () => {
   const { t } = useLanguage();
@@ -158,7 +158,7 @@ Desenvolvemos dashboards avançados de Sales Intelligence para melhorar previsib
                 {/* CTA */}
                 <div className="relative">
                   {service.isDueDiligence ? (
-                    <DueDiligenceModal
+                    <DueDiligenceFormModal
                       trigger={
                         <Button 
                           variant="ghost" 
