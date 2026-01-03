@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,6 +9,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { AnimatedInput } from "@/components/ui/animated-input";
+import { AnimatedTextarea } from "@/components/ui/animated-textarea";
+import { AnimatedSelect } from "@/components/ui/animated-select";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -519,6 +522,44 @@ const DueDiligenceFormModal = ({ trigger }: DueDiligenceFormModalProps) => {
     return messages[language]?.[key] || messages.PT[key] || key;
   };
 
+  // Field validation helpers for animated inputs
+  const isNameValid = useCallback(() => {
+    return formData.name.trim().length >= 2;
+  }, [formData.name]);
+
+  const isEmailValid = useCallback(() => {
+    if (!formData.email) return false;
+    if (!emailRegex.test(formData.email)) return false;
+    const domain = formData.email.split('@')[1]?.toLowerCase();
+    return !personalEmailDomains.includes(domain);
+  }, [formData.email]);
+
+  const isPhoneValid = useCallback(() => {
+    const cleanedPhone = formData.phone.replace(/\D/g, '');
+    return cleanedPhone.length >= 8;
+  }, [formData.phone]);
+
+  const isCompanyValid = useCallback(() => {
+    return formData.company.trim().length >= 2;
+  }, [formData.company]);
+
+  const isTaxIdValid = useCallback(() => {
+    if (!formData.taxId) return false;
+    if (formData.country === "BR") {
+      return validateCNPJ(formData.taxId);
+    }
+    const cleanedTaxId = formData.taxId.replace(/[^a-zA-Z0-9]/g, '');
+    return cleanedTaxId.length >= 8;
+  }, [formData.taxId, formData.country]);
+
+  const isTargetCompanyValid = useCallback(() => {
+    return formData.targetCompany.trim().length >= 5;
+  }, [formData.targetCompany]);
+
+  const isConcernsValid = useCallback(() => {
+    return formData.concerns.trim().length >= 10;
+  }, [formData.concerns]);
+
   const getTaxIdLabel = (): string => {
     if (formData.country === "BR") {
       return "CNPJ";
@@ -980,7 +1021,7 @@ ${formData.concerns}
                     <Label htmlFor="dd-name">
                       {t("duediligence.fullName")} *
                     </Label>
-                    <Input
+                    <AnimatedInput
                       id="dd-name"
                       value={formData.name}
                       onChange={(e) => {
@@ -988,7 +1029,8 @@ ${formData.concerns}
                         if (errors.name) setErrors(prev => ({ ...prev, name: "" }));
                       }}
                       placeholder="João Silva"
-                      className={errors.name ? "border-destructive" : ""}
+                      hasError={!!errors.name}
+                      isValid={isNameValid()}
                     />
                     {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
                   </div>
@@ -996,7 +1038,7 @@ ${formData.concerns}
                     <Label htmlFor="dd-email">
                       {t("duediligence.corporateEmail")} *
                     </Label>
-                    <Input
+                    <AnimatedInput
                       id="dd-email"
                       type="email"
                       value={formData.email}
@@ -1005,7 +1047,8 @@ ${formData.concerns}
                         if (errors.email) setErrors(prev => ({ ...prev, email: "" }));
                       }}
                       placeholder="joao@empresa.com"
-                      className={errors.email ? "border-destructive" : ""}
+                      hasError={!!errors.email}
+                      isValid={isEmailValid()}
                     />
                     {errors.email && <p className="text-xs text-destructive">{errors.email}</p>}
                   </div>
@@ -1017,13 +1060,14 @@ ${formData.concerns}
                     <Label htmlFor="dd-phone">
                       {t("duediligence.phone")} *
                     </Label>
-                    <Input
+                    <AnimatedInput
                       id="dd-phone"
                       type="tel"
                       value={formData.phone}
                       onChange={(e) => handlePhoneChange(e.target.value)}
                       placeholder={phonePlaceholder}
-                      className={errors.phone ? "border-destructive" : ""}
+                      hasError={!!errors.phone}
+                      isValid={isPhoneValid()}
                     />
                     {errors.phone && <p className="text-xs text-destructive">{errors.phone}</p>}
                   </div>
@@ -1031,7 +1075,7 @@ ${formData.concerns}
                     <Label htmlFor="dd-company">
                       {t("duediligence.company")} *
                     </Label>
-                    <Input
+                    <AnimatedInput
                       id="dd-company"
                       value={formData.company}
                       onChange={(e) => {
@@ -1039,7 +1083,8 @@ ${formData.concerns}
                         if (errors.company) setErrors(prev => ({ ...prev, company: "" }));
                       }}
                       placeholder={t("duediligence.companyPlaceholder")}
-                      className={errors.company ? "border-destructive" : ""}
+                      hasError={!!errors.company}
+                      isValid={isCompanyValid()}
                     />
                     {errors.company && <p className="text-xs text-destructive">{errors.company}</p>}
                   </div>
@@ -1076,15 +1121,15 @@ ${formData.concerns}
                     <Label htmlFor="dd-taxid">
                       {getTaxIdLabel()} *
                     </Label>
-                    <Input
+                    <AnimatedInput
                       id="dd-taxid"
                       value={formData.taxId}
                       onChange={(e) => handleTaxIdChange(e.target.value)}
                       placeholder={formData.country === "BR" ? "00.000.000/0000-00" : "Tax ID"}
-                      className={errors.taxId ? "border-destructive" : ""}
+                      hasError={!!errors.taxId}
+                      isValid={isTaxIdValid()}
                       disabled={!formData.country}
                     />
-                    {errors.taxId && <p className="text-xs text-destructive">{errors.taxId}</p>}
                   </div>
                 </div>
 
@@ -1348,7 +1393,7 @@ ${formData.concerns}
                     <Label htmlFor="dd-target">
                       {t("duediligence.targetCompanySector")} *
                     </Label>
-                    <Input
+                    <AnimatedInput
                       id="dd-target"
                       value={formData.targetCompany}
                       onChange={(e) => {
@@ -1356,7 +1401,8 @@ ${formData.concerns}
                         if (errors.targetCompany) setErrors(prev => ({ ...prev, targetCompany: "" }));
                       }}
                       placeholder={t("duediligence.targetCompanyPlaceholder")}
-                      className={errors.targetCompany ? "border-destructive" : ""}
+                      hasError={!!errors.targetCompany}
+                      isValid={isTargetCompanyValid()}
                     />
                     {errors.targetCompany && <p className="text-xs text-destructive">{errors.targetCompany}</p>}
                   </div>
@@ -1437,12 +1483,11 @@ ${formData.concerns}
                   {errors.availableData && <p className="text-xs text-destructive">{errors.availableData}</p>}
                 </div>
 
-                {/* Concerns - Required */}
                 <div className="space-y-2">
                   <Label htmlFor="dd-concerns" className={errors.concerns ? "text-destructive" : ""}>
                     {t("duediligence.concerns")} *
                   </Label>
-                  <Textarea
+                  <AnimatedTextarea
                     id="dd-concerns"
                     value={formData.concerns}
                     onChange={(e) => {
@@ -1451,7 +1496,8 @@ ${formData.concerns}
                     }}
                     placeholder={t("duediligence.concernsPlaceholder")}
                     rows={3}
-                    className={errors.concerns ? "border-destructive" : ""}
+                    hasError={!!errors.concerns}
+                    isValid={isConcernsValid()}
                   />
                   {errors.concerns && <p className="text-xs text-destructive">{errors.concerns}</p>}
                 </div>
