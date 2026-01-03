@@ -2,3 +2,6 @@ project_id = "cthfacthzfdfeehjwsvl"
 
 [functions.send-candidate-email]
 verify_jwt = false
+
+[functions.hubspot-contact]
+verify_jwt = false
