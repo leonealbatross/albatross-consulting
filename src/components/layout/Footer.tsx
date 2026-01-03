@@ -156,8 +156,15 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
           </div>
         </div>
 
+        {/* Commitment Statement */}
+        <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-border/50">
+          <p className="text-xs text-muted-foreground text-center max-w-4xl mx-auto leading-relaxed">
+            A Albatross Consulting emprega seus melhores esforços para manter este website em conformidade com as melhores práticas e padrões internacionais de acessibilidade digital, privacidade de dados e otimização de performance, reafirmando seu compromisso com a excelência e a responsabilidade corporativa.
+          </p>
+        </div>
+
         {/* Bottom Bar */}
-        <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-border/50 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-border/50 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-xs sm:text-sm text-muted-foreground text-center md:text-left">
             © {currentYear} Albatross Consulting. {t("footer.copyright")}
           </p>
