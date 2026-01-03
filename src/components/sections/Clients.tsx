@@ -64,39 +64,41 @@ const Clients = () => {
       </div>
 
       {/* Infinite Scroll Carousel */}
-      <div className="relative">
+      <div className="relative" role="region" aria-label="Carrossel de clientes" aria-roledescription="carousel">
         {/* Gradient fade on edges */}
-        <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-r from-secondary/30 to-transparent z-10 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-l from-secondary/30 to-transparent z-10 pointer-events-none" />
+        <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-r from-secondary/30 to-transparent z-10 pointer-events-none" aria-hidden="true" />
+        <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-l from-secondary/30 to-transparent z-10 pointer-events-none" aria-hidden="true" />
         
         {/* Scrolling container */}
-        <div className="flex animate-scroll-left hover:[animation-play-state:paused]">
+        <div className="flex animate-scroll-left hover:[animation-play-state:paused]" aria-live="off">
           {duplicatedClients.map((client, index) => (
             <a
               key={index}
               href={client.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative flex-shrink-0 flex flex-col items-center justify-center p-4 sm:p-6 mx-2 sm:mx-4 w-[160px] sm:w-[200px] md:w-[240px] h-[120px] sm:h-[140px] rounded-lg sm:rounded-xl bg-background/50 backdrop-blur-sm border border-border/30 hover:border-primary/50 hover:shadow-glow hover:scale-105 hover:bg-background/80 transition-all duration-300 ease-out"
+              className="group relative flex-shrink-0 flex flex-col items-center justify-center p-4 sm:p-6 mx-2 sm:mx-4 w-[160px] sm:w-[200px] md:w-[240px] h-[120px] sm:h-[140px] rounded-lg sm:rounded-xl bg-background/50 backdrop-blur-sm border border-border/30 hover:border-primary/50 hover:shadow-glow hover:scale-105 hover:bg-background/80 transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background min-h-[44px]"
+              aria-label={`${client.name} - ${client.description} (abre em nova janela)`}
             >
               {/* Client Logo or Name */}
               {client.logo ? (
                 <img 
                   src={client.logo} 
-                  alt={`${client.name} logo`}
+                  alt=""
+                  aria-hidden="true"
                   className="max-h-8 sm:max-h-12 md:max-h-16 w-auto object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300"
                 />
               ) : (
-                <div className="text-lg sm:text-2xl md:text-3xl font-heading font-bold text-foreground/80 group-hover:text-primary transition-colors duration-300">
+                <div className="text-lg sm:text-2xl md:text-3xl font-heading font-bold text-foreground/80 group-hover:text-primary transition-colors duration-300" aria-hidden="true">
                   {client.name}
                 </div>
               )}
-              <div className="text-[10px] sm:text-xs text-muted-foreground mt-2 sm:mt-3 text-center">
+              <div className="text-[10px] sm:text-xs text-muted-foreground mt-2 sm:mt-3 text-center" aria-hidden="true">
                 {client.description}
               </div>
               
               {/* External Link Icon */}
-              <ExternalLink className="absolute top-2 right-2 sm:top-3 sm:right-3 w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <ExternalLink className="absolute top-2 right-2 sm:top-3 sm:right-3 w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden="true" />
             </a>
           ))}
         </div>

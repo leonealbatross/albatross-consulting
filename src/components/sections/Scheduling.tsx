@@ -56,7 +56,7 @@ const Scheduling = ({ calendlyUrl = "https://calendly.com/albatross-consulting" 
                   className="flex items-start gap-4 p-6 rounded-2xl bg-card border border-border/50 hover:border-primary/30 transition-all duration-300"
                 >
                   <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <feature.icon className="w-6 h-6 text-primary" />
+                    <feature.icon className="w-6 h-6 text-primary" aria-hidden="true" />
                   </div>
                   <div>
                     <h3 className="font-heading font-semibold text-foreground mb-2">
@@ -81,10 +81,15 @@ const Scheduling = ({ calendlyUrl = "https://calendly.com/albatross-consulting" 
                   width="100%"
                   height="650"
                   frameBorder="0"
-                  title="Calendly Scheduling"
+                  title="Agendar reunião com Albatross Consulting via Calendly"
                   className="w-full"
                   style={{ border: "none" }}
+                  loading="lazy"
+                  aria-label="Ferramenta de agendamento Calendly - selecione data e horário para agendar uma reunião"
                 />
+                <p className="sr-only">
+                  Se você não conseguir usar o calendário acima, entre em contato pelo email leone@albatross.consulting para agendar sua reunião.
+                </p>
               </div>
             </div>
           </div>

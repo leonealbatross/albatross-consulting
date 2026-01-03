@@ -48,15 +48,17 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
                 href="https://www.linkedin.com/in/marcoleone/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-secondary flex items-center justify-center hover:bg-primary/20 transition-colors"
+                className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center hover:bg-primary/20 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-card min-w-[44px] min-h-[44px]"
+                aria-label="LinkedIn de Marco Leone (abre em nova janela)"
               >
-                <Linkedin className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
+                <Linkedin className="w-5 h-5 text-muted-foreground" aria-hidden="true" />
               </a>
               <a
                 href="mailto:leone@albatross.consulting"
-                className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-secondary flex items-center justify-center hover:bg-primary/20 transition-colors"
+                className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center hover:bg-primary/20 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-card min-w-[44px] min-h-[44px]"
+                aria-label="Enviar email para leone@albatross.consulting"
               >
-                <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
+                <Mail className="w-5 h-5 text-muted-foreground" aria-hidden="true" />
               </a>
             </div>
           </div>
@@ -66,13 +68,13 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
             <h4 className="font-heading font-semibold text-sm sm:text-base text-foreground mb-3 sm:mb-4">
               {t("footer.services")}
             </h4>
-            <ul className="space-y-2 sm:space-y-3">
+            <ul className="space-y-2 sm:space-y-3" role="list">
               {links.services.map((link) => (
                 <li key={link.label}>
                   <a
                     href={link.href}
                     onClick={(e) => handleClick(e, link.href.replace('#', ''))}
-                    className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-card rounded inline-block min-h-[44px] py-2"
                   >
                     {link.label}
                   </a>
@@ -86,13 +88,13 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
             <h4 className="font-heading font-semibold text-sm sm:text-base text-foreground mb-3 sm:mb-4">
               {t("footer.company")}
             </h4>
-            <ul className="space-y-2 sm:space-y-3">
+            <ul className="space-y-2 sm:space-y-3" role="list">
               {links.company.map((link) => (
                 <li key={link.label}>
                   <a
                     href={link.href}
                     onClick={(e) => handleClick(e, link.href.replace('#', ''))}
-                    className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-card rounded inline-block min-h-[44px] py-2"
                   >
                     {link.label}
                   </a>
@@ -109,30 +111,31 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
             <div className="mb-3 sm:mb-4">
               <span className="text-xs sm:text-sm text-primary font-medium">LATAM Office</span>
             </div>
-            <ul className="space-y-3 sm:space-y-4">
+            <ul className="space-y-3 sm:space-y-4" role="list">
               <li className="flex items-start gap-2 sm:gap-3">
-                <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0 mt-0.5" />
-                <span className="text-xs sm:text-sm text-muted-foreground">
+                <MapPin className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" aria-hidden="true" />
+                <address className="text-xs sm:text-sm text-muted-foreground not-italic">
                   <strong className="text-foreground">Brascan Century Offices</strong><br />
                   R. Joaquim Floriano, 466. Cj 814<br />
                   Itaim Bibi, São Paulo - SP<br />
                   CEP: 04534-002
-                </span>
+                </address>
               </li>
               <li className="flex items-center gap-2 sm:gap-3">
                 <a 
                   href="https://wa.me/5511981332775" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center hover:scale-110 transition-transform"
+                  className="flex items-center justify-center hover:scale-110 transition-transform min-w-[44px] min-h-[44px] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-card rounded"
+                  aria-label="Contato via WhatsApp: +55 11 981332775 (abre em nova janela)"
                 >
-                  <Phone className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
+                  <Phone className="w-5 h-5 text-primary flex-shrink-0" aria-hidden="true" />
                 </a>
                 <a 
                   href="https://wa.me/5511981332775" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-card rounded"
                 >
                   +55 11 981332775
                 </a>
@@ -140,11 +143,12 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
               <li className="flex items-center gap-2 sm:gap-3">
                 <a 
                   href="mailto:leone@albatross.consulting"
-                  className="flex items-center justify-center hover:scale-110 transition-transform"
+                  className="flex items-center justify-center hover:scale-110 transition-transform min-w-[44px] min-h-[44px] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-card rounded"
+                  aria-label="Enviar email para leone@albatross.consulting"
                 >
-                  <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
+                  <Mail className="w-5 h-5 text-primary flex-shrink-0" aria-hidden="true" />
                 </a>
-                <a href="mailto:leone@albatross.consulting" className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors break-all">
+                <a href="mailto:leone@albatross.consulting" className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors break-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-card rounded">
                   leone@albatross.consulting
                 </a>
               </li>
