@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { MessageCircle, X, Send, Calendar, Mail, Loader2, Briefcase, Users, Brain, Phone, ChevronLeft, Check, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
@@ -699,16 +700,25 @@ Consentimento LGPD: Sim (${new Date().toISOString()})
                 <p className="text-xs text-muted-foreground truncate">Assistente Albatross Consulting</p>
               </div>
               <div className="flex items-center gap-1 flex-shrink-0">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="hidden sm:flex gap-1.5 text-xs text-primary hover:text-primary hover:bg-primary/10 px-2 h-8"
-                  onClick={() => navigateToSection("agendamento")}
-                  aria-label="Agendar reunião"
-                >
-                  <Calendar className="w-3.5 h-3.5" />
-                  <span className="hidden md:inline">Agendar</span>
-                </Button>
+                <TooltipProvider delayDuration={300}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="flex gap-1.5 text-xs text-primary hover:text-primary hover:bg-primary/10 px-2 h-8"
+                        onClick={() => navigateToSection("agendamento")}
+                        aria-label="Agendar reunião"
+                      >
+                        <Calendar className="w-3.5 h-3.5" />
+                        <span className="hidden sm:inline">Agendar</span>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="bg-popover text-popover-foreground border border-border shadow-lg">
+                      <p>Agendar uma reunião com nossa equipe</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
                 <Button
                   variant="ghost"
                   size="icon"
