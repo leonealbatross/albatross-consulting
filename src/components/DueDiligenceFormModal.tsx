@@ -13,6 +13,7 @@ import { AnimatedInput } from "@/components/ui/animated-input";
 import { AnimatedTextarea } from "@/components/ui/animated-textarea";
 import { AnimatedSelect } from "@/components/ui/animated-select";
 import { AnimatedCheckbox, FormProgressIndicator } from "@/components/ui/animated-checkbox";
+import { MotivationalMessage } from "@/components/ui/motivational-message";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -561,6 +562,34 @@ const DueDiligenceFormModal = ({ trigger }: DueDiligenceFormModalProps) => {
     return formData.concerns.trim().length >= 10;
   }, [formData.concerns]);
 
+  // Calculate fields completed for motivational messages
+  const step1FieldsCompleted = useMemo(() => {
+    let count = 0;
+    if (isNameValid()) count++;
+    if (isEmailValid()) count++;
+    if (isPhoneValid()) count++;
+    if (isCompanyValid()) count++;
+    if (formData.country) count++;
+    if (isTaxIdValid()) count++;
+    if (formData.transactionType) count++;
+    if (formData.dealStatus) count++;
+    return count;
+  }, [isNameValid, isEmailValid, isPhoneValid, isCompanyValid, formData.country, isTaxIdValid, formData.transactionType, formData.dealStatus]);
+
+  const step2FieldsCompleted = useMemo(() => {
+    let count = 0;
+    if (formData.requesterProfile) count++;
+    if (formData.jobTitle) count++;
+    if (formData.marketSegment) count++;
+    if (formData.revenueModel) count++;
+    if (isTargetCompanyValid()) count++;
+    if (formData.targetRevenue) count++;
+    if (formData.objectives.length > 0) count++;
+    if (formData.availableData.length > 0) count++;
+    if (isConcernsValid()) count++;
+    return count;
+  }, [formData.requesterProfile, formData.jobTitle, formData.marketSegment, formData.revenueModel, isTargetCompanyValid, formData.targetRevenue, formData.objectives.length, formData.availableData.length, isConcernsValid]);
+
   const getTaxIdLabel = (): string => {
     if (formData.country === "BR") {
       return "CNPJ";
@@ -985,7 +1014,7 @@ ${formData.concerns}
 
             {/* Progress Bar */}
             <motion.div 
-              className="mt-4 space-y-2"
+              className="mt-4 space-y-3"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.1 }}
@@ -1002,6 +1031,15 @@ ${formData.concerns}
               >
                 <Progress value={step === 1 ? 50 : 100} className="h-2" />
               </motion.div>
+              
+              {/* Motivational Message */}
+              <MotivationalMessage
+                step={step}
+                totalSteps={2}
+                fieldsCompleted={step === 1 ? step1FieldsCompleted : step2FieldsCompleted}
+                totalFields={step === 1 ? 8 : 9}
+                language={language as "PT" | "EN" | "ES"}
+              />
             </motion.div>
 
             <AnimatePresence mode="wait">
