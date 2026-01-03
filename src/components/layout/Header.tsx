@@ -12,6 +12,12 @@ import { useActiveSection } from "@/hooks/use-active-section";
 import { useSmoothScroll } from "@/hooks/use-smooth-scroll";
 import albatrossLogo from "@/assets/logo-albatross-new.jpeg";
 import { Link } from "react-router-dom";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 
 const Header = () => {
@@ -104,14 +110,22 @@ const Header = () => {
           {/* Right Section */}
           <div className="hidden lg:flex items-center gap-2">
             {/* Accessibility Link */}
-            <Link
-              to="/accessibility"
-              className="p-2 text-muted-foreground hover:text-primary transition-colors rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background min-w-[44px] min-h-[44px] flex items-center justify-center"
-              aria-label="Acessibilidade"
-              title="Acessibilidade"
-            >
-              <Accessibility className="w-5 h-5" aria-hidden="true" />
-            </Link>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link
+                    to="/accessibility"
+                    className="p-2 text-muted-foreground hover:text-primary transition-colors rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background min-w-[44px] min-h-[44px] flex items-center justify-center"
+                    aria-label="Acessibilidade"
+                  >
+                    <Accessibility className="w-5 h-5" aria-hidden="true" />
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Acessibilidade</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
 
             {/* Language Selector */}
             <DropdownMenu>
@@ -179,14 +193,23 @@ const Header = () => {
               <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Menu</span>
               <div className="flex items-center gap-2">
                 {/* Accessibility Link - Mobile */}
-                <Link
-                  to="/accessibility"
-                  className="p-2 text-muted-foreground hover:text-primary transition-colors rounded-lg focus:outline-none focus:ring-2 focus:ring-primary min-w-[44px] min-h-[44px] flex items-center justify-center"
-                  aria-label="Acessibilidade"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <Accessibility className="w-5 h-5" aria-hidden="true" />
-                </Link>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Link
+                        to="/accessibility"
+                        className="p-2 text-muted-foreground hover:text-primary transition-colors rounded-lg focus:outline-none focus:ring-2 focus:ring-primary min-w-[44px] min-h-[44px] flex items-center justify-center"
+                        aria-label="Acessibilidade"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        <Accessibility className="w-5 h-5" aria-hidden="true" />
+                      </Link>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Acessibilidade</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
                 {/* Language Selector - Simple like desktop */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
