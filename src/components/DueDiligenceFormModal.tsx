@@ -32,25 +32,25 @@ interface DueDiligenceFormModalProps {
 
 // Step 1 Schema
 const step1Schema = z.object({
-  name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres").max(100),
-  email: z.string().email("Email corporativo inválido").max(255),
-  company: z.string().min(2, "Empresa é obrigatória").max(100),
-  roleInTransaction: z.string().min(1, "Papel na transação é obrigatório"),
-  dealStatus: z.string().min(1, "Status do deal é obrigatório"),
+  name: z.string().min(2).max(100),
+  email: z.string().email().max(255),
+  company: z.string().min(2).max(100),
+  roleInTransaction: z.string().min(1),
+  dealStatus: z.string().min(1),
 });
 
 // Step 2 Schema
 const step2Schema = z.object({
-  jobTitle: z.string().min(1, "Cargo é obrigatório"),
-  targetCompany: z.string().min(2, "Setor e geografia são obrigatórios").max(200),
-  targetRevenue: z.string().min(1, "Porte da empresa-alvo é obrigatório"),
-  objectives: z.array(z.string()).min(1, "Selecione pelo menos um objetivo"),
+  jobTitle: z.string().min(1),
+  targetCompany: z.string().min(2).max(200),
+  targetRevenue: z.string().min(1),
+  objectives: z.array(z.string()).min(1),
   availableData: z.array(z.string()).optional(),
   concerns: z.string().max(1000).optional(),
 });
 
 const DueDiligenceFormModal = ({ trigger }: DueDiligenceFormModalProps) => {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -74,109 +74,54 @@ const DueDiligenceFormModal = ({ trigger }: DueDiligenceFormModalProps) => {
   });
 
   const roleOptions = [
-    { value: "strategic_buyer", label: language === "PT" ? "Comprador estratégico" : language === "ES" ? "Comprador estratégico" : "Strategic Buyer" },
-    { value: "private_equity", label: "Private Equity" },
-    { value: "seller_management", label: language === "PT" ? "Vendedor/Management" : language === "ES" ? "Vendedor/Management" : "Seller/Management" },
-    { value: "advisor", label: language === "PT" ? "Advisor (IB/M&A)" : language === "ES" ? "Asesor (IB/M&A)" : "Advisor (IB/M&A)" },
-    { value: "other", label: language === "PT" ? "Outro" : language === "ES" ? "Otro" : "Other" },
+    { value: "strategic_buyer", label: t("duediligence.role.strategicBuyer") },
+    { value: "private_equity", label: t("duediligence.role.privateEquity") },
+    { value: "seller_management", label: t("duediligence.role.sellerManagement") },
+    { value: "advisor", label: t("duediligence.role.advisor") },
+    { value: "other", label: t("duediligence.role.other") },
   ];
 
   const dealStatusOptions = [
-    { value: "pre_loi", label: "Pré-LOI" },
-    { value: "post_loi", label: "Pós-LOI" },
-    { value: "exclusivity", label: language === "PT" ? "Exclusividade" : language === "ES" ? "Exclusividad" : "Exclusivity" },
-    { value: "pre_closing", label: "Pré-closing" },
-    { value: "post_closing", label: language === "PT" ? "Pós-closing (plano 100 dias)" : language === "ES" ? "Post-closing (plan 100 días)" : "Post-closing (100-day plan)" },
-    { value: "other", label: language === "PT" ? "Outro" : language === "ES" ? "Otro" : "Other" },
+    { value: "pre_loi", label: t("duediligence.status.preLoi") },
+    { value: "post_loi", label: t("duediligence.status.postLoi") },
+    { value: "exclusivity", label: t("duediligence.status.exclusivity") },
+    { value: "pre_closing", label: t("duediligence.status.preClosing") },
+    { value: "post_closing", label: t("duediligence.status.postClosing") },
+    { value: "other", label: t("duediligence.status.other") },
   ];
 
   const jobTitleOptions = [
-    { value: "partner", label: language === "PT" ? "Sócio/Partner" : language === "ES" ? "Socio/Partner" : "Partner" },
-    { value: "ceo", label: "CEO" },
-    { value: "cfo", label: "CFO" },
-    { value: "cro_vp_sales", label: "CRO/VP Sales" },
-    { value: "head_ma", label: language === "PT" ? "Head de M&A/Corp Dev" : language === "ES" ? "Head de M&A/Corp Dev" : "Head of M&A/Corp Dev" },
-    { value: "other", label: language === "PT" ? "Outro" : language === "ES" ? "Otro" : "Other" },
+    { value: "partner", label: t("duediligence.title.partner") },
+    { value: "ceo", label: t("duediligence.title.ceo") },
+    { value: "cfo", label: t("duediligence.title.cfo") },
+    { value: "cro_vp_sales", label: t("duediligence.title.croVpSales") },
+    { value: "head_ma", label: t("duediligence.title.headMa") },
+    { value: "other", label: t("duediligence.title.other") },
   ];
 
   const revenueOptions = [
-    { value: "under_50m", label: language === "PT" ? "Receita anual <R$50M" : language === "ES" ? "Ingresos anuales <$50M" : "Annual revenue <$50M" },
-    { value: "50m_200m", label: language === "PT" ? "R$50–200M" : language === "ES" ? "$50–200M" : "$50–200M" },
-    { value: "200m_500m", label: language === "PT" ? "R$200–500M" : language === "ES" ? "$200–500M" : "$200–500M" },
-    { value: "above_500m", label: language === "PT" ? ">R$500M" : language === "ES" ? ">$500M" : ">$500M" },
-    { value: "unknown", label: language === "PT" ? "Não sei informar" : language === "ES" ? "No sé informar" : "Don't know" },
+    { value: "under_50m", label: t("duediligence.revenue.under50m") },
+    { value: "50m_200m", label: t("duediligence.revenue.50m200m") },
+    { value: "200m_500m", label: t("duediligence.revenue.200m500m") },
+    { value: "above_500m", label: t("duediligence.revenue.above500m") },
+    { value: "unknown", label: t("duediligence.revenue.unknown") },
   ];
 
   const objectiveOptions = [
-    { 
-      value: "validate_icp", 
-      label: language === "PT" ? "Validar ICP/segmentação e proposta de valor" : 
-             language === "ES" ? "Validar ICP/segmentación y propuesta de valor" : 
-             "Validate ICP/segmentation and value proposition" 
-    },
-    { 
-      value: "evaluate_pricing", 
-      label: language === "PT" ? "Avaliar pricing/discounting e margem" : 
-             language === "ES" ? "Evaluar pricing/descuentos y margen" : 
-             "Evaluate pricing/discounting and margin" 
-    },
-    { 
-      value: "validate_sales_motions", 
-      label: language === "PT" ? "Validar sales motions (SMB/Mid, B2C, Enterprise/KAM, Green Field, SDR)" : 
-             language === "ES" ? "Validar sales motions (SMB/Mid, B2C, Enterprise/KAM, Green Field, SDR)" : 
-             "Validate sales motions (SMB/Mid, B2C, Enterprise/KAM, Green Field, SDR)" 
-    },
-    { 
-      value: "measure_pipeline", 
-      label: language === "PT" ? "Medir saúde de pipeline (Rolling Four Quarters)" : 
-             language === "ES" ? "Medir salud del pipeline (Rolling Four Quarters)" : 
-             "Measure pipeline health (Rolling Four Quarters)" 
-    },
-    { 
-      value: "test_forecast", 
-      label: language === "PT" ? "Testar previsibilidade de forecast (3 anos)" : 
-             language === "ES" ? "Probar previsibilidad de forecast (3 años)" : 
-             "Test forecast predictability (3 years)" 
-    },
-    { 
-      value: "evaluate_sales_ops", 
-      label: language === "PT" ? "Avaliar Sales Operations (CRM, métricas, enablement, incentivos)" : 
-             language === "ES" ? "Evaluar Sales Operations (CRM, métricas, enablement, incentivos)" : 
-             "Evaluate Sales Operations (CRM, metrics, enablement, incentives)" 
-    },
+    { value: "validate_icp", label: t("duediligence.obj.validateIcp") },
+    { value: "evaluate_pricing", label: t("duediligence.obj.evaluatePricing") },
+    { value: "validate_sales_motions", label: t("duediligence.obj.validateSalesMotions") },
+    { value: "measure_pipeline", label: t("duediligence.obj.measurePipeline") },
+    { value: "test_forecast", label: t("duediligence.obj.testForecast") },
+    { value: "evaluate_sales_ops", label: t("duediligence.obj.evaluateSalesOps") },
   ];
 
   const availableDataOptions = [
-    { 
-      value: "crm_export", 
-      label: language === "PT" ? "Export do CRM com histórico" : 
-             language === "ES" ? "Exportación del CRM con histórico" : 
-             "CRM export with history" 
-    },
-    { 
-      value: "quotas", 
-      label: language === "PT" ? "Metas/quotas (12 trimestres)" : 
-             language === "ES" ? "Metas/cuotas (12 trimestres)" : 
-             "Goals/quotas (12 quarters)" 
-    },
-    { 
-      value: "forecast_snapshots", 
-      label: language === "PT" ? "Snapshots de forecast (semanal/mensal)" : 
-             language === "ES" ? "Snapshots de forecast (semanal/mensual)" : 
-             "Forecast snapshots (weekly/monthly)" 
-    },
-    { 
-      value: "client_list", 
-      label: language === "PT" ? "Lista de clientes/contratos/renovações" : 
-             language === "ES" ? "Lista de clientes/contratos/renovaciones" : 
-             "Client/contract/renewal list" 
-    },
-    { 
-      value: "org_charts", 
-      label: language === "PT" ? "Org charts e comp plan" : 
-             language === "ES" ? "Org charts y comp plan" : 
-             "Org charts and comp plan" 
-    },
+    { value: "crm_export", label: t("duediligence.data.crmExport") },
+    { value: "quotas", label: t("duediligence.data.quotas") },
+    { value: "forecast_snapshots", label: t("duediligence.data.forecastSnapshots") },
+    { value: "client_list", label: t("duediligence.data.clientList") },
+    { value: "org_charts", label: t("duediligence.data.orgCharts") },
   ];
 
   const handleStep1Submit = () => {
@@ -190,8 +135,8 @@ const DueDiligenceFormModal = ({ trigger }: DueDiligenceFormModalProps) => {
 
     if (!result.success) {
       toast({
-        title: language === "PT" ? "Campos obrigatórios" : language === "ES" ? "Campos obligatorios" : "Required fields",
-        description: result.error.errors[0]?.message || "Por favor, preencha todos os campos obrigatórios",
+        title: t("duediligence.required"),
+        description: t("duediligence.fillRequired"),
         variant: "destructive",
       });
       return;
@@ -230,8 +175,8 @@ const DueDiligenceFormModal = ({ trigger }: DueDiligenceFormModalProps) => {
 
     if (!result.success) {
       toast({
-        title: language === "PT" ? "Campos obrigatórios" : language === "ES" ? "Campos obligatorios" : "Required fields",
-        description: result.error.errors[0]?.message || "Por favor, preencha todos os campos obrigatórios",
+        title: t("duediligence.required"),
+        description: t("duediligence.fillRequired"),
         variant: "destructive",
       });
       return;
@@ -331,17 +276,15 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
   const copyToClipboard = () => {
     navigator.clipboard.writeText(getScopeSummary());
     toast({
-      title: language === "PT" ? "Copiado!" : language === "ES" ? "¡Copiado!" : "Copied!",
-      description: language === "PT" ? "Resumo copiado para a área de transferência" : 
-                   language === "ES" ? "Resumen copiado al portapapeles" : 
-                   "Summary copied to clipboard",
+      title: t("duediligence.success.copied"),
+      description: t("duediligence.success.copiedDesc"),
     });
   };
 
   const defaultTrigger = (
     <Button className="gap-2">
       <Search className="w-4 h-4" />
-      {language === "PT" ? "Solicitar avaliação" : language === "ES" ? "Solicitar evaluación" : "Request assessment"}
+      {t("duediligence.cta")}
     </Button>
   );
 
@@ -356,21 +299,17 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
           <>
             <DialogHeader>
               <DialogTitle className="text-xl sm:text-2xl font-heading">
-                {language === "PT" ? "Solicitar avaliação — Due Diligence Comercial para M&A" : 
-                 language === "ES" ? "Solicitar evaluación — Due Diligence Comercial para M&A" : 
-                 "Request assessment — Commercial Due Diligence for M&A"}
+                {t("duediligence.modal.title")}
               </DialogTitle>
               <DialogDescription>
-                {language === "PT" ? "Responda em 2 minutos para recomendarmos a melhor abordagem." : 
-                 language === "ES" ? "Responda en 2 minutos para recomendar el mejor enfoque." : 
-                 "Answer in 2 minutes so we can recommend the best approach."}
+                {t("duediligence.modal.subtitle")}
               </DialogDescription>
             </DialogHeader>
 
             {/* Progress Bar */}
             <div className="mt-4 space-y-2">
               <div className="flex justify-between text-xs text-muted-foreground">
-                <span>{language === "PT" ? "Etapa" : language === "ES" ? "Paso" : "Step"} {step} {language === "PT" ? "de" : language === "ES" ? "de" : "of"} 2</span>
+                <span>{t("duediligence.step")} {step} {t("duediligence.of")} 2</span>
                 <span>{step === 1 ? "50%" : "100%"}</span>
               </div>
               <Progress value={step === 1 ? 50 : 100} className="h-2" />
@@ -382,7 +321,7 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="dd-name">
-                      {language === "PT" ? "Nome completo" : language === "ES" ? "Nombre completo" : "Full name"} *
+                      {t("duediligence.fullName")} *
                     </Label>
                     <Input
                       id="dd-name"
@@ -394,7 +333,7 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="dd-email">
-                      {language === "PT" ? "Email corporativo" : language === "ES" ? "Email corporativo" : "Corporate email"} *
+                      {t("duediligence.corporateEmail")} *
                     </Label>
                     <Input
                       id="dd-email"
@@ -410,20 +349,20 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="dd-company">
-                      {language === "PT" ? "Empresa" : language === "ES" ? "Empresa" : "Company"} *
+                      {t("duediligence.company")} *
                     </Label>
                     <Input
                       id="dd-company"
                       value={formData.company}
                       onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                      placeholder={language === "PT" ? "Nome da sua empresa" : language === "ES" ? "Nombre de su empresa" : "Your company name"}
+                      placeholder={t("duediligence.companyPlaceholder")}
                       required
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="dd-phone">
-                      {language === "PT" ? "Telefone/WhatsApp" : language === "ES" ? "Teléfono/WhatsApp" : "Phone/WhatsApp"} 
-                      <span className="text-muted-foreground text-xs ml-1">({language === "PT" ? "opcional" : language === "ES" ? "opcional" : "optional"})</span>
+                      {t("duediligence.phone")} 
+                      <span className="text-muted-foreground text-xs ml-1">({t("duediligence.optional")})</span>
                     </Label>
                     <Input
                       id="dd-phone"
@@ -436,13 +375,13 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>{language === "PT" ? "Papel na transação" : language === "ES" ? "Rol en la transacción" : "Role in transaction"} *</Label>
+                    <Label>{t("duediligence.roleInTransaction")} *</Label>
                     <Select
                       value={formData.roleInTransaction}
                       onValueChange={(value) => setFormData({ ...formData, roleInTransaction: value })}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder={language === "PT" ? "Selecione..." : language === "ES" ? "Seleccione..." : "Select..."} />
+                        <SelectValue placeholder={t("duediligence.select")} />
                       </SelectTrigger>
                       <SelectContent className="bg-background border shadow-lg z-50">
                         {roleOptions.map((option) => (
@@ -454,13 +393,13 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label>{language === "PT" ? "Status e janela do deal" : language === "ES" ? "Estado y ventana del deal" : "Deal status and window"} *</Label>
+                    <Label>{t("duediligence.dealStatus")} *</Label>
                     <Select
                       value={formData.dealStatus}
                       onValueChange={(value) => setFormData({ ...formData, dealStatus: value })}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder={language === "PT" ? "Selecione..." : language === "ES" ? "Seleccione..." : "Select..."} />
+                        <SelectValue placeholder={t("duediligence.select")} />
                       </SelectTrigger>
                       <SelectContent className="bg-background border shadow-lg z-50">
                         {dealStatusOptions.map((option) => (
@@ -478,7 +417,7 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
                   className="w-full gap-2 mt-4" 
                   onClick={handleStep1Submit}
                 >
-                  {language === "PT" ? "Continuar" : language === "ES" ? "Continuar" : "Continue"}
+                  {t("duediligence.continue")}
                   <ArrowRight className="w-4 h-4" />
                 </Button>
               </div>
@@ -487,13 +426,13 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
               <div className="space-y-4 mt-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>{language === "PT" ? "Cargo" : language === "ES" ? "Cargo" : "Job Title"} *</Label>
+                    <Label>{t("duediligence.jobTitle")} *</Label>
                     <Select
                       value={formData.jobTitle}
                       onValueChange={(value) => setFormData({ ...formData, jobTitle: value })}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder={language === "PT" ? "Selecione..." : language === "ES" ? "Seleccione..." : "Select..."} />
+                        <SelectValue placeholder={t("duediligence.select")} />
                       </SelectTrigger>
                       <SelectContent className="bg-background border shadow-lg z-50">
                         {jobTitleOptions.map((option) => (
@@ -505,13 +444,13 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label>{language === "PT" ? "Porte da empresa-alvo" : language === "ES" ? "Tamaño de la empresa objetivo" : "Target company size"} *</Label>
+                    <Label>{t("duediligence.targetCompanySize")} *</Label>
                     <Select
                       value={formData.targetRevenue}
                       onValueChange={(value) => setFormData({ ...formData, targetRevenue: value })}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder={language === "PT" ? "Selecione..." : language === "ES" ? "Seleccione..." : "Select..."} />
+                        <SelectValue placeholder={t("duediligence.select")} />
                       </SelectTrigger>
                       <SelectContent className="bg-background border shadow-lg z-50">
                         {revenueOptions.map((option) => (
@@ -526,27 +465,21 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
 
                 <div className="space-y-2">
                   <Label htmlFor="dd-target">
-                    {language === "PT" ? "Empresa-alvo: setor e geografia principal" : 
-                     language === "ES" ? "Empresa objetivo: sector y geografía principal" : 
-                     "Target company: sector and main geography"} *
+                    {t("duediligence.targetCompanySector")} *
                   </Label>
                   <Input
                     id="dd-target"
                     value={formData.targetCompany}
                     onChange={(e) => setFormData({ ...formData, targetCompany: e.target.value })}
-                    placeholder={language === "PT" ? "Ex.: SaaS B2B – Brasil/LatAm" : 
-                                 language === "ES" ? "Ej.: SaaS B2B – Brasil/LatAm" : 
-                                 "E.g.: B2B SaaS – Brazil/LatAm"}
+                    placeholder={t("duediligence.targetCompanyPlaceholder")}
                     required
                   />
                 </div>
 
                 <div className="space-y-3">
                   <Label>
-                    {language === "PT" ? "Objetivo principal do Due Diligence Comercial" : 
-                     language === "ES" ? "Objetivo principal del Due Diligence Comercial" : 
-                     "Main Commercial Due Diligence objectives"} *
-                    <span className="text-muted-foreground text-xs ml-1">({language === "PT" ? "selecione um ou mais" : language === "ES" ? "seleccione uno o más" : "select one or more"})</span>
+                    {t("duediligence.objectives.title")} *
+                    <span className="text-muted-foreground text-xs ml-1">({t("duediligence.objectives.selectMultiple")})</span>
                   </Label>
                   <div className="grid gap-2">
                     {objectiveOptions.map((option) => (
@@ -570,10 +503,8 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
 
                 <div className="space-y-3">
                   <Label>
-                    {language === "PT" ? "Quais dados vocês conseguem disponibilizar em até 5 dias úteis?" : 
-                     language === "ES" ? "¿Qué datos pueden proporcionar en hasta 5 días hábiles?" : 
-                     "What data can you provide within 5 business days?"}
-                    <span className="text-muted-foreground text-xs ml-1">({language === "PT" ? "opcional" : language === "ES" ? "opcional" : "optional"})</span>
+                    {t("duediligence.availableData.title")}
+                    <span className="text-muted-foreground text-xs ml-1">({t("duediligence.optional")})</span>
                   </Label>
                   <div className="grid gap-2">
                     {availableDataOptions.map((option) => (
@@ -597,27 +528,21 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
 
                 <div className="space-y-2">
                   <Label htmlFor="dd-concerns">
-                    {language === "PT" ? "Riscos/hipóteses que mais preocupam o comitê" : 
-                     language === "ES" ? "Riesgos/hipótesis que más preocupan al comité" : 
-                     "Risks/hypotheses that concern the committee most"}
-                    <span className="text-muted-foreground text-xs ml-1">({language === "PT" ? "opcional" : language === "ES" ? "opcional" : "optional"})</span>
+                    {t("duediligence.concerns")}
+                    <span className="text-muted-foreground text-xs ml-1">({t("duediligence.optional")})</span>
                   </Label>
                   <Textarea
                     id="dd-concerns"
                     value={formData.concerns}
                     onChange={(e) => setFormData({ ...formData, concerns: e.target.value })}
-                    placeholder={language === "PT" ? "Ex.: Concentração de receita, dependência de poucos clientes, turnover alto em vendas..." : 
-                                 language === "ES" ? "Ej.: Concentración de ingresos, dependencia de pocos clientes, alta rotación en ventas..." : 
-                                 "E.g.: Revenue concentration, dependency on few clients, high sales turnover..."}
+                    placeholder={t("duediligence.concernsPlaceholder")}
                     rows={3}
                   />
                 </div>
 
                 {/* LGPD Notice */}
                 <p className="text-xs text-muted-foreground bg-muted/50 p-3 rounded-lg">
-                  {language === "PT" ? "Ao enviar, você concorda em ser contatado pela Albatross Consulting para tratar da sua solicitação, conforme nossa política de privacidade." : 
-                   language === "ES" ? "Al enviar, acepta ser contactado por Albatross Consulting para gestionar su solicitud, según nuestra política de privacidad." : 
-                   "By submitting, you agree to be contacted by Albatross Consulting regarding your request, in accordance with our privacy policy."}
+                  {t("duediligence.lgpd")}
                 </p>
 
                 <div className="flex gap-3 mt-4">
@@ -628,7 +553,7 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
                     onClick={() => setStep(1)}
                   >
                     <ArrowLeft className="w-4 h-4" />
-                    {language === "PT" ? "Voltar" : language === "ES" ? "Volver" : "Back"}
+                    {t("duediligence.back")}
                   </Button>
                   <Button 
                     type="button" 
@@ -641,9 +566,7 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
                     ) : (
                       <Search className="w-4 h-4" />
                     )}
-                    {isSubmitting 
-                      ? (language === "PT" ? "Enviando..." : language === "ES" ? "Enviando..." : "Sending...") 
-                      : (language === "PT" ? "Solicitar avaliação" : language === "ES" ? "Solicitar evaluación" : "Request assessment")}
+                    {isSubmitting ? t("duediligence.sending") : t("duediligence.submit")}
                   </Button>
                 </div>
               </div>
@@ -660,14 +583,10 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
             
             <div>
               <h3 className="text-xl font-heading font-semibold text-foreground mb-2">
-                {language === "PT" ? "Solicitação enviada com sucesso!" : 
-                 language === "ES" ? "¡Solicitud enviada con éxito!" : 
-                 "Request submitted successfully!"}
+                {t("duediligence.success.title")}
               </h3>
               <p className="text-muted-foreground">
-                {language === "PT" ? "Nossa equipe entrará em contato em até 1 dia útil." : 
-                 language === "ES" ? "Nuestro equipo se pondrá en contacto en hasta 1 día hábil." : 
-                 "Our team will contact you within 1 business day."}
+                {t("duediligence.success.contact")}
               </p>
             </div>
 
@@ -675,9 +594,7 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
               <div className="flex items-center gap-2 mb-3">
                 <FileText className="w-4 h-4 text-primary" />
                 <span className="font-medium text-sm">
-                  {language === "PT" ? "Resumo do escopo" : 
-                   language === "ES" ? "Resumen del alcance" : 
-                   "Scope summary"}
+                  {t("duediligence.success.scopeSummary")}
                 </span>
               </div>
               <pre className="text-xs text-muted-foreground whitespace-pre-wrap font-sans leading-relaxed max-h-48 overflow-y-auto">
@@ -690,33 +607,23 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
                 onClick={copyToClipboard}
               >
                 <Copy className="w-3 h-3" />
-                {language === "PT" ? "Copiar resumo" : 
-                 language === "ES" ? "Copiar resumen" : 
-                 "Copy summary"}
+                {t("duediligence.success.copySummary")}
               </Button>
             </div>
 
             <div className="pt-2">
               <h4 className="font-medium text-sm mb-2">
-                {language === "PT" ? "Próximos passos:" : 
-                 language === "ES" ? "Próximos pasos:" : 
-                 "Next steps:"}
+                {t("duediligence.success.nextSteps")}
               </h4>
               <ul className="text-sm text-muted-foreground space-y-1">
-                <li>1. {language === "PT" ? "Análise do seu perfil e escopo" : 
-                       language === "ES" ? "Análisis de su perfil y alcance" : 
-                       "Analysis of your profile and scope"}</li>
-                <li>2. {language === "PT" ? "Contato para alinhar expectativas e timing" : 
-                       language === "ES" ? "Contacto para alinear expectativas y timing" : 
-                       "Contact to align expectations and timing"}</li>
-                <li>3. {language === "PT" ? "Proposta customizada de Due Diligence Comercial" : 
-                       language === "ES" ? "Propuesta personalizada de Due Diligence Comercial" : 
-                       "Customized Commercial Due Diligence proposal"}</li>
+                <li>1. {t("duediligence.success.step1")}</li>
+                <li>2. {t("duediligence.success.step2")}</li>
+                <li>3. {t("duediligence.success.step3")}</li>
               </ul>
             </div>
 
             <Button onClick={resetForm} className="w-full">
-              {language === "PT" ? "Fechar" : language === "ES" ? "Cerrar" : "Close"}
+              {t("duediligence.success.close")}
             </Button>
           </div>
         )}
