@@ -157,14 +157,26 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
           <p className="text-xs sm:text-sm text-muted-foreground text-center md:text-left">
             © {currentYear} Albatross Consulting. {t("footer.copyright")}
           </p>
-          <div className="flex gap-4 sm:gap-6">
-            <span className="text-xs sm:text-sm text-muted-foreground cursor-default">
+          <nav className="flex flex-wrap justify-center gap-4 sm:gap-6" aria-label="Links legais">
+            <a 
+              href="/privacy" 
+              className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-card rounded"
+            >
               {t("footer.privacy")}
-            </span>
-            <span className="text-xs sm:text-sm text-muted-foreground cursor-default">
-              {t("footer.terms")}
-            </span>
-          </div>
+            </a>
+            <a 
+              href="/cookies" 
+              className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-card rounded"
+            >
+              Preferências de Cookies
+            </a>
+            <a 
+              href="/accessibility" 
+              className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-card rounded"
+            >
+              Acessibilidade
+            </a>
+          </nav>
         </div>
       </div>
     </footer>

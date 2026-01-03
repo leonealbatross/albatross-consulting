@@ -10,11 +10,20 @@ import Careers from "@/components/sections/Careers";
 import CTA from "@/components/sections/CTA";
 import Footer from "@/components/layout/Footer";
 import AlbaChatbot from "@/components/AlbaChatbot";
+
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
+      {/* Skip to main content link for keyboard navigation - WCAG 2.4.1 */}
+      <a 
+        href="#main-content" 
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[200] focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background"
+      >
+        Pular para o conteúdo principal
+      </a>
+      
       <Header />
-      <main>
+      <main id="main-content" role="main">
         <Hero />
         <About />
         <Services />

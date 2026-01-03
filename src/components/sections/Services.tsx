@@ -94,9 +94,10 @@ Desenvolvemos dashboards avançados de Sales Intelligence para melhorar previsib
       ref={sectionRef}
       id="servicos" 
       className={`py-16 lg:py-24 xl:py-32 bg-secondary/30 relative section-highlight ${isVisible ? 'visible' : ''}`}
+      aria-labelledby="services-headline"
     >
       {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-5">
+      <div className="absolute inset-0 opacity-5" aria-hidden="true">
         <div 
           className="absolute inset-0"
           style={{
@@ -112,7 +113,7 @@ Desenvolvemos dashboards avançados de Sales Intelligence para melhorar previsib
           <span className="inline-block text-primary font-semibold text-xs sm:text-sm tracking-wider uppercase mb-3 sm:mb-4">
             {t("services.label")}
           </span>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-heading font-semibold tracking-tight text-foreground mb-4 sm:mb-6">
+          <h2 id="services-headline" className="text-2xl sm:text-3xl lg:text-4xl font-heading font-semibold tracking-tight text-foreground mb-4 sm:mb-6">
             {t("services.headline")}{" "}
             <span className="bg-gradient-to-r from-teal-400 to-primary bg-clip-text text-transparent">{t("services.headline.highlight")}</span>
           </h2>
@@ -122,25 +123,26 @@ Desenvolvemos dashboards avançados de Sales Intelligence para melhorar previsib
         </div>
 
         {/* Services Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6" role="list" aria-label="Nossos serviços">
           {services.map((service, index) => (
-            <div
+            <article
               key={index}
               className="group relative"
+              role="listitem"
             >
               {/* Animated border gradient */}
-              <div className={`absolute -inset-[1px] rounded-2xl bg-gradient-to-r ${service.accent} opacity-0 group-hover:opacity-40 blur-sm group-hover:blur-md transition-all duration-500`} />
+              <div className={`absolute -inset-[1px] rounded-2xl bg-gradient-to-r ${service.accent} opacity-0 group-hover:opacity-40 blur-sm group-hover:blur-md transition-all duration-500`} aria-hidden="true" />
               
               {/* Card */}
               <div className="relative bg-card/95 backdrop-blur-xl rounded-xl sm:rounded-2xl p-5 sm:p-6 lg:p-8 border border-border/50 group-hover:border-primary/30 transition-all duration-500 h-full">
                 {/* Decorative corner accent */}
-                <div className={`absolute -top-16 -right-16 w-32 h-32 bg-gradient-to-br ${service.accent} opacity-0 group-hover:opacity-10 rounded-full blur-3xl transition-all duration-500`} />
+                <div className={`absolute -top-16 -right-16 w-32 h-32 bg-gradient-to-br ${service.accent} opacity-0 group-hover:opacity-10 rounded-full blur-3xl transition-all duration-500`} aria-hidden="true" />
                 
                 {/* Icon & Highlight */}
                 <div className="relative flex items-start justify-between mb-4 sm:mb-6">
                   <div className="relative">
-                    <div className={`absolute inset-0 rounded-xl bg-gradient-to-r ${service.accent} opacity-0 group-hover:opacity-30 blur-md transition-all duration-500`} />
-                    <div className="relative w-10 h-10 sm:w-12 lg:w-14 sm:h-12 lg:h-14 rounded-lg sm:rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:scale-105 transition-all duration-300">
+                    <div className={`absolute inset-0 rounded-xl bg-gradient-to-r ${service.accent} opacity-0 group-hover:opacity-30 blur-md transition-all duration-500`} aria-hidden="true" />
+                    <div className="relative w-10 h-10 sm:w-12 lg:w-14 sm:h-12 lg:h-14 rounded-lg sm:rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:scale-105 transition-all duration-300" aria-hidden="true">
                       <service.icon className="w-5 h-5 sm:w-6 lg:w-7 sm:h-6 lg:h-7 text-primary" />
                     </div>
                   </div>
@@ -197,9 +199,9 @@ Desenvolvemos dashboards avançados de Sales Intelligence para melhorar previsib
                 </div>
                 
                 {/* Bottom accent line */}
-                <div className={`absolute bottom-0 left-6 right-6 h-[2px] bg-gradient-to-r ${service.accent} opacity-0 group-hover:opacity-60 transition-all duration-500`} />
+                <div className={`absolute bottom-0 left-6 right-6 h-[2px] bg-gradient-to-r ${service.accent} opacity-0 group-hover:opacity-60 transition-all duration-500`} aria-hidden="true" />
               </div>
-            </div>
+            </article>
           ))}
         </div>
       </div>
