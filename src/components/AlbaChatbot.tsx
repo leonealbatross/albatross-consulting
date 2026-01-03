@@ -41,8 +41,8 @@ const SECTION_MAP: Record<string, { id: string; label: string }> = {
   "genai": { id: "servicos", label: "GenAI & Inovação" },
   "ia": { id: "servicos", label: "GenAI & Inovação" },
   "ai": { id: "servicos", label: "GenAI & Inovação" },
-  "contato": { id: "cta", label: "Contato" },
-  "contact": { id: "cta", label: "Contato" },
+  "contato": { id: "contato", label: "Contato" },
+  "contact": { id: "contato", label: "Contato" },
   "sobre": { id: "sobre", label: "Sobre" },
   "about": { id: "sobre", label: "Sobre" },
   "metodologia": { id: "metodologia", label: "Metodologia" },
@@ -71,7 +71,7 @@ const QUICK_ACTIONS = [
   { id: "services", label: "Conhecer serviços", icon: Briefcase, section: "servicos" },
   { id: "specialist", label: "Falar com especialista", icon: Users, action: "lead" },
   { id: "schedule", label: "Agendar diagnóstico", icon: Calendar, section: "agendamento" },
-  { id: "contact", label: "Contato", icon: Mail, section: "cta" },
+  { id: "contact", label: "Contato", icon: Mail, section: "contato" },
 ];
 
 // Intent detection keywords
