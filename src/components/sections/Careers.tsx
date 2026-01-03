@@ -239,17 +239,6 @@ const Careers = () => {
               </div>
             ))}
 
-            <div className="p-6 rounded-2xl bg-primary/5 border border-primary/20">
-              <div className="flex items-center gap-3 mb-3">
-                <Upload className="w-5 h-5 text-primary" />
-                <span className="font-medium text-foreground">
-                  {t("careers.upload.info")}
-                </span>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                {t("careers.upload.formats")}
-              </p>
-            </div>
           </div>
 
           {/* Application Form */}
@@ -260,6 +249,19 @@ const Careers = () => {
               </h3>
             </div>
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
+              {/* Resume upload info inside form */}
+              <div className="p-4 rounded-xl bg-primary/5 border border-primary/20 flex items-start gap-3">
+                <Upload className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                <div>
+                  <span className="font-medium text-foreground text-sm">
+                    {t("careers.upload.info")}
+                  </span>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {t("careers.upload.formats")}
+                  </p>
+                </div>
+              </div>
+              
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="career-name">{t("contact.name")} *</Label>
