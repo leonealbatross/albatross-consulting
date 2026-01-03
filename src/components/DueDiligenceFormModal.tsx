@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -24,44 +24,107 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "@/hooks/use-toast";
 import { ArrowRight, ArrowLeft, Loader2, Search, CheckCircle2, Copy, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { z } from "zod";
 
 interface DueDiligenceFormModalProps {
   trigger?: React.ReactNode;
 }
 
-// Email validation regex - corporate email pattern
+// Personal email domains to block
+const personalEmailDomains = [
+  "gmail.com", "gmail.com.br", "googlemail.com",
+  "outlook.com", "outlook.com.br", "hotmail.com", "hotmail.com.br",
+  "yahoo.com", "yahoo.com.br", "ymail.com",
+  "icloud.com", "me.com", "mac.com",
+  "live.com", "live.com.br", "msn.com",
+  "aol.com", "protonmail.com", "zoho.com",
+  "mail.com", "gmx.com", "inbox.com"
+];
+
+// Email validation
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-// Phone validation regex - international format
-const phoneRegex = /^[\+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,9}([-\s\.]?[0-9]{1,9})*$/;
+// CNPJ validation function
+const validateCNPJ = (cnpj: string): boolean => {
+  const cleaned = cnpj.replace(/\D/g, '');
+  if (cleaned.length !== 14) return false;
+  
+  // Check for known invalid CNPJs
+  if (/^(\d)\1+$/.test(cleaned)) return false;
+  
+  // Validate check digits
+  let size = cleaned.length - 2;
+  let numbers = cleaned.substring(0, size);
+  const digits = cleaned.substring(size);
+  let sum = 0;
+  let pos = size - 7;
+  
+  for (let i = size; i >= 1; i--) {
+    sum += parseInt(numbers.charAt(size - i)) * pos--;
+    if (pos < 2) pos = 9;
+  }
+  
+  let result = sum % 11 < 2 ? 0 : 11 - (sum % 11);
+  if (result !== parseInt(digits.charAt(0))) return false;
+  
+  size = size + 1;
+  numbers = cleaned.substring(0, size);
+  sum = 0;
+  pos = size - 7;
+  
+  for (let i = size; i >= 1; i--) {
+    sum += parseInt(numbers.charAt(size - i)) * pos--;
+    if (pos < 2) pos = 9;
+  }
+  
+  result = sum % 11 < 2 ? 0 : 11 - (sum % 11);
+  return result === parseInt(digits.charAt(1));
+};
 
-// Step 1 Schema with enhanced validation
-const step1Schema = z.object({
-  name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres").max(100),
-  email: z.string()
-    .min(1, "Email é obrigatório")
-    .regex(emailRegex, "Email inválido"),
-  company: z.string().min(2, "Empresa é obrigatória").max(100),
-  phone: z.string()
-    .optional()
-    .refine((val) => !val || phoneRegex.test(val), "Telefone inválido"),
-  roleInTransaction: z.string().min(1, "Papel na transação é obrigatório"),
-  roleOther: z.string().optional(),
-  dealStatus: z.string().min(1, "Status do deal é obrigatório"),
-  dealStatusOther: z.string().optional(),
-});
+// Format CNPJ with mask
+const formatCNPJ = (value: string): string => {
+  const cleaned = value.replace(/\D/g, '').slice(0, 14);
+  return cleaned
+    .replace(/^(\d{2})(\d)/, '$1.$2')
+    .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+    .replace(/\.(\d{3})(\d)/, '.$1/$2')
+    .replace(/(\d{4})(\d)/, '$1-$2');
+};
 
-// Step 2 Schema
-const step2Schema = z.object({
-  jobTitle: z.string().min(1, "Cargo é obrigatório"),
-  jobTitleOther: z.string().optional(),
-  targetCompany: z.string().min(2, "Setor e geografia são obrigatórios").max(200),
-  targetRevenue: z.string().min(1, "Porte da empresa-alvo é obrigatório"),
-  objectives: z.array(z.string()).min(1, "Selecione pelo menos um objetivo"),
-  availableData: z.array(z.string()).optional(),
-  concerns: z.string().max(1000).optional(),
-});
+// Format phone with Brazilian mask
+const formatPhoneBR = (value: string): string => {
+  const cleaned = value.replace(/\D/g, '').slice(0, 11);
+  if (cleaned.length <= 2) return cleaned;
+  if (cleaned.length <= 6) return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2)}`;
+  if (cleaned.length <= 10) return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 6)}-${cleaned.slice(6)}`;
+  return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 7)}-${cleaned.slice(7)}`;
+};
+
+// Format phone international (basic)
+const formatPhoneIntl = (value: string): string => {
+  const cleaned = value.replace(/\D/g, '').slice(0, 15);
+  if (!value.startsWith('+')) {
+    return '+' + cleaned;
+  }
+  return '+' + cleaned;
+};
+
+// LatAm countries
+const latamCountries = [
+  { value: "BR", label: { PT: "Brasil", EN: "Brazil", ES: "Brasil" } },
+  { value: "MX", label: { PT: "México", EN: "Mexico", ES: "México" } },
+  { value: "AR", label: { PT: "Argentina", EN: "Argentina", ES: "Argentina" } },
+  { value: "CO", label: { PT: "Colômbia", EN: "Colombia", ES: "Colombia" } },
+  { value: "CL", label: { PT: "Chile", EN: "Chile", ES: "Chile" } },
+  { value: "PE", label: { PT: "Peru", EN: "Peru", ES: "Perú" } },
+  { value: "EC", label: { PT: "Equador", EN: "Ecuador", ES: "Ecuador" } },
+  { value: "UY", label: { PT: "Uruguai", EN: "Uruguay", ES: "Uruguay" } },
+  { value: "PY", label: { PT: "Paraguai", EN: "Paraguay", ES: "Paraguay" } },
+  { value: "BO", label: { PT: "Bolívia", EN: "Bolivia", ES: "Bolivia" } },
+  { value: "VE", label: { PT: "Venezuela", EN: "Venezuela", ES: "Venezuela" } },
+  { value: "CR", label: { PT: "Costa Rica", EN: "Costa Rica", ES: "Costa Rica" } },
+  { value: "PA", label: { PT: "Panamá", EN: "Panama", ES: "Panamá" } },
+  { value: "OTHER", label: { PT: "Outro", EN: "Other", ES: "Otro" } },
+];
 
 const DueDiligenceFormModal = ({ trigger }: DueDiligenceFormModalProps) => {
   const { t, language } = useLanguage();
@@ -75,15 +138,23 @@ const DueDiligenceFormModal = ({ trigger }: DueDiligenceFormModalProps) => {
     // Step 1
     name: "",
     email: "",
-    company: "",
     phone: "",
-    roleInTransaction: "",
-    roleOther: "",
+    company: "",
+    country: "",
+    taxId: "",
+    transactionType: "",
+    transactionTypeOther: "",
     dealStatus: "",
     dealStatusOther: "",
     // Step 2
+    requesterProfile: "",
+    requesterProfileOther: "",
     jobTitle: "",
     jobTitleOther: "",
+    marketSegment: "",
+    marketSegmentOther: "",
+    revenueModel: "",
+    revenueModelOther: "",
     targetCompany: "",
     targetRevenue: "",
     objectives: [] as string[],
@@ -91,141 +162,290 @@ const DueDiligenceFormModal = ({ trigger }: DueDiligenceFormModalProps) => {
     concerns: "",
   });
 
-  const roleOptions = [
-    { value: "strategic_buyer", label: t("duediligence.role.strategicBuyer") },
-    { value: "private_equity", label: t("duediligence.role.privateEquity") },
-    { value: "seller_management", label: t("duediligence.role.sellerManagement") },
-    { value: "advisor", label: t("duediligence.role.advisor") },
-    { value: "other", label: t("duediligence.role.other") },
-  ];
+  // Options for Step 1
+  const transactionTypeOptions = useMemo(() => [
+    { value: "buy_side", label: t("duediligence.transaction.buySide") },
+    { value: "sell_side", label: t("duediligence.transaction.sellSide") },
+    { value: "ma_strategic", label: t("duediligence.transaction.maStrategic") },
+    { value: "primary_vc", label: t("duediligence.transaction.primaryVc") },
+    { value: "secondary", label: t("duediligence.transaction.secondary") },
+    { value: "other", label: t("duediligence.other") },
+  ], [t]);
 
-  const dealStatusOptions = [
+  const dealStatusOptions = useMemo(() => [
     { value: "pre_loi", label: t("duediligence.status.preLoi") },
     { value: "post_loi", label: t("duediligence.status.postLoi") },
     { value: "exclusivity", label: t("duediligence.status.exclusivity") },
     { value: "pre_closing", label: t("duediligence.status.preClosing") },
     { value: "post_closing", label: t("duediligence.status.postClosing") },
-    { value: "other", label: t("duediligence.status.other") },
-  ];
+    { value: "exploratory", label: t("duediligence.status.exploratory") },
+    { value: "other", label: t("duediligence.other") },
+  ], [t]);
 
-  const jobTitleOptions = [
+  // Options for Step 2
+  const requesterProfileOptions = useMemo(() => [
+    { value: "strategic_buyer", label: t("duediligence.profile.strategicBuyer") },
+    { value: "private_equity", label: t("duediligence.profile.privateEquity") },
+    { value: "venture_capital", label: t("duediligence.profile.ventureCapital") },
+    { value: "growth_equity", label: t("duediligence.profile.growthEquity") },
+    { value: "cvc", label: t("duediligence.profile.cvc") },
+    { value: "family_office", label: t("duediligence.profile.familyOffice") },
+    { value: "search_fund", label: t("duediligence.profile.searchFund") },
+    { value: "seller_management", label: t("duediligence.profile.sellerManagement") },
+    { value: "advisor", label: t("duediligence.profile.advisor") },
+    { value: "other", label: t("duediligence.other") },
+  ], [t]);
+
+  const jobTitleOptions = useMemo(() => [
     { value: "partner", label: t("duediligence.title.partner") },
+    { value: "principal", label: t("duediligence.title.principal") },
     { value: "ceo", label: t("duediligence.title.ceo") },
     { value: "cfo", label: t("duediligence.title.cfo") },
     { value: "cro_vp_sales", label: t("duediligence.title.croVpSales") },
     { value: "head_ma", label: t("duediligence.title.headMa") },
-    { value: "other", label: t("duediligence.title.other") },
-  ];
+    { value: "other", label: t("duediligence.other") },
+  ], [t]);
 
-  const revenueOptions = [
+  const marketSegmentOptions = useMemo(() => [
+    { value: "fintech", label: "Fintech" },
+    { value: "healthtech", label: "Healthtech" },
+    { value: "retail_commerce", label: t("duediligence.segment.retailCommerce") },
+    { value: "logistics", label: t("duediligence.segment.logistics") },
+    { value: "martech", label: "Martech/Adtech" },
+    { value: "erp_backoffice", label: "ERP/Backoffice" },
+    { value: "cybersecurity", label: "Cybersecurity" },
+    { value: "data_ai", label: "Data/AI/Analytics" },
+    { value: "edtech", label: "Edtech" },
+    { value: "saas_horizontal", label: t("duediligence.segment.saasHorizontal") },
+    { value: "other", label: t("duediligence.other") },
+  ], [t]);
+
+  const revenueModelOptions = useMemo(() => [
+    { value: "saas", label: t("duediligence.revenueModel.saas") },
+    { value: "usage_based", label: t("duediligence.revenueModel.usageBased") },
+    { value: "marketplace", label: t("duediligence.revenueModel.marketplace") },
+    { value: "transactional", label: t("duediligence.revenueModel.transactional") },
+    { value: "services", label: t("duediligence.revenueModel.services") },
+    { value: "hardware_software", label: t("duediligence.revenueModel.hardwareSoftware") },
+    { value: "other", label: t("duediligence.revenueModel.otherHybrid") },
+  ], [t]);
+
+  const revenueOptions = useMemo(() => [
+    { value: "startup", label: t("duediligence.revenue.startup") },
     { value: "under_50m", label: t("duediligence.revenue.under50m") },
     { value: "50m_200m", label: t("duediligence.revenue.50m200m") },
     { value: "200m_500m", label: t("duediligence.revenue.200m500m") },
     { value: "above_500m", label: t("duediligence.revenue.above500m") },
     { value: "unknown", label: t("duediligence.revenue.unknown") },
-  ];
+  ], [t]);
 
-  const objectiveOptions = [
+  const objectiveOptions = useMemo(() => [
     { value: "validate_icp", label: t("duediligence.obj.validateIcp") },
     { value: "evaluate_pricing", label: t("duediligence.obj.evaluatePricing") },
     { value: "validate_sales_motions", label: t("duediligence.obj.validateSalesMotions") },
     { value: "measure_pipeline", label: t("duediligence.obj.measurePipeline") },
     { value: "test_forecast", label: t("duediligence.obj.testForecast") },
     { value: "evaluate_sales_ops", label: t("duediligence.obj.evaluateSalesOps") },
-  ];
+    { value: "vendor_dd", label: t("duediligence.obj.vendorDd") },
+  ], [t]);
 
-  const availableDataOptions = [
+  const availableDataOptions = useMemo(() => [
     { value: "crm_export", label: t("duediligence.data.crmExport") },
     { value: "quotas", label: t("duediligence.data.quotas") },
     { value: "forecast_snapshots", label: t("duediligence.data.forecastSnapshots") },
     { value: "client_list", label: t("duediligence.data.clientList") },
     { value: "org_charts", label: t("duediligence.data.orgCharts") },
-  ];
+  ], [t]);
 
   const getErrorMessage = (key: string): string => {
     const messages: Record<string, Record<string, string>> = {
       PT: {
-        emailInvalid: "Email corporativo inválido",
         emailRequired: "Email é obrigatório",
-        phoneInvalid: "Telefone inválido. Use formato: +55 11 99999-9999",
+        emailInvalid: "Email inválido",
+        emailPersonal: "Use seu email corporativo para receber a avaliação",
+        phoneRequired: "Telefone é obrigatório",
+        phoneInvalid: "Telefone inválido",
         nameMin: "Nome deve ter pelo menos 2 caracteres",
         companyRequired: "Empresa é obrigatória",
-        roleRequired: "Papel na transação é obrigatório",
-        roleOtherRequired: "Especifique o papel na transação",
+        countryRequired: "País é obrigatório",
+        taxIdRequired: "CNPJ é obrigatório",
+        taxIdInvalid: "CNPJ inválido",
+        taxIdMinLength: "ID fiscal deve ter pelo menos 8 caracteres",
+        transactionRequired: "Tipo de transação é obrigatório",
+        transactionOtherRequired: "Especifique o tipo de transação",
         dealStatusRequired: "Status do deal é obrigatório",
         dealStatusOtherRequired: "Especifique o status do deal",
+        profileRequired: "Perfil do solicitante é obrigatório",
+        profileOtherRequired: "Especifique o perfil",
         jobTitleRequired: "Cargo é obrigatório",
         jobTitleOtherRequired: "Especifique o cargo",
+        segmentRequired: "Segmento de mercado é obrigatório",
+        segmentOtherRequired: "Especifique o segmento",
+        revenueModelRequired: "Modelo de receita é obrigatório",
+        revenueModelOtherRequired: "Especifique o modelo",
         targetCompanyRequired: "Setor e geografia são obrigatórios",
         revenueRequired: "Porte da empresa-alvo é obrigatório",
         objectivesRequired: "Selecione pelo menos um objetivo",
+        availableDataRequired: "Selecione pelo menos um dado disponível",
+        concernsRequired: "Riscos/hipóteses são obrigatórios",
       },
       EN: {
-        emailInvalid: "Invalid corporate email",
         emailRequired: "Email is required",
-        phoneInvalid: "Invalid phone. Use format: +1 555 123-4567",
+        emailInvalid: "Invalid email",
+        emailPersonal: "Use your corporate email to receive the assessment",
+        phoneRequired: "Phone is required",
+        phoneInvalid: "Invalid phone number",
         nameMin: "Name must have at least 2 characters",
         companyRequired: "Company is required",
-        roleRequired: "Role in transaction is required",
-        roleOtherRequired: "Specify the role in transaction",
+        countryRequired: "Country is required",
+        taxIdRequired: "Company Tax ID is required",
+        taxIdInvalid: "Invalid Tax ID",
+        taxIdMinLength: "Tax ID must have at least 8 characters",
+        transactionRequired: "Transaction type is required",
+        transactionOtherRequired: "Specify the transaction type",
         dealStatusRequired: "Deal status is required",
         dealStatusOtherRequired: "Specify the deal status",
+        profileRequired: "Requester profile is required",
+        profileOtherRequired: "Specify the profile",
         jobTitleRequired: "Job title is required",
         jobTitleOtherRequired: "Specify the job title",
+        segmentRequired: "Market segment is required",
+        segmentOtherRequired: "Specify the segment",
+        revenueModelRequired: "Revenue model is required",
+        revenueModelOtherRequired: "Specify the model",
         targetCompanyRequired: "Sector and geography are required",
         revenueRequired: "Target company size is required",
         objectivesRequired: "Select at least one objective",
+        availableDataRequired: "Select at least one available data",
+        concernsRequired: "Risks/hypotheses are required",
       },
       ES: {
-        emailInvalid: "Email corporativo inválido",
         emailRequired: "Email es obligatorio",
-        phoneInvalid: "Teléfono inválido. Use formato: +52 55 1234-5678",
+        emailInvalid: "Email inválido",
+        emailPersonal: "Use su email corporativo para recibir la evaluación",
+        phoneRequired: "Teléfono es obligatorio",
+        phoneInvalid: "Teléfono inválido",
         nameMin: "Nombre debe tener al menos 2 caracteres",
         companyRequired: "Empresa es obligatoria",
-        roleRequired: "Rol en la transacción es obligatorio",
-        roleOtherRequired: "Especifique el rol en la transacción",
+        countryRequired: "País es obligatorio",
+        taxIdRequired: "ID fiscal / NIF / RUC es obligatorio",
+        taxIdInvalid: "ID fiscal inválido",
+        taxIdMinLength: "ID fiscal debe tener al menos 8 caracteres",
+        transactionRequired: "Tipo de transacción es obligatorio",
+        transactionOtherRequired: "Especifique el tipo de transacción",
         dealStatusRequired: "Estado del deal es obligatorio",
         dealStatusOtherRequired: "Especifique el estado del deal",
+        profileRequired: "Perfil del solicitante es obligatorio",
+        profileOtherRequired: "Especifique el perfil",
         jobTitleRequired: "Cargo es obligatorio",
         jobTitleOtherRequired: "Especifique el cargo",
+        segmentRequired: "Segmento de mercado es obligatorio",
+        segmentOtherRequired: "Especifique el segmento",
+        revenueModelRequired: "Modelo de ingresos es obligatorio",
+        revenueModelOtherRequired: "Especifique el modelo",
         targetCompanyRequired: "Sector y geografía son obligatorios",
         revenueRequired: "Tamaño de la empresa objetivo es obligatorio",
         objectivesRequired: "Seleccione al menos un objetivo",
+        availableDataRequired: "Seleccione al menos un dato disponible",
+        concernsRequired: "Riesgos/hipótesis son obligatorios",
       },
     };
     return messages[language]?.[key] || messages.PT[key] || key;
+  };
+
+  const getTaxIdLabel = (): string => {
+    if (formData.country === "BR") {
+      return "CNPJ";
+    }
+    if (language === "EN") return "Company Tax ID";
+    if (language === "ES") return "ID fiscal / NIF / RUC";
+    return "CNPJ / ID Fiscal";
+  };
+
+  const handlePhoneChange = (value: string) => {
+    let formatted = value;
+    if (formData.country === "BR" || !formData.country) {
+      // Remove prefix if BR
+      const withoutPrefix = value.replace(/^\+55\s?/, '');
+      formatted = formatPhoneBR(withoutPrefix);
+    } else {
+      formatted = formatPhoneIntl(value);
+    }
+    setFormData({ ...formData, phone: formatted });
+    if (errors.phone) setErrors(prev => ({ ...prev, phone: "" }));
+  };
+
+  const handleTaxIdChange = (value: string) => {
+    let formatted = value;
+    if (formData.country === "BR") {
+      formatted = formatCNPJ(value);
+    } else {
+      // Allow alphanumeric, max 20 chars
+      formatted = value.replace(/[^a-zA-Z0-9-]/g, '').slice(0, 20);
+    }
+    setFormData({ ...formData, taxId: formatted });
+    if (errors.taxId) setErrors(prev => ({ ...prev, taxId: "" }));
   };
 
   const validateStep1 = (): boolean => {
     const newErrors: Record<string, string> = {};
 
     // Name validation
-    if (!formData.name || formData.name.length < 2) {
+    if (!formData.name || formData.name.trim().length < 2) {
       newErrors.name = getErrorMessage("nameMin");
     }
 
-    // Email validation
+    // Email validation - check format and personal domains
     if (!formData.email) {
       newErrors.email = getErrorMessage("emailRequired");
     } else if (!emailRegex.test(formData.email)) {
       newErrors.email = getErrorMessage("emailInvalid");
+    } else {
+      const domain = formData.email.split('@')[1]?.toLowerCase();
+      if (personalEmailDomains.includes(domain)) {
+        newErrors.email = getErrorMessage("emailPersonal");
+      }
+    }
+
+    // Phone validation - required
+    if (!formData.phone) {
+      newErrors.phone = getErrorMessage("phoneRequired");
+    } else {
+      const cleanedPhone = formData.phone.replace(/\D/g, '');
+      if (cleanedPhone.length < 8) {
+        newErrors.phone = getErrorMessage("phoneInvalid");
+      }
     }
 
     // Company validation
-    if (!formData.company || formData.company.length < 2) {
+    if (!formData.company || formData.company.trim().length < 2) {
       newErrors.company = getErrorMessage("companyRequired");
     }
 
-    // Phone validation (optional but must be valid if provided)
-    if (formData.phone && !phoneRegex.test(formData.phone)) {
-      newErrors.phone = getErrorMessage("phoneInvalid");
+    // Country validation
+    if (!formData.country) {
+      newErrors.country = getErrorMessage("countryRequired");
     }
 
-    // Role validation
-    if (!formData.roleInTransaction) {
-      newErrors.roleInTransaction = getErrorMessage("roleRequired");
-    } else if (formData.roleInTransaction === "other" && !formData.roleOther) {
-      newErrors.roleOther = getErrorMessage("roleOtherRequired");
+    // Tax ID validation
+    if (!formData.taxId) {
+      newErrors.taxId = getErrorMessage("taxIdRequired");
+    } else if (formData.country === "BR") {
+      if (!validateCNPJ(formData.taxId)) {
+        newErrors.taxId = getErrorMessage("taxIdInvalid");
+      }
+    } else {
+      const cleanedTaxId = formData.taxId.replace(/[^a-zA-Z0-9]/g, '');
+      if (cleanedTaxId.length < 8) {
+        newErrors.taxId = getErrorMessage("taxIdMinLength");
+      }
+    }
+
+    // Transaction type validation
+    if (!formData.transactionType) {
+      newErrors.transactionType = getErrorMessage("transactionRequired");
+    } else if (formData.transactionType === "other" && !formData.transactionTypeOther) {
+      newErrors.transactionTypeOther = getErrorMessage("transactionOtherRequired");
     }
 
     // Deal status validation
@@ -242,6 +462,13 @@ const DueDiligenceFormModal = ({ trigger }: DueDiligenceFormModalProps) => {
   const validateStep2 = (): boolean => {
     const newErrors: Record<string, string> = {};
 
+    // Requester profile validation
+    if (!formData.requesterProfile) {
+      newErrors.requesterProfile = getErrorMessage("profileRequired");
+    } else if (formData.requesterProfile === "other" && !formData.requesterProfileOther) {
+      newErrors.requesterProfileOther = getErrorMessage("profileOtherRequired");
+    }
+
     // Job title validation
     if (!formData.jobTitle) {
       newErrors.jobTitle = getErrorMessage("jobTitleRequired");
@@ -249,8 +476,22 @@ const DueDiligenceFormModal = ({ trigger }: DueDiligenceFormModalProps) => {
       newErrors.jobTitleOther = getErrorMessage("jobTitleOtherRequired");
     }
 
+    // Market segment validation
+    if (!formData.marketSegment) {
+      newErrors.marketSegment = getErrorMessage("segmentRequired");
+    } else if (formData.marketSegment === "other" && !formData.marketSegmentOther) {
+      newErrors.marketSegmentOther = getErrorMessage("segmentOtherRequired");
+    }
+
+    // Revenue model validation
+    if (!formData.revenueModel) {
+      newErrors.revenueModel = getErrorMessage("revenueModelRequired");
+    } else if (formData.revenueModel === "other" && !formData.revenueModelOther) {
+      newErrors.revenueModelOther = getErrorMessage("revenueModelOtherRequired");
+    }
+
     // Target company validation
-    if (!formData.targetCompany || formData.targetCompany.length < 2) {
+    if (!formData.targetCompany || formData.targetCompany.trim().length < 2) {
       newErrors.targetCompany = getErrorMessage("targetCompanyRequired");
     }
 
@@ -262,6 +503,16 @@ const DueDiligenceFormModal = ({ trigger }: DueDiligenceFormModalProps) => {
     // Objectives validation
     if (formData.objectives.length === 0) {
       newErrors.objectives = getErrorMessage("objectivesRequired");
+    }
+
+    // Available data validation - now required
+    if (formData.availableData.length === 0) {
+      newErrors.availableData = getErrorMessage("availableDataRequired");
+    }
+
+    // Concerns validation - now required
+    if (!formData.concerns || formData.concerns.trim().length < 10) {
+      newErrors.concerns = getErrorMessage("concernsRequired");
     }
 
     setErrors(newErrors);
@@ -287,7 +538,6 @@ const DueDiligenceFormModal = ({ trigger }: DueDiligenceFormModalProps) => {
         ? prev.objectives.filter(v => v !== value)
         : [...prev.objectives, value]
     }));
-    // Clear objective error when selection changes
     if (errors.objectives) {
       setErrors(prev => ({ ...prev, objectives: "" }));
     }
@@ -300,6 +550,17 @@ const DueDiligenceFormModal = ({ trigger }: DueDiligenceFormModalProps) => {
         ? prev.availableData.filter(v => v !== value)
         : [...prev.availableData, value]
     }));
+    if (errors.availableData) {
+      setErrors(prev => ({ ...prev, availableData: "" }));
+    }
+  };
+
+  const getPhoneE164 = (): string => {
+    const cleaned = formData.phone.replace(/\D/g, '');
+    if (formData.country === "BR" && !cleaned.startsWith("55")) {
+      return "+55" + cleaned;
+    }
+    return "+" + cleaned;
   };
 
   const handleSubmit = async () => {
@@ -315,32 +576,47 @@ const DueDiligenceFormModal = ({ trigger }: DueDiligenceFormModalProps) => {
     setIsSubmitting(true);
 
     try {
-      // Prepare final values with "other" fields
-      const finalRole = formData.roleInTransaction === "other" 
-        ? formData.roleOther 
-        : formData.roleInTransaction;
+      const finalTransactionType = formData.transactionType === "other" 
+        ? formData.transactionTypeOther 
+        : formData.transactionType;
       const finalDealStatus = formData.dealStatus === "other" 
         ? formData.dealStatusOther 
         : formData.dealStatus;
+      const finalRequesterProfile = formData.requesterProfile === "other" 
+        ? formData.requesterProfileOther 
+        : formData.requesterProfile;
       const finalJobTitle = formData.jobTitle === "other" 
         ? formData.jobTitleOther 
         : formData.jobTitle;
+      const finalMarketSegment = formData.marketSegment === "other" 
+        ? formData.marketSegmentOther 
+        : formData.marketSegment;
+      const finalRevenueModel = formData.revenueModel === "other" 
+        ? formData.revenueModelOther 
+        : formData.revenueModel;
 
       const { data, error } = await supabase.functions.invoke('hubspot-duediligence', {
         body: {
           name: formData.name,
           email: formData.email,
+          phone: getPhoneE164(),
           company: formData.company,
-          phone: formData.phone,
-          roleInTransaction: finalRole,
+          country: formData.country,
+          taxId: formData.taxId,
+          transactionType: finalTransactionType,
           dealStatus: finalDealStatus,
+          requesterProfile: finalRequesterProfile,
           jobTitle: finalJobTitle,
+          marketSegment: finalMarketSegment,
+          revenueModel: finalRevenueModel,
           targetCompany: formData.targetCompany,
           targetRevenue: formData.targetRevenue,
           objectives: formData.objectives,
           availableData: formData.availableData,
           concerns: formData.concerns,
+          // Tags
           service: "Commercial Due Diligence (M&A)",
+          segment: "Tech / LatAm",
           source: "Website / Solicitar avaliação",
         },
       });
@@ -369,14 +645,22 @@ const DueDiligenceFormModal = ({ trigger }: DueDiligenceFormModalProps) => {
     setFormData({
       name: "",
       email: "",
-      company: "",
       phone: "",
-      roleInTransaction: "",
-      roleOther: "",
+      company: "",
+      country: "",
+      taxId: "",
+      transactionType: "",
+      transactionTypeOther: "",
       dealStatus: "",
       dealStatusOther: "",
+      requesterProfile: "",
+      requesterProfileOther: "",
       jobTitle: "",
       jobTitleOther: "",
+      marketSegment: "",
+      marketSegmentOther: "",
+      revenueModel: "",
+      revenueModelOther: "",
       targetCompany: "",
       targetRevenue: "",
       objectives: [],
@@ -402,28 +686,46 @@ const DueDiligenceFormModal = ({ trigger }: DueDiligenceFormModalProps) => {
       return option?.label || obj;
     });
 
-    const role = getDisplayValue(formData.roleInTransaction, roleOptions, formData.roleOther);
-    const status = getDisplayValue(formData.dealStatus, dealStatusOptions, formData.dealStatusOther);
-    const revenue = getDisplayValue(formData.targetRevenue, revenueOptions);
-    const jobTitle = getDisplayValue(formData.jobTitle, jobTitleOptions, formData.jobTitleOther);
+    const availableDataLabels = formData.availableData.map(d => {
+      const option = availableDataOptions.find(o => o.value === d);
+      return option?.label || d;
+    });
+
+    const countryLabel = latamCountries.find(c => c.value === formData.country)?.label[language] || formData.country;
 
     return `
-RESUMO DO ESCOPO - Due Diligence Comercial
+RESUMO DO ESCOPO - Due Diligence Comercial (Tech / LatAm)
 
-Solicitante: ${formData.name}
-Empresa: ${formData.company}
-Email: ${formData.email}
-Cargo: ${jobTitle}
-Papel na transação: ${role}
-Status do deal: ${status}
+IDENTIFICAÇÃO:
+• Solicitante: ${formData.name}
+• Empresa: ${formData.company}
+• Email: ${formData.email}
+• Telefone: ${formData.phone}
+• País: ${countryLabel}
+• ${getTaxIdLabel()}: ${formData.taxId}
 
-Empresa-alvo: ${formData.targetCompany}
-Porte: ${revenue}
+TRANSAÇÃO:
+• Tipo: ${getDisplayValue(formData.transactionType, transactionTypeOptions, formData.transactionTypeOther)}
+• Status: ${getDisplayValue(formData.dealStatus, dealStatusOptions, formData.dealStatusOther)}
 
-Objetivos principais:
+PERFIL:
+• Instituição: ${getDisplayValue(formData.requesterProfile, requesterProfileOptions, formData.requesterProfileOther)}
+• Cargo: ${getDisplayValue(formData.jobTitle, jobTitleOptions, formData.jobTitleOther)}
+
+EMPRESA-ALVO:
+• Segmento: ${getDisplayValue(formData.marketSegment, marketSegmentOptions, formData.marketSegmentOther)}
+• Modelo de receita: ${getDisplayValue(formData.revenueModel, revenueModelOptions, formData.revenueModelOther)}
+• Setor/Geografia: ${formData.targetCompany}
+• Porte: ${getDisplayValue(formData.targetRevenue, revenueOptions)}
+
+OBJETIVOS DO DUE DILIGENCE:
 ${objectives.map(o => `• ${o}`).join('\n')}
 
-${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}` : ''}
+DADOS DISPONÍVEIS:
+${availableDataLabels.map(d => `• ${d}`).join('\n')}
+
+RISCOS/HIPÓTESES:
+${formData.concerns}
     `.trim();
   };
 
@@ -443,6 +745,7 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
   );
 
   const specifyPlaceholder = language === "PT" ? "Especifique..." : language === "ES" ? "Especifique..." : "Specify...";
+  const phonePlaceholder = formData.country === "BR" ? "(11) 99999-9999" : "+1 555 123-4567";
 
   return (
     <Dialog open={open} onOpenChange={(newOpen) => {
@@ -450,14 +753,14 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
       setOpen(newOpen);
     }}>
       <DialogTrigger asChild>{trigger || defaultTrigger}</DialogTrigger>
-      <DialogContent className="sm:max-w-[640px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
         {!isCompleted ? (
           <>
             <DialogHeader>
-              <DialogTitle className="text-xl sm:text-2xl font-heading">
+              <DialogTitle className="text-lg sm:text-xl font-heading leading-tight">
                 {t("duediligence.modal.title")}
               </DialogTitle>
-              <DialogDescription>
+              <DialogDescription className="text-sm">
                 {t("duediligence.modal.subtitle")}
               </DialogDescription>
             </DialogHeader>
@@ -472,8 +775,9 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
             </div>
 
             {step === 1 ? (
-              /* Step 1 */
+              /* Step 1 - Identification + Initial Qualification */
               <div className="space-y-4 mt-6">
+                {/* Name + Email */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="dd-name">
@@ -510,7 +814,22 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
                   </div>
                 </div>
 
+                {/* Phone + Company */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="dd-phone">
+                      {t("duediligence.phone")} *
+                    </Label>
+                    <Input
+                      id="dd-phone"
+                      type="tel"
+                      value={formData.phone}
+                      onChange={(e) => handlePhoneChange(e.target.value)}
+                      placeholder={phonePlaceholder}
+                      className={errors.phone ? "border-destructive" : ""}
+                    />
+                    {errors.phone && <p className="text-xs text-destructive">{errors.phone}</p>}
+                  </div>
                   <div className="space-y-2">
                     <Label htmlFor="dd-company">
                       {t("duediligence.company")} *
@@ -527,62 +846,84 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
                     />
                     {errors.company && <p className="text-xs text-destructive">{errors.company}</p>}
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="dd-phone">
-                      {t("duediligence.phone")} 
-                      <span className="text-muted-foreground text-xs ml-1">({t("duediligence.optional")})</span>
-                    </Label>
-                    <Input
-                      id="dd-phone"
-                      type="tel"
-                      value={formData.phone}
-                      onChange={(e) => {
-                        setFormData({ ...formData, phone: e.target.value });
-                        if (errors.phone) setErrors(prev => ({ ...prev, phone: "" }));
-                      }}
-                      placeholder="+55 11 99999-9999"
-                      className={errors.phone ? "border-destructive" : ""}
-                    />
-                    {errors.phone && <p className="text-xs text-destructive">{errors.phone}</p>}
-                  </div>
                 </div>
 
+                {/* Country + Tax ID */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>{t("duediligence.roleInTransaction")} *</Label>
+                    <Label>{t("duediligence.country")} *</Label>
                     <Select
-                      value={formData.roleInTransaction}
+                      value={formData.country}
                       onValueChange={(value) => {
-                        setFormData({ ...formData, roleInTransaction: value, roleOther: "" });
-                        if (errors.roleInTransaction) setErrors(prev => ({ ...prev, roleInTransaction: "" }));
+                        setFormData({ ...formData, country: value, taxId: "" });
+                        if (errors.country) setErrors(prev => ({ ...prev, country: "", taxId: "" }));
                       }}
                     >
-                      <SelectTrigger className={errors.roleInTransaction ? "border-destructive" : ""}>
+                      <SelectTrigger className={errors.country ? "border-destructive" : ""}>
                         <SelectValue placeholder={t("duediligence.select")} />
                       </SelectTrigger>
                       <SelectContent className="bg-background border shadow-lg z-50">
-                        {roleOptions.map((option) => (
+                        {latamCountries.map((country) => (
+                          <SelectItem key={country.value} value={country.value}>
+                            {country.label[language]}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {errors.country && <p className="text-xs text-destructive">{errors.country}</p>}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="dd-taxid">
+                      {getTaxIdLabel()} *
+                    </Label>
+                    <Input
+                      id="dd-taxid"
+                      value={formData.taxId}
+                      onChange={(e) => handleTaxIdChange(e.target.value)}
+                      placeholder={formData.country === "BR" ? "00.000.000/0000-00" : "Tax ID"}
+                      className={errors.taxId ? "border-destructive" : ""}
+                      disabled={!formData.country}
+                    />
+                    {errors.taxId && <p className="text-xs text-destructive">{errors.taxId}</p>}
+                  </div>
+                </div>
+
+                {/* Transaction Type + Deal Status */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>{t("duediligence.transactionType")} *</Label>
+                    <Select
+                      value={formData.transactionType}
+                      onValueChange={(value) => {
+                        setFormData({ ...formData, transactionType: value, transactionTypeOther: "" });
+                        if (errors.transactionType) setErrors(prev => ({ ...prev, transactionType: "" }));
+                      }}
+                    >
+                      <SelectTrigger className={errors.transactionType ? "border-destructive" : ""}>
+                        <SelectValue placeholder={t("duediligence.select")} />
+                      </SelectTrigger>
+                      <SelectContent className="bg-background border shadow-lg z-50">
+                        {transactionTypeOptions.map((option) => (
                           <SelectItem key={option.value} value={option.value}>
                             {option.label}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
-                    {errors.roleInTransaction && <p className="text-xs text-destructive">{errors.roleInTransaction}</p>}
+                    {errors.transactionType && <p className="text-xs text-destructive">{errors.transactionType}</p>}
                     
-                    {/* Show input when "other" is selected */}
-                    {formData.roleInTransaction === "other" && (
+                    {formData.transactionType === "other" && (
                       <div className="mt-2">
                         <Input
-                          value={formData.roleOther}
+                          value={formData.transactionTypeOther}
                           onChange={(e) => {
-                            setFormData({ ...formData, roleOther: e.target.value });
-                            if (errors.roleOther) setErrors(prev => ({ ...prev, roleOther: "" }));
+                            setFormData({ ...formData, transactionTypeOther: e.target.value });
+                            if (errors.transactionTypeOther) setErrors(prev => ({ ...prev, transactionTypeOther: "" }));
                           }}
                           placeholder={specifyPlaceholder}
-                          className={errors.roleOther ? "border-destructive" : ""}
+                          className={errors.transactionTypeOther ? "border-destructive" : ""}
                         />
-                        {errors.roleOther && <p className="text-xs text-destructive">{errors.roleOther}</p>}
+                        {errors.transactionTypeOther && <p className="text-xs text-destructive">{errors.transactionTypeOther}</p>}
                       </div>
                     )}
                   </div>
@@ -608,7 +949,6 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
                     </Select>
                     {errors.dealStatus && <p className="text-xs text-destructive">{errors.dealStatus}</p>}
                     
-                    {/* Show input when "other" is selected */}
                     {formData.dealStatus === "other" && (
                       <div className="mt-2">
                         <Input
@@ -636,9 +976,47 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
                 </Button>
               </div>
             ) : (
-              /* Step 2 */
+              /* Step 2 - Investment Context + Deep Qualification */
               <div className="space-y-4 mt-6">
+                {/* Requester Profile + Job Title */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>{t("duediligence.requesterProfile")} *</Label>
+                    <Select
+                      value={formData.requesterProfile}
+                      onValueChange={(value) => {
+                        setFormData({ ...formData, requesterProfile: value, requesterProfileOther: "" });
+                        if (errors.requesterProfile) setErrors(prev => ({ ...prev, requesterProfile: "" }));
+                      }}
+                    >
+                      <SelectTrigger className={errors.requesterProfile ? "border-destructive" : ""}>
+                        <SelectValue placeholder={t("duediligence.select")} />
+                      </SelectTrigger>
+                      <SelectContent className="bg-background border shadow-lg z-50 max-h-60">
+                        {requesterProfileOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {errors.requesterProfile && <p className="text-xs text-destructive">{errors.requesterProfile}</p>}
+                    
+                    {formData.requesterProfile === "other" && (
+                      <div className="mt-2">
+                        <Input
+                          value={formData.requesterProfileOther}
+                          onChange={(e) => {
+                            setFormData({ ...formData, requesterProfileOther: e.target.value });
+                            if (errors.requesterProfileOther) setErrors(prev => ({ ...prev, requesterProfileOther: "" }));
+                          }}
+                          placeholder={specifyPlaceholder}
+                          className={errors.requesterProfileOther ? "border-destructive" : ""}
+                        />
+                        {errors.requesterProfileOther && <p className="text-xs text-destructive">{errors.requesterProfileOther}</p>}
+                      </div>
+                    )}
+                  </div>
                   <div className="space-y-2">
                     <Label>{t("duediligence.jobTitle")} *</Label>
                     <Select
@@ -661,7 +1039,6 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
                     </Select>
                     {errors.jobTitle && <p className="text-xs text-destructive">{errors.jobTitle}</p>}
                     
-                    {/* Show input when "other" is selected */}
                     {formData.jobTitle === "other" && (
                       <div className="mt-2">
                         <Input
@@ -676,6 +1053,104 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
                         {errors.jobTitleOther && <p className="text-xs text-destructive">{errors.jobTitleOther}</p>}
                       </div>
                     )}
+                  </div>
+                </div>
+
+                {/* Market Segment + Revenue Model */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>{t("duediligence.marketSegment")} *</Label>
+                    <Select
+                      value={formData.marketSegment}
+                      onValueChange={(value) => {
+                        setFormData({ ...formData, marketSegment: value, marketSegmentOther: "" });
+                        if (errors.marketSegment) setErrors(prev => ({ ...prev, marketSegment: "" }));
+                      }}
+                    >
+                      <SelectTrigger className={errors.marketSegment ? "border-destructive" : ""}>
+                        <SelectValue placeholder={t("duediligence.select")} />
+                      </SelectTrigger>
+                      <SelectContent className="bg-background border shadow-lg z-50 max-h-60">
+                        {marketSegmentOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {errors.marketSegment && <p className="text-xs text-destructive">{errors.marketSegment}</p>}
+                    
+                    {formData.marketSegment === "other" && (
+                      <div className="mt-2">
+                        <Input
+                          value={formData.marketSegmentOther}
+                          onChange={(e) => {
+                            setFormData({ ...formData, marketSegmentOther: e.target.value });
+                            if (errors.marketSegmentOther) setErrors(prev => ({ ...prev, marketSegmentOther: "" }));
+                          }}
+                          placeholder={specifyPlaceholder}
+                          className={errors.marketSegmentOther ? "border-destructive" : ""}
+                        />
+                        {errors.marketSegmentOther && <p className="text-xs text-destructive">{errors.marketSegmentOther}</p>}
+                      </div>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label>{t("duediligence.revenueModelLabel")} *</Label>
+                    <Select
+                      value={formData.revenueModel}
+                      onValueChange={(value) => {
+                        setFormData({ ...formData, revenueModel: value, revenueModelOther: "" });
+                        if (errors.revenueModel) setErrors(prev => ({ ...prev, revenueModel: "" }));
+                      }}
+                    >
+                      <SelectTrigger className={errors.revenueModel ? "border-destructive" : ""}>
+                        <SelectValue placeholder={t("duediligence.select")} />
+                      </SelectTrigger>
+                      <SelectContent className="bg-background border shadow-lg z-50">
+                        {revenueModelOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {errors.revenueModel && <p className="text-xs text-destructive">{errors.revenueModel}</p>}
+                    
+                    {formData.revenueModel === "other" && (
+                      <div className="mt-2">
+                        <Input
+                          value={formData.revenueModelOther}
+                          onChange={(e) => {
+                            setFormData({ ...formData, revenueModelOther: e.target.value });
+                            if (errors.revenueModelOther) setErrors(prev => ({ ...prev, revenueModelOther: "" }));
+                          }}
+                          placeholder={specifyPlaceholder}
+                          className={errors.revenueModelOther ? "border-destructive" : ""}
+                        />
+                        {errors.revenueModelOther && <p className="text-xs text-destructive">{errors.revenueModelOther}</p>}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Target Company Sector + Size */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="dd-target">
+                      {t("duediligence.targetCompanySector")} *
+                    </Label>
+                    <Input
+                      id="dd-target"
+                      value={formData.targetCompany}
+                      onChange={(e) => {
+                        setFormData({ ...formData, targetCompany: e.target.value });
+                        if (errors.targetCompany) setErrors(prev => ({ ...prev, targetCompany: "" }));
+                      }}
+                      placeholder={t("duediligence.targetCompanyPlaceholder")}
+                      className={errors.targetCompany ? "border-destructive" : ""}
+                    />
+                    {errors.targetCompany && <p className="text-xs text-destructive">{errors.targetCompany}</p>}
                   </div>
                   <div className="space-y-2">
                     <Label>{t("duediligence.targetCompanySize")} *</Label>
@@ -701,23 +1176,7 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="dd-target">
-                    {t("duediligence.targetCompanySector")} *
-                  </Label>
-                  <Input
-                    id="dd-target"
-                    value={formData.targetCompany}
-                    onChange={(e) => {
-                      setFormData({ ...formData, targetCompany: e.target.value });
-                      if (errors.targetCompany) setErrors(prev => ({ ...prev, targetCompany: "" }));
-                    }}
-                    placeholder={t("duediligence.targetCompanyPlaceholder")}
-                    className={errors.targetCompany ? "border-destructive" : ""}
-                  />
-                  {errors.targetCompany && <p className="text-xs text-destructive">{errors.targetCompany}</p>}
-                </div>
-
+                {/* Objectives - Multiple choice */}
                 <div className="space-y-3">
                   <Label className={errors.objectives ? "text-destructive" : ""}>
                     {t("duediligence.objectives.title")} *
@@ -744,10 +1203,10 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
                   {errors.objectives && <p className="text-xs text-destructive">{errors.objectives}</p>}
                 </div>
 
+                {/* Available Data - Required checkbox */}
                 <div className="space-y-3">
-                  <Label>
-                    {t("duediligence.availableData.title")}
-                    <span className="text-muted-foreground text-xs ml-1">({t("duediligence.optional")})</span>
+                  <Label className={errors.availableData ? "text-destructive" : ""}>
+                    {t("duediligence.availableData.title")} *
                   </Label>
                   <div className="grid gap-2">
                     {availableDataOptions.map((option) => (
@@ -767,20 +1226,26 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
                       </div>
                     ))}
                   </div>
+                  {errors.availableData && <p className="text-xs text-destructive">{errors.availableData}</p>}
                 </div>
 
+                {/* Concerns - Required */}
                 <div className="space-y-2">
-                  <Label htmlFor="dd-concerns">
-                    {t("duediligence.concerns")}
-                    <span className="text-muted-foreground text-xs ml-1">({t("duediligence.optional")})</span>
+                  <Label htmlFor="dd-concerns" className={errors.concerns ? "text-destructive" : ""}>
+                    {t("duediligence.concerns")} *
                   </Label>
                   <Textarea
                     id="dd-concerns"
                     value={formData.concerns}
-                    onChange={(e) => setFormData({ ...formData, concerns: e.target.value })}
+                    onChange={(e) => {
+                      setFormData({ ...formData, concerns: e.target.value });
+                      if (errors.concerns) setErrors(prev => ({ ...prev, concerns: "" }));
+                    }}
                     placeholder={t("duediligence.concernsPlaceholder")}
                     rows={3}
+                    className={errors.concerns ? "border-destructive" : ""}
                   />
+                  {errors.concerns && <p className="text-xs text-destructive">{errors.concerns}</p>}
                 </div>
 
                 {/* LGPD Notice */}
@@ -833,6 +1298,25 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
               </p>
             </div>
 
+            {/* Next Steps */}
+            <div className="bg-primary/5 rounded-lg p-4 text-left border border-primary/20">
+              <h4 className="font-medium text-sm mb-3">{t("duediligence.success.nextSteps")}</h4>
+              <ol className="space-y-2 text-sm text-muted-foreground">
+                <li className="flex items-start gap-2">
+                  <span className="bg-primary text-primary-foreground rounded-full w-5 h-5 flex items-center justify-center text-xs flex-shrink-0">1</span>
+                  {t("duediligence.success.step1")}
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="bg-primary text-primary-foreground rounded-full w-5 h-5 flex items-center justify-center text-xs flex-shrink-0">2</span>
+                  {t("duediligence.success.step2")}
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="bg-primary text-primary-foreground rounded-full w-5 h-5 flex items-center justify-center text-xs flex-shrink-0">3</span>
+                  {t("duediligence.success.step3")}
+                </li>
+              </ol>
+            </div>
+
             <div className="bg-muted/50 rounded-lg p-4 text-left">
               <div className="flex items-center gap-2 mb-3">
                 <FileText className="w-4 h-4 text-primary" />
@@ -854,18 +1338,10 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
               </Button>
             </div>
 
-            <div className="pt-2">
-              <h4 className="font-medium text-sm mb-2">
-                {t("duediligence.success.nextSteps")}
-              </h4>
-              <ul className="text-sm text-muted-foreground space-y-1">
-                <li>1. {t("duediligence.success.step1")}</li>
-                <li>2. {t("duediligence.success.step2")}</li>
-                <li>3. {t("duediligence.success.step3")}</li>
-              </ul>
-            </div>
-
-            <Button onClick={resetForm} className="w-full">
+            <Button 
+              className="w-full" 
+              onClick={resetForm}
+            >
               {t("duediligence.success.close")}
             </Button>
           </div>
