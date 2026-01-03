@@ -13,8 +13,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "@/hooks/use-toast";
-import { Calendar, Send } from "lucide-react";
+import { Calendar, Send, Loader2 } from "lucide-react";
 import { contactFormSchema } from "@/lib/form-sanitization";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ContactModalProps {
   trigger?: React.ReactNode;
@@ -25,6 +26,7 @@ interface ContactModalProps {
 const ContactModal = ({ trigger, variant = "header", sectionTitle = "Albatross Consulting" }: ContactModalProps) => {
   const { t } = useLanguage();
   const [open, setOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -32,8 +34,9 @@ const ContactModal = ({ trigger, variant = "header", sectionTitle = "Albatross C
     message: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     // Validate and sanitize form data using zod schema
     const validationResult = contactFormSchema.safeParse(formData);
@@ -44,31 +47,64 @@ const ContactModal = ({ trigger, variant = "header", sectionTitle = "Albatross C
         description: validationResult.error.errors[0]?.message || t("contact.error.description") || "Please check your input",
         variant: "destructive",
       });
+      setIsSubmitting(false);
       return;
     }
 
     // Use sanitized data from zod transform
     const sanitizedData = validationResult.data;
 
-    const emailTo = "leone@albatross.consulting";
-    const subject = encodeURIComponent(`Contato via ${sectionTitle} - Albatross Consulting`);
-    const body = encodeURIComponent(
-      `Seção: ${sectionTitle}\n\n` +
-      `Nome: ${sanitizedData.name}\n` +
-      `Email: ${sanitizedData.email}\n` +
-      `Empresa: ${sanitizedData.company || "Não informada"}\n\n` +
-      `Mensagem:\n${sanitizedData.message}`
-    );
+    try {
+      // Send to HubSpot
+      const { data, error } = await supabase.functions.invoke('hubspot-contact', {
+        body: {
+          name: sanitizedData.name,
+          email: sanitizedData.email,
+          company: sanitizedData.company,
+          message: sanitizedData.message,
+          sectionTitle: sectionTitle,
+        },
+      });
 
-    window.open(`mailto:${emailTo}?subject=${subject}&body=${body}`, "_blank");
+      if (error) {
+        console.error('HubSpot integration error:', error);
+        // Continue with email fallback even if HubSpot fails
+      } else {
+        console.log('HubSpot response:', data);
+      }
 
-    toast({
-      title: t("contact.success.title"),
-      description: t("contact.success.description"),
-    });
+      // Also open mailto as backup
+      const emailTo = "leone@albatross.consulting";
+      const subject = encodeURIComponent(`Contato via ${sectionTitle} - Albatross Consulting`);
+      const body = encodeURIComponent(
+        `Seção: ${sectionTitle}\n\n` +
+        `Nome: ${sanitizedData.name}\n` +
+        `Email: ${sanitizedData.email}\n` +
+        `Empresa: ${sanitizedData.company || "Não informada"}\n\n` +
+        `Mensagem:\n${sanitizedData.message}`
+      );
 
-    setFormData({ name: "", email: "", company: "", message: "" });
-    setOpen(false);
+      window.open(`mailto:${emailTo}?subject=${subject}&body=${body}`, "_blank");
+
+      toast({
+        title: t("contact.success.title"),
+        description: data?.success 
+          ? "Contato enviado para o HubSpot e email!" 
+          : t("contact.success.description"),
+      });
+
+      setFormData({ name: "", email: "", company: "", message: "" });
+      setOpen(false);
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      toast({
+        title: "Erro",
+        description: "Ocorreu um erro ao enviar. Tente novamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const defaultTrigger = (
@@ -140,9 +176,13 @@ const ContactModal = ({ trigger, variant = "header", sectionTitle = "Albatross C
               required
             />
           </div>
-          <Button type="submit" className="w-full gap-2">
-            <Send className="w-4 h-4" />
-            {t("contact.submit")}
+          <Button type="submit" className="w-full gap-2" disabled={isSubmitting}>
+            {isSubmitting ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Send className="w-4 h-4" />
+            )}
+            {isSubmitting ? "Enviando..." : t("contact.submit")}
           </Button>
         </form>
       </DialogContent>
