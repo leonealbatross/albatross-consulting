@@ -4,6 +4,17 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Alba Chatbot Avatar Tokens */
+:root {
+  --alba-avatar-mobile: 60px;
+  --alba-avatar-tablet: 72px;
+  --alba-avatar-desktop: 88px;
+  --alba-avatar-header: 48px;
+  --alba-avatar-message: 32px;
+  --alba-avatar-welcome: 80px;
+  --alba-min-touch: 44px;
+}
+
 @layer base {
   :root {
     /* Albatross Brand Colors - Based on Official Logo */
