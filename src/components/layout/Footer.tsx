@@ -179,13 +179,13 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
               href="/cookies" 
               className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-card rounded"
             >
-              Preferências de Cookies
+              {t("footer.cookies")}
             </a>
             <a 
               href="/accessibility" 
               className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-card rounded"
             >
-              Acessibilidade
+              {t("footer.accessibility")}
             </a>
           </nav>
         </div>
