@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface BGaaSModalProps {
   open: boolean;
@@ -35,21 +36,10 @@ interface BGaaSModalProps {
 
 const CALENDLY_URL = "https://calendly.com/leone-albatross";
 
-const deliverables = [
-  { icon: Target, text: "Diagnóstico das alavancas de crescimento e gargalos" },
-  { icon: Users, text: "Estrutura comercial e governança de execução (rituais, métricas e cadência)" },
-  { icon: TrendingUp, text: "Inteligência B2B para gerar demanda e aumentar conversão" },
-  { icon: Brain, text: "Projetos de IA aplicada para eficiência e escala" },
-  { icon: Handshake, text: "Avaliação de oportunidades de M&A para acelerar (quando fizer sentido)" },
-];
-
-const benefits = [
-  "Pipeline mais previsível",
-  "Melhor eficiência de CAC e margem",
-  "Time alinhado e execução disciplinada",
-];
+const deliverableIcons = [Target, Users, TrendingUp, Brain, Handshake];
 
 const BGaaSModal = ({ open, onOpenChange }: BGaaSModalProps) => {
+  const { t } = useLanguage();
   const [step, setStep] = useState<"info" | "form" | "calendly">("info");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [expandedSection, setExpandedSection] = useState<"deliverables" | "benefits" | null>("deliverables");
@@ -65,6 +55,21 @@ const BGaaSModal = ({ open, onOpenChange }: BGaaSModalProps) => {
   });
   
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Build translated arrays
+  const deliverables = [
+    { icon: deliverableIcons[0], text: t("bgaas.deliverables.1") },
+    { icon: deliverableIcons[1], text: t("bgaas.deliverables.2") },
+    { icon: deliverableIcons[2], text: t("bgaas.deliverables.3") },
+    { icon: deliverableIcons[3], text: t("bgaas.deliverables.4") },
+    { icon: deliverableIcons[4], text: t("bgaas.deliverables.5") },
+  ];
+
+  const benefits = [
+    t("bgaas.benefits.1"),
+    t("bgaas.benefits.2"),
+    t("bgaas.benefits.3"),
+  ];
 
   // Track modal open event
   useEffect(() => {
@@ -96,21 +101,21 @@ const BGaaSModal = ({ open, onOpenChange }: BGaaSModalProps) => {
     const newErrors: Record<string, string> = {};
     
     if (!formData.name.trim()) {
-      newErrors.name = "Nome é obrigatório";
+      newErrors.name = t("bgaas.form.error.name");
     }
     
     if (!formData.email.trim()) {
-      newErrors.email = "E-mail é obrigatório";
+      newErrors.email = t("bgaas.form.error.email");
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "E-mail inválido";
+      newErrors.email = t("bgaas.form.error.emailInvalid");
     }
     
     if (!formData.company.trim()) {
-      newErrors.company = "Empresa é obrigatória";
+      newErrors.company = t("bgaas.form.error.company");
     }
     
     if (!formData.lgpdConsent) {
-      newErrors.lgpdConsent = "É necessário aceitar os termos para continuar";
+      newErrors.lgpdConsent = t("bgaas.form.error.lgpd");
     }
     
     setErrors(newErrors);
@@ -147,8 +152,8 @@ const BGaaSModal = ({ open, onOpenChange }: BGaaSModalProps) => {
       }
 
       toast({
-        title: "Perfeito!",
-        description: "Agora agende sua reunião inicial de 30 min.",
+        title: t("bgaas.toast.success.title"),
+        description: t("bgaas.toast.success.desc"),
       });
       
       setStep("calendly");
@@ -156,8 +161,8 @@ const BGaaSModal = ({ open, onOpenChange }: BGaaSModalProps) => {
     } catch (error) {
       console.error('Error submitting form:', error);
       toast({
-        title: "Erro",
-        description: "Ocorreu um erro ao enviar. Tente novamente.",
+        title: t("bgaas.toast.error.title"),
+        description: t("bgaas.toast.error.desc"),
         variant: "destructive",
       });
     } finally {
@@ -235,17 +240,17 @@ const BGaaSModal = ({ open, onOpenChange }: BGaaSModalProps) => {
                   tabIndex={-1}
                   className="text-xl sm:text-2xl font-heading font-semibold text-foreground outline-none"
                 >
-                  Crescimento de verdade, com previsibilidade.
+                  {t("bgaas.title")}
                 </DialogTitle>
                 <p className="text-sm sm:text-base text-muted-foreground mt-2">
-                  Chega de tentativa e erro: transforme crescimento em rotina operacional.
+                  {t("bgaas.subtitle")}
                 </p>
               </DialogHeader>
 
               <div className="mt-6 space-y-3">
                 {/* Mobile: Accordion | Desktop: Full content */}
                 <div className="block sm:hidden space-y-3">
-                  <AccordionSection title="O que entregamos" id="deliverables">
+                  <AccordionSection title={t("bgaas.deliverables.title")} id="deliverables">
                     <ul className="space-y-2">
                       {deliverables.map((item, index) => (
                         <li key={index} className="flex items-start gap-2">
@@ -256,7 +261,7 @@ const BGaaSModal = ({ open, onOpenChange }: BGaaSModalProps) => {
                     </ul>
                   </AccordionSection>
                   
-                  <AccordionSection title="O que você ganha" id="benefits">
+                  <AccordionSection title={t("bgaas.benefits.title")} id="benefits">
                     <ul className="space-y-2">
                       {benefits.map((benefit, index) => (
                         <li key={index} className="flex items-center gap-2">
@@ -273,7 +278,7 @@ const BGaaSModal = ({ open, onOpenChange }: BGaaSModalProps) => {
                   <div>
                     <h4 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
                       <Sparkles className="w-4 h-4 text-primary" />
-                      O que entregamos
+                      {t("bgaas.deliverables.title")}
                     </h4>
                     <ul className="space-y-2.5">
                       {deliverables.map((item, index) => (
@@ -296,7 +301,7 @@ const BGaaSModal = ({ open, onOpenChange }: BGaaSModalProps) => {
                   <div className="pt-4 border-t border-border/50">
                     <h4 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
                       <TrendingUp className="w-4 h-4 text-primary" />
-                      O que você ganha
+                      {t("bgaas.benefits.title")}
                     </h4>
                     <div className="grid grid-cols-3 gap-3">
                       {benefits.map((benefit, index) => (
@@ -327,7 +332,7 @@ const BGaaSModal = ({ open, onOpenChange }: BGaaSModalProps) => {
                   className="w-full gap-2"
                   size="lg"
                 >
-                  Quero saber mais
+                  {t("bgaas.cta.learnMore")}
                   <Calendar className="w-4 h-4" />
                 </Button>
               </motion.div>
@@ -349,17 +354,17 @@ const BGaaSModal = ({ open, onOpenChange }: BGaaSModalProps) => {
                   tabIndex={-1}
                   className="text-xl font-heading font-semibold text-foreground outline-none"
                 >
-                  Vamos conhecer você
+                  {t("bgaas.form.title")}
                 </DialogTitle>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Preencha seus dados para agendar uma conversa inicial.
+                  {t("bgaas.form.subtitle")}
                 </p>
               </DialogHeader>
 
               <form onSubmit={handleSubmit} className="mt-6 space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="bgaas-name">Nome *</Label>
+                    <Label htmlFor="bgaas-name">{t("bgaas.form.name")} *</Label>
                     <Input
                       id="bgaas-name"
                       value={formData.name}
@@ -367,14 +372,14 @@ const BGaaSModal = ({ open, onOpenChange }: BGaaSModalProps) => {
                         setFormData({ ...formData, name: e.target.value });
                         if (errors.name) setErrors({ ...errors, name: "" });
                       }}
-                      placeholder="Seu nome"
+                      placeholder={t("bgaas.form.namePlaceholder")}
                       className={errors.name ? "border-destructive" : ""}
                     />
                     {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="bgaas-email">E-mail *</Label>
+                    <Label htmlFor="bgaas-email">{t("bgaas.form.email")} *</Label>
                     <Input
                       id="bgaas-email"
                       type="email"
@@ -383,7 +388,7 @@ const BGaaSModal = ({ open, onOpenChange }: BGaaSModalProps) => {
                         setFormData({ ...formData, email: e.target.value });
                         if (errors.email) setErrors({ ...errors, email: "" });
                       }}
-                      placeholder="seu@email.com"
+                      placeholder={t("bgaas.form.emailPlaceholder")}
                       className={errors.email ? "border-destructive" : ""}
                     />
                     {errors.email && <p className="text-xs text-destructive">{errors.email}</p>}
@@ -391,7 +396,7 @@ const BGaaSModal = ({ open, onOpenChange }: BGaaSModalProps) => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="bgaas-company">Empresa *</Label>
+                  <Label htmlFor="bgaas-company">{t("bgaas.form.company")} *</Label>
                   <Input
                     id="bgaas-company"
                     value={formData.company}
@@ -399,7 +404,7 @@ const BGaaSModal = ({ open, onOpenChange }: BGaaSModalProps) => {
                       setFormData({ ...formData, company: e.target.value });
                       if (errors.company) setErrors({ ...errors, company: "" });
                     }}
-                    placeholder="Nome da empresa"
+                    placeholder={t("bgaas.form.companyPlaceholder")}
                     className={errors.company ? "border-destructive" : ""}
                   />
                   {errors.company && <p className="text-xs text-destructive">{errors.company}</p>}
@@ -407,23 +412,23 @@ const BGaaSModal = ({ open, onOpenChange }: BGaaSModalProps) => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="bgaas-jobtitle">Cargo</Label>
+                    <Label htmlFor="bgaas-jobtitle">{t("bgaas.form.jobTitle")}</Label>
                     <Input
                       id="bgaas-jobtitle"
                       value={formData.jobTitle}
                       onChange={(e) => setFormData({ ...formData, jobTitle: e.target.value })}
-                      placeholder="Seu cargo"
+                      placeholder={t("bgaas.form.jobTitlePlaceholder")}
                     />
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="bgaas-phone">Telefone</Label>
+                    <Label htmlFor="bgaas-phone">{t("bgaas.form.phone")}</Label>
                     <Input
                       id="bgaas-phone"
                       type="tel"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      placeholder="+55 11 99999-9999"
+                      placeholder={t("bgaas.form.phonePlaceholder")}
                     />
                   </div>
                 </div>
@@ -443,7 +448,7 @@ const BGaaSModal = ({ open, onOpenChange }: BGaaSModalProps) => {
                       htmlFor="bgaas-lgpd" 
                       className="text-xs text-muted-foreground cursor-pointer leading-relaxed"
                     >
-                      Concordo em ser contatado(a) pela Albatross Consulting conforme a LGPD. *
+                      {t("bgaas.form.lgpd")} *
                     </label>
                   </div>
                   {errors.lgpdConsent && (
@@ -458,7 +463,7 @@ const BGaaSModal = ({ open, onOpenChange }: BGaaSModalProps) => {
                     onClick={() => setStep("info")}
                     className="flex-1"
                   >
-                    Voltar
+                    {t("bgaas.form.back")}
                   </Button>
                   <Button 
                     type="submit" 
@@ -468,12 +473,12 @@ const BGaaSModal = ({ open, onOpenChange }: BGaaSModalProps) => {
                     {isSubmitting ? (
                       <>
                         <Loader2 className="w-4 h-4 animate-spin" />
-                        Enviando…
+                        {t("bgaas.form.sending")}
                       </>
                     ) : (
                       <>
                         <Send className="w-4 h-4" />
-                        Enviar
+                        {t("bgaas.form.submit")}
                       </>
                     )}
                   </Button>
@@ -507,10 +512,10 @@ const BGaaSModal = ({ open, onOpenChange }: BGaaSModalProps) => {
                   tabIndex={-1}
                   className="text-xl font-heading font-semibold text-foreground text-center outline-none"
                 >
-                  Perfeito!
+                  {t("bgaas.success.title")}
                 </DialogTitle>
                 <p className="text-sm text-muted-foreground text-center mt-2">
-                  Agora agende sua reunião inicial de 30 min para conhecer nosso método.
+                  {t("bgaas.success.subtitle")}
                 </p>
               </DialogHeader>
 
@@ -522,7 +527,7 @@ const BGaaSModal = ({ open, onOpenChange }: BGaaSModalProps) => {
                     width="100%"
                     height="500"
                     frameBorder="0"
-                    title="Agendar reunião inicial"
+                    title={t("bgaas.success.calendlyTitle")}
                     className="w-full"
                     style={{ border: "none" }}
                     onLoad={handleOpenCalendly}
@@ -530,14 +535,14 @@ const BGaaSModal = ({ open, onOpenChange }: BGaaSModalProps) => {
                 </div>
 
                 <p className="text-xs text-muted-foreground text-center mt-4">
-                  Prefere agendar depois?{" "}
+                  {t("bgaas.success.preferLater")}{" "}
                   <a 
                     href={CALENDLY_URL}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-primary hover:underline"
                   >
-                    Abrir em nova aba
+                    {t("bgaas.success.openNewTab")}
                   </a>
                 </p>
               </div>
