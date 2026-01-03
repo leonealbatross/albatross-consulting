@@ -1,7 +1,6 @@
 import { 
   TrendingUp, 
   GitMerge, 
-  BarChart3, 
   Building2, 
   Sparkles, 
   Users,
@@ -21,6 +20,7 @@ const Services = () => {
   const { handleClick } = useSmoothScroll();
 
   const services = [
+    // 1. Growth Strategy & Go-to-Market
     {
       icon: TrendingUp,
       title: t("services.s1.title"),
@@ -31,6 +31,7 @@ const Services = () => {
 A Albatross Consulting aplica frameworks consagrados como PESTEL, SWOT por área, Ansoff, OKRs, KPIs comerciais, funil de vendas e rituais de gestão para desenhar modelos comerciais eficientes e escaláveis. Atuamos da estratégia à operação para aumentar vendas, previsibilidade e acuracidade do forecast, gerar caixa, ampliar margens, reduzir churn e diminuir níveis de desconto, sustentando crescimento consistente.`,
       accent: "from-primary to-teal-300",
     },
+    // 2. M&A para Empresas de Tecnologia
     {
       icon: GitMerge,
       title: t("services.s2.title"),
@@ -39,18 +40,7 @@ A Albatross Consulting aplica frameworks consagrados como PESTEL, SWOT por área
       detailContent: `A Albatross Consulting, em parceria com a ONEtoONE Corporate Finance, atua de forma end-to-end em fusões e aquisições para empresas de tecnologia, combinando deal sourcing com alcance internacional e execução estratégica. Após a transação, a Albatross lidera a fase de pós-M&A, apoiando integração, governança, execução estratégica e captura de sinergias para garantir geração de valor sustentável no longo prazo.`,
       accent: "from-emerald-400 to-primary",
     },
-    {
-      icon: BarChart3,
-      title: t("services.s3.title"),
-      description: t("services.s3.desc"),
-      highlight: t("services.s3.highlight"),
-      detailContent: `Transformamos dados em decisões que aceleram crescimento e execução.
-
-A Albatross Consulting combina frameworks consagrados de estratégia, métricas avançadas de performance e metodologia própria de Growth e Go-to-Market para estruturar governança, previsibilidade comercial e eficiência operacional.
-
-Conectamos dados, liderança e execução para gerar impacto mensurável e crescimento sustentável.`,
-      accent: "from-cyan-400 to-primary",
-    },
+    // 3. Governança Corporativa & Advisory Board
     {
       icon: Building2,
       title: t("services.s4.title"),
@@ -63,6 +53,7 @@ A Albatross Consulting apoia empresas na criação e organização de modelos de
 Atuamos na composição de conselhos, recrutamento de conselheiros e executivos (GO), definição de ritos, métricas e tomada de decisão, fortalecendo liderança, transparência e geração de valor sustentável.`,
       accent: "from-blue-400 to-primary",
     },
+    // 4. GenAI & Inovação
     {
       icon: Sparkles,
       title: t("services.s5.title"),
@@ -75,6 +66,7 @@ A Albatross Consulting apoia empresas na aplicação prática de IA generativa p
 Desenvolvemos dashboards avançados de Sales Intelligence para melhorar previsibilidade, acuracidade de forecast e qualidade da tomada de decisão comercial, conectando dados, execução e crescimento sustentável.`,
       accent: "from-violet-400 to-primary",
     },
+    // 5. Mentoria Executiva
     {
       icon: Users,
       title: t("services.s6.title"),
@@ -85,6 +77,7 @@ Desenvolvemos dashboards avançados de Sales Intelligence para melhorar previsib
 Voltada a CEOs, CROs e líderes comerciais, a mentoria apoia decisões estratégicas, execução, liderança, performance de vendas e escala com foco em clareza, velocidade, accountability e resultados sustentáveis.`,
       accent: "from-rose-400 to-primary",
     },
+    // 6. Due Diligence Comercial para M&A
     {
       icon: Search,
       title: t("services.s7.title"),
