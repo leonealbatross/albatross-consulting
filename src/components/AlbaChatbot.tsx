@@ -195,7 +195,7 @@ const AlbaChatbot = () => {
         <img 
           src={albaAvatar} 
           alt="Alba - Assistente Virtual Albatross" 
-          className="w-16 h-16 rounded-full object-cover"
+          className="w-20 h-20 sm:w-16 sm:h-16 rounded-full object-cover"
         />
         <span className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-background animate-pulse" />
       </button>
