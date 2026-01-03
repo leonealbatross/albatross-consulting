@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Globe, Accessibility } from "lucide-react";
 import {
@@ -12,6 +12,7 @@ import { useActiveSection } from "@/hooks/use-active-section";
 import { useSmoothScroll } from "@/hooks/use-smooth-scroll";
 import albatrossLogo from "@/assets/logo-albatross-new.jpeg";
 import { Link } from "react-router-dom";
+import AccessibilityPanel from "@/components/AccessibilityPanel";
 import {
   Tooltip,
   TooltipContent,
@@ -23,6 +24,8 @@ import {
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isAccessibilityPanelOpen, setIsAccessibilityPanelOpen] = useState(false);
+  const accessibilityTriggerRef = useRef<HTMLButtonElement>(null);
   const { language, setLanguage, t } = useLanguage();
   const { scrollToSection } = useSmoothScroll();
 
@@ -54,6 +57,7 @@ const Header = () => {
   ];
 
   return (
+    <>
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         isScrolled
@@ -109,17 +113,18 @@ const Header = () => {
 
           {/* Right Section */}
           <div className="hidden lg:flex items-center gap-2">
-            {/* Accessibility Link */}
+            {/* Accessibility Button */}
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Link
-                    to="/accessibility"
+                  <button
+                    ref={accessibilityTriggerRef}
+                    onClick={() => setIsAccessibilityPanelOpen(true)}
                     className="p-2 text-muted-foreground hover:text-primary transition-colors rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background min-w-[44px] min-h-[44px] flex items-center justify-center"
-                    aria-label="Acessibilidade"
+                    aria-label="Configurações de acessibilidade"
                   >
                     <Accessibility className="w-5 h-5" aria-hidden="true" />
-                  </Link>
+                  </button>
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>Acessibilidade</p>
@@ -192,6 +197,18 @@ const Header = () => {
             <div className="flex items-center justify-between p-6 border-b border-border/30">
               <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Menu</span>
               <div className="flex items-center gap-2">
+                {/* Accessibility Button - Mobile */}
+                <button
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    setIsAccessibilityPanelOpen(true);
+                  }}
+                  className="p-2 text-muted-foreground hover:text-primary transition-colors rounded-lg focus:outline-none focus:ring-2 focus:ring-primary min-w-[44px] min-h-[44px] flex items-center justify-center"
+                  aria-label="Configurações de acessibilidade"
+                >
+                  <Accessibility className="w-5 h-5" aria-hidden="true" />
+                </button>
+
                 {/* Language Selector - Simple like desktop */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -260,6 +277,13 @@ const Header = () => {
         </div>
       </div>
     </header>
+
+    <AccessibilityPanel 
+      isOpen={isAccessibilityPanelOpen} 
+      onClose={() => setIsAccessibilityPanelOpen(false)}
+      triggerRef={accessibilityTriggerRef}
+    />
+    </>
   );
 };
 
