@@ -51,12 +51,16 @@ const defaultSettings: AccessibilitySettings = {
 
 const STORAGE_KEY = "albatross_accessibility_settings";
 
-const AccessibilityPanel = () => {
-  const [isOpen, setIsOpen] = useState(false);
+interface AccessibilityPanelProps {
+  isOpen: boolean;
+  onClose: () => void;
+  triggerRef?: React.RefObject<HTMLButtonElement>;
+}
+
+const AccessibilityPanel = ({ isOpen, onClose, triggerRef }: AccessibilityPanelProps) => {
   const [settings, setSettings] = useState<AccessibilitySettings>(defaultSettings);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
   const firstFocusableRef = useRef<HTMLButtonElement>(null);
 
   // Load settings from localStorage
@@ -180,8 +184,8 @@ const AccessibilityPanel = () => {
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        setIsOpen(false);
-        triggerRef.current?.focus();
+        onClose();
+        triggerRef?.current?.focus();
         return;
       }
 
@@ -244,25 +248,6 @@ const AccessibilityPanel = () => {
 
   return (
     <>
-      {/* Floating Accessibility Button */}
-      <motion.button
-        ref={triggerRef}
-        onClick={() => setIsOpen(true)}
-        className={cn(
-          "fixed bottom-24 right-6 z-[99] p-3 rounded-full",
-          "bg-primary text-primary-foreground shadow-lg",
-          "hover:bg-primary/90 transition-colors",
-          "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background",
-          "min-w-[48px] min-h-[48px] flex items-center justify-center"
-        )}
-        aria-label="Configurações avançadas de acessibilidade"
-        title="Acessibilidade"
-        whileHover={prefersReducedMotion ? {} : { scale: 1.05 }}
-        whileTap={prefersReducedMotion ? {} : { scale: 0.95 }}
-      >
-        <Accessibility className="w-6 h-6" aria-hidden="true" />
-      </motion.button>
-
       {/* Accessibility Panel Modal */}
       <AnimatePresence>
         {isOpen && (
@@ -273,7 +258,7 @@ const AccessibilityPanel = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100]"
-              onClick={() => setIsOpen(false)}
+              onClick={onClose}
               aria-hidden="true"
             />
 
@@ -311,8 +296,8 @@ const AccessibilityPanel = () => {
                   variant="ghost"
                   size="icon"
                   onClick={() => {
-                    setIsOpen(false);
-                    triggerRef.current?.focus();
+                    onClose();
+                    triggerRef?.current?.focus();
                   }}
                   className="min-w-[44px] min-h-[44px]"
                   aria-label="Fechar painel de acessibilidade"
