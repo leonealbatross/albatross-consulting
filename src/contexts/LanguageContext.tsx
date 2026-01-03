@@ -167,6 +167,7 @@ ENTREGÁVEIS:
     "footer.terms": "Termos de Uso",
     "footer.cookies": "Preferências de Cookies",
     "footer.accessibility": "Acessibilidade",
+    "footer.commitment": "A Albatross Consulting emprega seus melhores esforços para manter este website em conformidade com as melhores práticas e padrões internacionais de acessibilidade digital, privacidade de dados e otimização de performance, reafirmando seu compromisso com a excelência e a responsabilidade corporativa.",
 
     // Contact Modal
     "header.cta": "Agendar Conversa",
@@ -544,6 +545,7 @@ DELIVERABLES:
     "footer.terms": "Terms of Use",
     "footer.cookies": "Cookie Preferences",
     "footer.accessibility": "Accessibility",
+    "footer.commitment": "Albatross Consulting makes its best efforts to maintain this website in compliance with international best practices and standards for digital accessibility, data privacy, and performance optimization, reaffirming its commitment to excellence and corporate responsibility.",
 
     // Contact Modal
     "header.cta": "Schedule a Call",
@@ -921,6 +923,7 @@ ENTREGABLES:
     "footer.terms": "Términos de Uso",
     "footer.cookies": "Preferencias de Cookies",
     "footer.accessibility": "Accesibilidad",
+    "footer.commitment": "Albatross Consulting emplea sus mejores esfuerzos para mantener este sitio web en conformidad con las mejores prácticas y estándares internacionales de accesibilidad digital, privacidad de datos y optimización del rendimiento, reafirmando su compromiso con la excelencia y la responsabilidad corporativa.",
 
     // Contact Modal
     "header.cta": "Agendar una Llamada",

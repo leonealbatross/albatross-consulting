@@ -159,7 +159,7 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
         {/* Commitment Statement */}
         <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-border/50">
           <p className="text-xs text-muted-foreground text-center max-w-4xl mx-auto leading-relaxed">
-            A Albatross Consulting emprega seus melhores esforços para manter este website em conformidade com as melhores práticas e padrões internacionais de acessibilidade digital, privacidade de dados e otimização de performance, reafirmando seu compromisso com a excelência e a responsabilidade corporativa.
+            {t("footer.commitment")}
           </p>
         </div>
 
