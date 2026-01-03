@@ -37,7 +37,10 @@ const Hero = () => {
   ];
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section 
+      className="relative min-h-screen flex items-center justify-center overflow-hidden"
+      aria-labelledby="hero-headline"
+    >
       {/* Background Image */}
       <div 
         className="absolute inset-0 z-0"
@@ -46,13 +49,15 @@ const Hero = () => {
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
+        role="img"
+        aria-label="Imagem de fundo representando crescimento empresarial"
       >
         {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" aria-hidden="true" />
       </div>
 
       {/* Animated Background Elements */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
+      <div className="absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl animate-float" />
         <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-primary/10 rounded-full blur-3xl animate-float" style={{ animationDelay: "-3s" }} />
       </div>
@@ -62,11 +67,12 @@ const Hero = () => {
           {/* Badge - Enhanced BGaaS Button */}
           <motion.button
             onClick={() => setBgaasModalOpen(true)}
-            className="inline-flex items-center gap-2.5 px-5 py-3 rounded-full bg-gradient-to-r from-primary/20 to-primary/10 backdrop-blur-sm border border-primary/40 mb-8 opacity-0 animate-fade-up cursor-pointer group relative overflow-hidden"
+            className="inline-flex items-center gap-2.5 px-5 py-3 rounded-full bg-gradient-to-r from-primary/20 to-primary/10 backdrop-blur-sm border border-primary/40 mb-8 opacity-0 animate-fade-up cursor-pointer group relative overflow-hidden min-h-[44px] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.98 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
             style={{ minWidth: "280px" }}
+            aria-label="Business Growth as a Service - Clique para saber mais"
           >
             {/* Glow effect on hover */}
             <motion.div 
@@ -101,7 +107,10 @@ const Hero = () => {
           <BGaaSModal open={bgaasModalOpen} onOpenChange={setBgaasModalOpen} />
 
           {/* Main Headline */}
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-heading font-semibold tracking-tight leading-tight text-foreground mb-6 opacity-0 animate-fade-up stagger-1 px-2 sm:px-0">
+          <h1 
+            id="hero-headline"
+            className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-heading font-semibold tracking-tight leading-tight text-foreground mb-6 opacity-0 animate-fade-up stagger-1 px-2 sm:px-0"
+          >
             {t("hero.headline")}{" "}
             <span className="bg-gradient-to-r from-teal-400 to-primary bg-clip-text text-transparent">{t("hero.headline.highlight")}</span>
           </h1>
@@ -113,16 +122,20 @@ const Hero = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-16 opacity-0 animate-fade-up stagger-3 px-4 sm:px-0">
-            <a href="#agendamento" onClick={(e) => handleClick(e, 'agendamento')}>
-              <Button variant="hero" size="lg" className="group w-full sm:w-auto text-sm sm:text-base">
+            <a 
+              href="#agendamento" 
+              onClick={(e) => handleClick(e, 'agendamento')}
+              className="w-full sm:w-auto focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background rounded-lg"
+            >
+              <Button variant="hero" size="lg" className="group w-full sm:w-auto text-sm sm:text-base min-h-[48px]">
                 {t("hero.cta.primary")}
-                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:translate-x-1" />
+                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
               </Button>
             </a>
             <Button 
               variant="heroOutline" 
               size="lg" 
-              className="w-full sm:w-auto text-sm sm:text-base"
+              className="w-full sm:w-auto text-sm sm:text-base min-h-[48px] focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
               onClick={() => scrollToSection('sobre')}
             >
               {t("hero.cta.secondary")}
