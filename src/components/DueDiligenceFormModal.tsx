@@ -30,31 +30,46 @@ interface DueDiligenceFormModalProps {
   trigger?: React.ReactNode;
 }
 
-// Step 1 Schema
+// Email validation regex - corporate email pattern
+const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+// Phone validation regex - international format
+const phoneRegex = /^[\+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,9}([-\s\.]?[0-9]{1,9})*$/;
+
+// Step 1 Schema with enhanced validation
 const step1Schema = z.object({
-  name: z.string().min(2).max(100),
-  email: z.string().email().max(255),
-  company: z.string().min(2).max(100),
-  roleInTransaction: z.string().min(1),
-  dealStatus: z.string().min(1),
+  name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres").max(100),
+  email: z.string()
+    .min(1, "Email é obrigatório")
+    .regex(emailRegex, "Email inválido"),
+  company: z.string().min(2, "Empresa é obrigatória").max(100),
+  phone: z.string()
+    .optional()
+    .refine((val) => !val || phoneRegex.test(val), "Telefone inválido"),
+  roleInTransaction: z.string().min(1, "Papel na transação é obrigatório"),
+  roleOther: z.string().optional(),
+  dealStatus: z.string().min(1, "Status do deal é obrigatório"),
+  dealStatusOther: z.string().optional(),
 });
 
 // Step 2 Schema
 const step2Schema = z.object({
-  jobTitle: z.string().min(1),
-  targetCompany: z.string().min(2).max(200),
-  targetRevenue: z.string().min(1),
-  objectives: z.array(z.string()).min(1),
+  jobTitle: z.string().min(1, "Cargo é obrigatório"),
+  jobTitleOther: z.string().optional(),
+  targetCompany: z.string().min(2, "Setor e geografia são obrigatórios").max(200),
+  targetRevenue: z.string().min(1, "Porte da empresa-alvo é obrigatório"),
+  objectives: z.array(z.string()).min(1, "Selecione pelo menos um objetivo"),
   availableData: z.array(z.string()).optional(),
   concerns: z.string().max(1000).optional(),
 });
 
 const DueDiligenceFormModal = ({ trigger }: DueDiligenceFormModalProps) => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   
   const [formData, setFormData] = useState({
     // Step 1
@@ -63,9 +78,12 @@ const DueDiligenceFormModal = ({ trigger }: DueDiligenceFormModalProps) => {
     company: "",
     phone: "",
     roleInTransaction: "",
+    roleOther: "",
     dealStatus: "",
+    dealStatusOther: "",
     // Step 2
     jobTitle: "",
+    jobTitleOther: "",
     targetCompany: "",
     targetRevenue: "",
     objectives: [] as string[],
@@ -124,25 +142,142 @@ const DueDiligenceFormModal = ({ trigger }: DueDiligenceFormModalProps) => {
     { value: "org_charts", label: t("duediligence.data.orgCharts") },
   ];
 
-  const handleStep1Submit = () => {
-    const result = step1Schema.safeParse({
-      name: formData.name,
-      email: formData.email,
-      company: formData.company,
-      roleInTransaction: formData.roleInTransaction,
-      dealStatus: formData.dealStatus,
-    });
+  const getErrorMessage = (key: string): string => {
+    const messages: Record<string, Record<string, string>> = {
+      PT: {
+        emailInvalid: "Email corporativo inválido",
+        emailRequired: "Email é obrigatório",
+        phoneInvalid: "Telefone inválido. Use formato: +55 11 99999-9999",
+        nameMin: "Nome deve ter pelo menos 2 caracteres",
+        companyRequired: "Empresa é obrigatória",
+        roleRequired: "Papel na transação é obrigatório",
+        roleOtherRequired: "Especifique o papel na transação",
+        dealStatusRequired: "Status do deal é obrigatório",
+        dealStatusOtherRequired: "Especifique o status do deal",
+        jobTitleRequired: "Cargo é obrigatório",
+        jobTitleOtherRequired: "Especifique o cargo",
+        targetCompanyRequired: "Setor e geografia são obrigatórios",
+        revenueRequired: "Porte da empresa-alvo é obrigatório",
+        objectivesRequired: "Selecione pelo menos um objetivo",
+      },
+      EN: {
+        emailInvalid: "Invalid corporate email",
+        emailRequired: "Email is required",
+        phoneInvalid: "Invalid phone. Use format: +1 555 123-4567",
+        nameMin: "Name must have at least 2 characters",
+        companyRequired: "Company is required",
+        roleRequired: "Role in transaction is required",
+        roleOtherRequired: "Specify the role in transaction",
+        dealStatusRequired: "Deal status is required",
+        dealStatusOtherRequired: "Specify the deal status",
+        jobTitleRequired: "Job title is required",
+        jobTitleOtherRequired: "Specify the job title",
+        targetCompanyRequired: "Sector and geography are required",
+        revenueRequired: "Target company size is required",
+        objectivesRequired: "Select at least one objective",
+      },
+      ES: {
+        emailInvalid: "Email corporativo inválido",
+        emailRequired: "Email es obligatorio",
+        phoneInvalid: "Teléfono inválido. Use formato: +52 55 1234-5678",
+        nameMin: "Nombre debe tener al menos 2 caracteres",
+        companyRequired: "Empresa es obligatoria",
+        roleRequired: "Rol en la transacción es obligatorio",
+        roleOtherRequired: "Especifique el rol en la transacción",
+        dealStatusRequired: "Estado del deal es obligatorio",
+        dealStatusOtherRequired: "Especifique el estado del deal",
+        jobTitleRequired: "Cargo es obligatorio",
+        jobTitleOtherRequired: "Especifique el cargo",
+        targetCompanyRequired: "Sector y geografía son obligatorios",
+        revenueRequired: "Tamaño de la empresa objetivo es obligatorio",
+        objectivesRequired: "Seleccione al menos un objetivo",
+      },
+    };
+    return messages[language]?.[key] || messages.PT[key] || key;
+  };
 
-    if (!result.success) {
+  const validateStep1 = (): boolean => {
+    const newErrors: Record<string, string> = {};
+
+    // Name validation
+    if (!formData.name || formData.name.length < 2) {
+      newErrors.name = getErrorMessage("nameMin");
+    }
+
+    // Email validation
+    if (!formData.email) {
+      newErrors.email = getErrorMessage("emailRequired");
+    } else if (!emailRegex.test(formData.email)) {
+      newErrors.email = getErrorMessage("emailInvalid");
+    }
+
+    // Company validation
+    if (!formData.company || formData.company.length < 2) {
+      newErrors.company = getErrorMessage("companyRequired");
+    }
+
+    // Phone validation (optional but must be valid if provided)
+    if (formData.phone && !phoneRegex.test(formData.phone)) {
+      newErrors.phone = getErrorMessage("phoneInvalid");
+    }
+
+    // Role validation
+    if (!formData.roleInTransaction) {
+      newErrors.roleInTransaction = getErrorMessage("roleRequired");
+    } else if (formData.roleInTransaction === "other" && !formData.roleOther) {
+      newErrors.roleOther = getErrorMessage("roleOtherRequired");
+    }
+
+    // Deal status validation
+    if (!formData.dealStatus) {
+      newErrors.dealStatus = getErrorMessage("dealStatusRequired");
+    } else if (formData.dealStatus === "other" && !formData.dealStatusOther) {
+      newErrors.dealStatusOther = getErrorMessage("dealStatusOtherRequired");
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const validateStep2 = (): boolean => {
+    const newErrors: Record<string, string> = {};
+
+    // Job title validation
+    if (!formData.jobTitle) {
+      newErrors.jobTitle = getErrorMessage("jobTitleRequired");
+    } else if (formData.jobTitle === "other" && !formData.jobTitleOther) {
+      newErrors.jobTitleOther = getErrorMessage("jobTitleOtherRequired");
+    }
+
+    // Target company validation
+    if (!formData.targetCompany || formData.targetCompany.length < 2) {
+      newErrors.targetCompany = getErrorMessage("targetCompanyRequired");
+    }
+
+    // Revenue validation
+    if (!formData.targetRevenue) {
+      newErrors.targetRevenue = getErrorMessage("revenueRequired");
+    }
+
+    // Objectives validation
+    if (formData.objectives.length === 0) {
+      newErrors.objectives = getErrorMessage("objectivesRequired");
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleStep1Submit = () => {
+    if (validateStep1()) {
+      setStep(2);
+    } else {
       toast({
         title: t("duediligence.required"),
         description: t("duediligence.fillRequired"),
         variant: "destructive",
       });
-      return;
     }
-
-    setStep(2);
   };
 
   const handleObjectiveToggle = (value: string) => {
@@ -152,6 +287,10 @@ const DueDiligenceFormModal = ({ trigger }: DueDiligenceFormModalProps) => {
         ? prev.objectives.filter(v => v !== value)
         : [...prev.objectives, value]
     }));
+    // Clear objective error when selection changes
+    if (errors.objectives) {
+      setErrors(prev => ({ ...prev, objectives: "" }));
+    }
   };
 
   const handleDataToggle = (value: string) => {
@@ -164,16 +303,7 @@ const DueDiligenceFormModal = ({ trigger }: DueDiligenceFormModalProps) => {
   };
 
   const handleSubmit = async () => {
-    const result = step2Schema.safeParse({
-      jobTitle: formData.jobTitle,
-      targetCompany: formData.targetCompany,
-      targetRevenue: formData.targetRevenue,
-      objectives: formData.objectives,
-      availableData: formData.availableData,
-      concerns: formData.concerns,
-    });
-
-    if (!result.success) {
+    if (!validateStep2()) {
       toast({
         title: t("duediligence.required"),
         description: t("duediligence.fillRequired"),
@@ -185,15 +315,26 @@ const DueDiligenceFormModal = ({ trigger }: DueDiligenceFormModalProps) => {
     setIsSubmitting(true);
 
     try {
+      // Prepare final values with "other" fields
+      const finalRole = formData.roleInTransaction === "other" 
+        ? formData.roleOther 
+        : formData.roleInTransaction;
+      const finalDealStatus = formData.dealStatus === "other" 
+        ? formData.dealStatusOther 
+        : formData.dealStatus;
+      const finalJobTitle = formData.jobTitle === "other" 
+        ? formData.jobTitleOther 
+        : formData.jobTitle;
+
       const { data, error } = await supabase.functions.invoke('hubspot-duediligence', {
         body: {
           name: formData.name,
           email: formData.email,
           company: formData.company,
           phone: formData.phone,
-          roleInTransaction: formData.roleInTransaction,
-          dealStatus: formData.dealStatus,
-          jobTitle: formData.jobTitle,
+          roleInTransaction: finalRole,
+          dealStatus: finalDealStatus,
+          jobTitle: finalJobTitle,
           targetCompany: formData.targetCompany,
           targetRevenue: formData.targetRevenue,
           objectives: formData.objectives,
@@ -231,17 +372,28 @@ const DueDiligenceFormModal = ({ trigger }: DueDiligenceFormModalProps) => {
       company: "",
       phone: "",
       roleInTransaction: "",
+      roleOther: "",
       dealStatus: "",
+      dealStatusOther: "",
       jobTitle: "",
+      jobTitleOther: "",
       targetCompany: "",
       targetRevenue: "",
       objectives: [],
       availableData: [],
       concerns: "",
     });
+    setErrors({});
     setStep(1);
     setIsCompleted(false);
     setOpen(false);
+  };
+
+  const getDisplayValue = (value: string, options: { value: string; label: string }[], otherValue?: string) => {
+    if (value === "other" && otherValue) {
+      return otherValue;
+    }
+    return options.find(o => o.value === value)?.label || value;
   };
 
   const getScopeSummary = () => {
@@ -250,9 +402,10 @@ const DueDiligenceFormModal = ({ trigger }: DueDiligenceFormModalProps) => {
       return option?.label || obj;
     });
 
-    const role = roleOptions.find(r => r.value === formData.roleInTransaction)?.label || formData.roleInTransaction;
-    const status = dealStatusOptions.find(s => s.value === formData.dealStatus)?.label || formData.dealStatus;
-    const revenue = revenueOptions.find(r => r.value === formData.targetRevenue)?.label || formData.targetRevenue;
+    const role = getDisplayValue(formData.roleInTransaction, roleOptions, formData.roleOther);
+    const status = getDisplayValue(formData.dealStatus, dealStatusOptions, formData.dealStatusOther);
+    const revenue = getDisplayValue(formData.targetRevenue, revenueOptions);
+    const jobTitle = getDisplayValue(formData.jobTitle, jobTitleOptions, formData.jobTitleOther);
 
     return `
 RESUMO DO ESCOPO - Due Diligence Comercial
@@ -260,6 +413,7 @@ RESUMO DO ESCOPO - Due Diligence Comercial
 Solicitante: ${formData.name}
 Empresa: ${formData.company}
 Email: ${formData.email}
+Cargo: ${jobTitle}
 Papel na transação: ${role}
 Status do deal: ${status}
 
@@ -287,6 +441,8 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
       {t("duediligence.cta")}
     </Button>
   );
+
+  const specifyPlaceholder = language === "PT" ? "Especifique..." : language === "ES" ? "Especifique..." : "Specify...";
 
   return (
     <Dialog open={open} onOpenChange={(newOpen) => {
@@ -326,10 +482,14 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
                     <Input
                       id="dd-name"
                       value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      onChange={(e) => {
+                        setFormData({ ...formData, name: e.target.value });
+                        if (errors.name) setErrors(prev => ({ ...prev, name: "" }));
+                      }}
                       placeholder="João Silva"
-                      required
+                      className={errors.name ? "border-destructive" : ""}
                     />
+                    {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="dd-email">
@@ -339,10 +499,14 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
                       id="dd-email"
                       type="email"
                       value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      onChange={(e) => {
+                        setFormData({ ...formData, email: e.target.value });
+                        if (errors.email) setErrors(prev => ({ ...prev, email: "" }));
+                      }}
                       placeholder="joao@empresa.com"
-                      required
+                      className={errors.email ? "border-destructive" : ""}
                     />
+                    {errors.email && <p className="text-xs text-destructive">{errors.email}</p>}
                   </div>
                 </div>
 
@@ -354,10 +518,14 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
                     <Input
                       id="dd-company"
                       value={formData.company}
-                      onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                      onChange={(e) => {
+                        setFormData({ ...formData, company: e.target.value });
+                        if (errors.company) setErrors(prev => ({ ...prev, company: "" }));
+                      }}
                       placeholder={t("duediligence.companyPlaceholder")}
-                      required
+                      className={errors.company ? "border-destructive" : ""}
                     />
+                    {errors.company && <p className="text-xs text-destructive">{errors.company}</p>}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="dd-phone">
@@ -366,10 +534,16 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
                     </Label>
                     <Input
                       id="dd-phone"
+                      type="tel"
                       value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      onChange={(e) => {
+                        setFormData({ ...formData, phone: e.target.value });
+                        if (errors.phone) setErrors(prev => ({ ...prev, phone: "" }));
+                      }}
                       placeholder="+55 11 99999-9999"
+                      className={errors.phone ? "border-destructive" : ""}
                     />
+                    {errors.phone && <p className="text-xs text-destructive">{errors.phone}</p>}
                   </div>
                 </div>
 
@@ -378,9 +552,12 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
                     <Label>{t("duediligence.roleInTransaction")} *</Label>
                     <Select
                       value={formData.roleInTransaction}
-                      onValueChange={(value) => setFormData({ ...formData, roleInTransaction: value })}
+                      onValueChange={(value) => {
+                        setFormData({ ...formData, roleInTransaction: value, roleOther: "" });
+                        if (errors.roleInTransaction) setErrors(prev => ({ ...prev, roleInTransaction: "" }));
+                      }}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className={errors.roleInTransaction ? "border-destructive" : ""}>
                         <SelectValue placeholder={t("duediligence.select")} />
                       </SelectTrigger>
                       <SelectContent className="bg-background border shadow-lg z-50">
@@ -391,14 +568,34 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
                         ))}
                       </SelectContent>
                     </Select>
+                    {errors.roleInTransaction && <p className="text-xs text-destructive">{errors.roleInTransaction}</p>}
+                    
+                    {/* Show input when "other" is selected */}
+                    {formData.roleInTransaction === "other" && (
+                      <div className="mt-2">
+                        <Input
+                          value={formData.roleOther}
+                          onChange={(e) => {
+                            setFormData({ ...formData, roleOther: e.target.value });
+                            if (errors.roleOther) setErrors(prev => ({ ...prev, roleOther: "" }));
+                          }}
+                          placeholder={specifyPlaceholder}
+                          className={errors.roleOther ? "border-destructive" : ""}
+                        />
+                        {errors.roleOther && <p className="text-xs text-destructive">{errors.roleOther}</p>}
+                      </div>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label>{t("duediligence.dealStatus")} *</Label>
                     <Select
                       value={formData.dealStatus}
-                      onValueChange={(value) => setFormData({ ...formData, dealStatus: value })}
+                      onValueChange={(value) => {
+                        setFormData({ ...formData, dealStatus: value, dealStatusOther: "" });
+                        if (errors.dealStatus) setErrors(prev => ({ ...prev, dealStatus: "" }));
+                      }}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className={errors.dealStatus ? "border-destructive" : ""}>
                         <SelectValue placeholder={t("duediligence.select")} />
                       </SelectTrigger>
                       <SelectContent className="bg-background border shadow-lg z-50">
@@ -409,6 +606,23 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
                         ))}
                       </SelectContent>
                     </Select>
+                    {errors.dealStatus && <p className="text-xs text-destructive">{errors.dealStatus}</p>}
+                    
+                    {/* Show input when "other" is selected */}
+                    {formData.dealStatus === "other" && (
+                      <div className="mt-2">
+                        <Input
+                          value={formData.dealStatusOther}
+                          onChange={(e) => {
+                            setFormData({ ...formData, dealStatusOther: e.target.value });
+                            if (errors.dealStatusOther) setErrors(prev => ({ ...prev, dealStatusOther: "" }));
+                          }}
+                          placeholder={specifyPlaceholder}
+                          className={errors.dealStatusOther ? "border-destructive" : ""}
+                        />
+                        {errors.dealStatusOther && <p className="text-xs text-destructive">{errors.dealStatusOther}</p>}
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -429,9 +643,12 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
                     <Label>{t("duediligence.jobTitle")} *</Label>
                     <Select
                       value={formData.jobTitle}
-                      onValueChange={(value) => setFormData({ ...formData, jobTitle: value })}
+                      onValueChange={(value) => {
+                        setFormData({ ...formData, jobTitle: value, jobTitleOther: "" });
+                        if (errors.jobTitle) setErrors(prev => ({ ...prev, jobTitle: "" }));
+                      }}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className={errors.jobTitle ? "border-destructive" : ""}>
                         <SelectValue placeholder={t("duediligence.select")} />
                       </SelectTrigger>
                       <SelectContent className="bg-background border shadow-lg z-50">
@@ -442,14 +659,34 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
                         ))}
                       </SelectContent>
                     </Select>
+                    {errors.jobTitle && <p className="text-xs text-destructive">{errors.jobTitle}</p>}
+                    
+                    {/* Show input when "other" is selected */}
+                    {formData.jobTitle === "other" && (
+                      <div className="mt-2">
+                        <Input
+                          value={formData.jobTitleOther}
+                          onChange={(e) => {
+                            setFormData({ ...formData, jobTitleOther: e.target.value });
+                            if (errors.jobTitleOther) setErrors(prev => ({ ...prev, jobTitleOther: "" }));
+                          }}
+                          placeholder={specifyPlaceholder}
+                          className={errors.jobTitleOther ? "border-destructive" : ""}
+                        />
+                        {errors.jobTitleOther && <p className="text-xs text-destructive">{errors.jobTitleOther}</p>}
+                      </div>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label>{t("duediligence.targetCompanySize")} *</Label>
                     <Select
                       value={formData.targetRevenue}
-                      onValueChange={(value) => setFormData({ ...formData, targetRevenue: value })}
+                      onValueChange={(value) => {
+                        setFormData({ ...formData, targetRevenue: value });
+                        if (errors.targetRevenue) setErrors(prev => ({ ...prev, targetRevenue: "" }));
+                      }}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className={errors.targetRevenue ? "border-destructive" : ""}>
                         <SelectValue placeholder={t("duediligence.select")} />
                       </SelectTrigger>
                       <SelectContent className="bg-background border shadow-lg z-50">
@@ -460,6 +697,7 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
                         ))}
                       </SelectContent>
                     </Select>
+                    {errors.targetRevenue && <p className="text-xs text-destructive">{errors.targetRevenue}</p>}
                   </div>
                 </div>
 
@@ -470,14 +708,18 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
                   <Input
                     id="dd-target"
                     value={formData.targetCompany}
-                    onChange={(e) => setFormData({ ...formData, targetCompany: e.target.value })}
+                    onChange={(e) => {
+                      setFormData({ ...formData, targetCompany: e.target.value });
+                      if (errors.targetCompany) setErrors(prev => ({ ...prev, targetCompany: "" }));
+                    }}
                     placeholder={t("duediligence.targetCompanyPlaceholder")}
-                    required
+                    className={errors.targetCompany ? "border-destructive" : ""}
                   />
+                  {errors.targetCompany && <p className="text-xs text-destructive">{errors.targetCompany}</p>}
                 </div>
 
                 <div className="space-y-3">
-                  <Label>
+                  <Label className={errors.objectives ? "text-destructive" : ""}>
                     {t("duediligence.objectives.title")} *
                     <span className="text-muted-foreground text-xs ml-1">({t("duediligence.objectives.selectMultiple")})</span>
                   </Label>
@@ -499,6 +741,7 @@ ${formData.concerns ? `Riscos/hipóteses de preocupação:\n${formData.concerns}
                       </div>
                     ))}
                   </div>
+                  {errors.objectives && <p className="text-xs text-destructive">{errors.objectives}</p>}
                 </div>
 
                 <div className="space-y-3">
