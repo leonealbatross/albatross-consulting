@@ -90,40 +90,162 @@ const formatCNPJ = (value: string): string => {
     .replace(/(\d{4})(\d)/, '$1-$2');
 };
 
-// Format phone with Brazilian mask
-const formatPhoneBR = (value: string): string => {
-  const cleaned = value.replace(/\D/g, '').slice(0, 11);
-  if (cleaned.length <= 2) return cleaned;
-  if (cleaned.length <= 6) return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2)}`;
-  if (cleaned.length <= 10) return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 6)}-${cleaned.slice(6)}`;
-  return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 7)}-${cleaned.slice(7)}`;
+// Country dial codes mapping
+const countryDialCodes: Record<string, { code: string; length: number; format: (v: string) => string }> = {
+  BR: { 
+    code: "55", 
+    length: 11, 
+    format: (v: string) => {
+      const cleaned = v.slice(0, 11);
+      if (cleaned.length <= 2) return cleaned;
+      if (cleaned.length <= 7) return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2)}`;
+      return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 7)}-${cleaned.slice(7)}`;
+    }
+  },
+  MX: { 
+    code: "52", 
+    length: 10, 
+    format: (v: string) => {
+      const cleaned = v.slice(0, 10);
+      if (cleaned.length <= 2) return cleaned;
+      if (cleaned.length <= 6) return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2)}`;
+      return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 6)}-${cleaned.slice(6)}`;
+    }
+  },
+  AR: { 
+    code: "54", 
+    length: 10, 
+    format: (v: string) => {
+      const cleaned = v.slice(0, 10);
+      if (cleaned.length <= 2) return cleaned;
+      if (cleaned.length <= 6) return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2)}`;
+      return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 6)}-${cleaned.slice(6)}`;
+    }
+  },
+  CO: { 
+    code: "57", 
+    length: 10, 
+    format: (v: string) => {
+      const cleaned = v.slice(0, 10);
+      if (cleaned.length <= 3) return cleaned;
+      if (cleaned.length <= 6) return `${cleaned.slice(0, 3)} ${cleaned.slice(3)}`;
+      return `${cleaned.slice(0, 3)} ${cleaned.slice(3, 6)} ${cleaned.slice(6)}`;
+    }
+  },
+  CL: { 
+    code: "56", 
+    length: 9, 
+    format: (v: string) => {
+      const cleaned = v.slice(0, 9);
+      if (cleaned.length <= 1) return cleaned;
+      if (cleaned.length <= 5) return `${cleaned.slice(0, 1)} ${cleaned.slice(1)}`;
+      return `${cleaned.slice(0, 1)} ${cleaned.slice(1, 5)} ${cleaned.slice(5)}`;
+    }
+  },
+  PE: { code: "51", length: 9, format: (v: string) => v.slice(0, 9) },
+  EC: { code: "593", length: 9, format: (v: string) => v.slice(0, 9) },
+  UY: { code: "598", length: 8, format: (v: string) => v.slice(0, 8) },
+  PY: { code: "595", length: 9, format: (v: string) => v.slice(0, 9) },
+  BO: { code: "591", length: 8, format: (v: string) => v.slice(0, 8) },
+  VE: { code: "58", length: 10, format: (v: string) => v.slice(0, 10) },
+  CR: { code: "506", length: 8, format: (v: string) => v.slice(0, 8) },
+  PA: { code: "507", length: 8, format: (v: string) => v.slice(0, 8) },
+  OTHER: { code: "", length: 15, format: (v: string) => v.slice(0, 15) },
 };
 
-// Format phone international (basic)
-const formatPhoneIntl = (value: string): string => {
-  const cleaned = value.replace(/\D/g, '').slice(0, 15);
-  if (!value.startsWith('+')) {
-    return '+' + cleaned;
+// Detect country from dial code
+const detectCountryFromDialCode = (phoneNumber: string): string | null => {
+  const cleaned = phoneNumber.replace(/\D/g, '');
+  
+  // Check for 3-digit codes first (more specific)
+  const threeDigitCodes = ['593', '598', '595', '591', '506', '507'];
+  for (const code of threeDigitCodes) {
+    if (cleaned.startsWith(code)) {
+      const country = Object.entries(countryDialCodes).find(([_, data]) => data.code === code);
+      return country ? country[0] : null;
+    }
   }
-  return '+' + cleaned;
+  
+  // Check for 2-digit codes
+  const twoDigitCodes = ['55', '52', '54', '57', '56', '51', '58'];
+  for (const code of twoDigitCodes) {
+    if (cleaned.startsWith(code)) {
+      const country = Object.entries(countryDialCodes).find(([_, data]) => data.code === code);
+      return country ? country[0] : null;
+    }
+  }
+  
+  return null;
 };
 
-// LatAm countries
+// Format phone with country-specific mask
+const formatPhoneWithCountry = (value: string, countryCode: string): string => {
+  const countryData = countryDialCodes[countryCode] || countryDialCodes.OTHER;
+  const dialCode = countryData.code;
+  
+  // If value starts with +, handle the full international format
+  if (value.startsWith('+')) {
+    const cleaned = value.replace(/\D/g, '');
+    
+    // Check if dial code matches
+    if (dialCode && cleaned.startsWith(dialCode)) {
+      const localNumber = cleaned.slice(dialCode.length);
+      const formatted = countryData.format(localNumber);
+      return `+${dialCode} ${formatted}`;
+    }
+    
+    // Return with + and cleaned number
+    return '+' + cleaned.slice(0, 15);
+  }
+  
+  // If no +, add dial code prefix and format
+  const cleaned = value.replace(/\D/g, '');
+  const formatted = countryData.format(cleaned);
+  
+  if (dialCode) {
+    return `+${dialCode} ${formatted}`;
+  }
+  
+  return formatted;
+};
+
+// Get phone placeholder based on country
+const getPhonePlaceholder = (countryCode: string): string => {
+  const placeholders: Record<string, string> = {
+    BR: "+55 (11) 99999-9999",
+    MX: "+52 (55) 1234-5678",
+    AR: "+54 (11) 1234-5678",
+    CO: "+57 300 123 4567",
+    CL: "+56 9 1234 5678",
+    PE: "+51 999 999 999",
+    EC: "+593 99 999 9999",
+    UY: "+598 99 999 999",
+    PY: "+595 99 999 999",
+    BO: "+591 7 999 9999",
+    VE: "+58 412 123 4567",
+    CR: "+506 8888 8888",
+    PA: "+507 6666 6666",
+    OTHER: "+1 555 123 4567",
+  };
+  return placeholders[countryCode] || placeholders.OTHER;
+};
+
+// LatAm countries with dial codes for display
 const latamCountries = [
-  { value: "BR", label: { PT: "Brasil", EN: "Brazil", ES: "Brasil" } },
-  { value: "MX", label: { PT: "México", EN: "Mexico", ES: "México" } },
-  { value: "AR", label: { PT: "Argentina", EN: "Argentina", ES: "Argentina" } },
-  { value: "CO", label: { PT: "Colômbia", EN: "Colombia", ES: "Colombia" } },
-  { value: "CL", label: { PT: "Chile", EN: "Chile", ES: "Chile" } },
-  { value: "PE", label: { PT: "Peru", EN: "Peru", ES: "Perú" } },
-  { value: "EC", label: { PT: "Equador", EN: "Ecuador", ES: "Ecuador" } },
-  { value: "UY", label: { PT: "Uruguai", EN: "Uruguay", ES: "Uruguay" } },
-  { value: "PY", label: { PT: "Paraguai", EN: "Paraguay", ES: "Paraguay" } },
-  { value: "BO", label: { PT: "Bolívia", EN: "Bolivia", ES: "Bolivia" } },
-  { value: "VE", label: { PT: "Venezuela", EN: "Venezuela", ES: "Venezuela" } },
-  { value: "CR", label: { PT: "Costa Rica", EN: "Costa Rica", ES: "Costa Rica" } },
-  { value: "PA", label: { PT: "Panamá", EN: "Panama", ES: "Panamá" } },
-  { value: "OTHER", label: { PT: "Outro", EN: "Other", ES: "Otro" } },
+  { value: "BR", label: { PT: "Brasil", EN: "Brazil", ES: "Brasil" }, dialCode: "+55" },
+  { value: "MX", label: { PT: "México", EN: "Mexico", ES: "México" }, dialCode: "+52" },
+  { value: "AR", label: { PT: "Argentina", EN: "Argentina", ES: "Argentina" }, dialCode: "+54" },
+  { value: "CO", label: { PT: "Colômbia", EN: "Colombia", ES: "Colombia" }, dialCode: "+57" },
+  { value: "CL", label: { PT: "Chile", EN: "Chile", ES: "Chile" }, dialCode: "+56" },
+  { value: "PE", label: { PT: "Peru", EN: "Peru", ES: "Perú" }, dialCode: "+51" },
+  { value: "EC", label: { PT: "Equador", EN: "Ecuador", ES: "Ecuador" }, dialCode: "+593" },
+  { value: "UY", label: { PT: "Uruguai", EN: "Uruguay", ES: "Uruguay" }, dialCode: "+598" },
+  { value: "PY", label: { PT: "Paraguai", EN: "Paraguay", ES: "Paraguay" }, dialCode: "+595" },
+  { value: "BO", label: { PT: "Bolívia", EN: "Bolivia", ES: "Bolivia" }, dialCode: "+591" },
+  { value: "VE", label: { PT: "Venezuela", EN: "Venezuela", ES: "Venezuela" }, dialCode: "+58" },
+  { value: "CR", label: { PT: "Costa Rica", EN: "Costa Rica", ES: "Costa Rica" }, dialCode: "+506" },
+  { value: "PA", label: { PT: "Panamá", EN: "Panama", ES: "Panamá" }, dialCode: "+507" },
+  { value: "OTHER", label: { PT: "Outro", EN: "Other", ES: "Otro" }, dialCode: "" },
 ];
 
 const DueDiligenceFormModal = ({ trigger }: DueDiligenceFormModalProps) => {
@@ -363,14 +485,24 @@ const DueDiligenceFormModal = ({ trigger }: DueDiligenceFormModalProps) => {
   };
 
   const handlePhoneChange = (value: string) => {
-    let formatted = value;
-    if (formData.country === "BR" || !formData.country) {
-      // Remove prefix if BR
-      const withoutPrefix = value.replace(/^\+55\s?/, '');
-      formatted = formatPhoneBR(withoutPrefix);
-    } else {
-      formatted = formatPhoneIntl(value);
+    // Auto-detect country from dial code when user types + followed by numbers
+    if (value.startsWith('+') && value.length >= 3) {
+      const detectedCountry = detectCountryFromDialCode(value);
+      if (detectedCountry && detectedCountry !== formData.country) {
+        // Auto-update country based on dial code
+        setFormData(prev => ({ 
+          ...prev, 
+          country: detectedCountry,
+          phone: formatPhoneWithCountry(value, detectedCountry),
+          taxId: "" // Reset tax ID when country changes
+        }));
+        if (errors.phone) setErrors(prev => ({ ...prev, phone: "", country: "", taxId: "" }));
+        return;
+      }
     }
+    
+    // Format with current country
+    const formatted = formatPhoneWithCountry(value, formData.country || "BR");
     setFormData({ ...formData, phone: formatted });
     if (errors.phone) setErrors(prev => ({ ...prev, phone: "" }));
   };
@@ -745,7 +877,7 @@ ${formData.concerns}
   );
 
   const specifyPlaceholder = language === "PT" ? "Especifique..." : language === "ES" ? "Especifique..." : "Specify...";
-  const phonePlaceholder = formData.country === "BR" ? "(11) 99999-9999" : "+1 555 123-4567";
+  const phonePlaceholder = getPhonePlaceholder(formData.country || "BR");
 
   return (
     <Dialog open={open} onOpenChange={(newOpen) => {
@@ -855,8 +987,11 @@ ${formData.concerns}
                     <Select
                       value={formData.country}
                       onValueChange={(value) => {
-                        setFormData({ ...formData, country: value, taxId: "" });
-                        if (errors.country) setErrors(prev => ({ ...prev, country: "", taxId: "" }));
+                        // Update phone with new country dial code
+                        const dialCode = countryDialCodes[value]?.code;
+                        const newPhone = dialCode ? `+${dialCode} ` : "";
+                        setFormData({ ...formData, country: value, taxId: "", phone: newPhone });
+                        if (errors.country) setErrors(prev => ({ ...prev, country: "", taxId: "", phone: "" }));
                       }}
                     >
                       <SelectTrigger className={errors.country ? "border-destructive" : ""}>
@@ -865,7 +1000,7 @@ ${formData.concerns}
                       <SelectContent className="bg-background border shadow-lg z-50">
                         {latamCountries.map((country) => (
                           <SelectItem key={country.value} value={country.value}>
-                            {country.label[language]}
+                            {country.dialCode ? `${country.label[language]} (${country.dialCode})` : country.label[language]}
                           </SelectItem>
                         ))}
                       </SelectContent>
