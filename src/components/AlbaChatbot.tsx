@@ -681,8 +681,8 @@ Consentimento LGPD: Sim (${new Date().toISOString()})
             aria-label="Chat com Alba"
           >
             {/* Header */}
-            <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-primary/10 to-primary/5 border-b border-border/50">
-              <div className="relative">
+            <div className="flex items-center gap-3 p-3 sm:p-4 bg-gradient-to-r from-primary/10 to-primary/5 border-b border-border/50">
+              <div className="relative flex-shrink-0">
                 <img 
                   src={albaAvatar} 
                   alt="Alba" 
@@ -691,19 +691,34 @@ Consentimento LGPD: Sim (${new Date().toISOString()})
                 />
                 <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-background" />
               </div>
-              <div className="flex-1">
-                <h3 className="font-semibold text-foreground">Alba</h3>
-                <p className="text-xs text-muted-foreground">Assistente Albatross Consulting</p>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <h3 className="font-semibold text-foreground truncate">Alba</h3>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-primary/20 text-primary font-medium whitespace-nowrap">Online</span>
+                </div>
+                <p className="text-xs text-muted-foreground truncate">Assistente Albatross Consulting</p>
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsOpen(false)}
-                className="h-8 w-8 rounded-full"
-                aria-label="Fechar chat"
-              >
-                <X className="w-4 h-4" />
-              </Button>
+              <div className="flex items-center gap-1 flex-shrink-0">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="hidden sm:flex gap-1.5 text-xs text-primary hover:text-primary hover:bg-primary/10 px-2 h-8"
+                  onClick={() => navigateToSection("agendamento")}
+                  aria-label="Agendar reunião"
+                >
+                  <Calendar className="w-3.5 h-3.5" />
+                  <span className="hidden md:inline">Agendar</span>
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setIsOpen(false)}
+                  className="h-8 w-8 rounded-full"
+                  aria-label="Fechar chat"
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
 
             {/* Quick Actions - Fixed at top */}
