@@ -88,6 +88,27 @@ const translations: Record<Language, Record<string, string>> = {
     "services.s6.title": "Mentoria Executiva",
     "services.s6.desc": "Mentoria estratégica, confidencial e personalizada para líderes que precisam decidir melhor, executar mais rápido e escalar com consistência.",
     "services.s6.highlight": "Liderança Executiva",
+    "services.s7.title": "Due Diligence Comercial para M&A",
+    "services.s7.desc": "Avaliação profunda do Go-to-Market, pipeline, forecast e capacidade de execução comercial para reduzir riscos e acelerar criação de valor em M&A.",
+    "services.s7.highlight": "GTM & Vendas",
+    "services.s7.detailContent": `A Albatross Consulting conduz Due Diligence Comercial voltado a operações de M&A para validar se a "máquina de vendas" é escalável, previsível e sustentável.
+
+A análise cobre o GTM, diferentes estratégias comerciais e a maturidade da organização de vendas, com foco em riscos, dependências e alavancas de valor que impactam valuation, earn-out e plano de integração.
+
+ESCOPO:
+• Validação do GTM: ICP/segmentação, proposta de valor, pricing, canais e cobertura
+• Avaliação por estratégia comercial (B2B SMB/Mid-Market, B2C, Enterprise/KAM, Green Field, SDR Inbound/Outbound)
+• Rolling Four Quarters (RFQ): pipeline health e cobertura dos próximos 4 trimestres
+• Forecast: acurácia, viés, commit reliability e slippage (histórico de 3 anos)
+• Processo, enablement, métricas e CRM: critérios de etapas, governança do pipeline, qualidade de dados
+• Incentivos (Rewards & Recognition): alinhamento com margem, qualidade e crescimento sustentável
+• Pessoas: performance de vendedores e líderes (L1→CRO) nos últimos 3 anos
+
+ENTREGÁVEIS:
+• Relatório executivo com riscos e recomendações para o deal
+• Scorecard de maturidade comercial e prontidão para escala
+• Anexo analítico com RFQ pipeline/forecast e performance 3 anos
+• Recomendações para valuation/earn-out e plano de 100 dias`,
 
     // Methodology
     "methodology.label": "Nossa Metodologia",
@@ -215,6 +236,27 @@ const translations: Record<Language, Record<string, string>> = {
     "careers.form.error.linkedinInvalid": "URL do LinkedIn inválida",
     "careers.form.error.messageRequired": "Mensagem é obrigatória",
     "careers.form.error.messageMin": "Mensagem deve ter pelo menos 20 caracteres",
+
+    // Due Diligence Modal
+    "duediligence.cta": "Solicitar avaliação",
+    "duediligence.form.title": "Due Diligence Comercial para M&A",
+    "duediligence.form.description": "Preencha o formulário para solicitar uma avaliação do seu Go-to-Market, pipeline e forecast.",
+    "duediligence.form.role": "Cargo",
+    "duediligence.form.role.placeholder": "Ex: CEO, CFO, M&A Director",
+    "duediligence.form.transactionType": "Tipo de Transação",
+    "duediligence.form.dealStage": "Estágio do Deal",
+    "duediligence.form.annualRevenue": "Receita Anual Aproximada",
+    "duediligence.form.mainObjective": "Objetivo Principal",
+    "duediligence.form.selectOption": "Selecione uma opção",
+    "duediligence.form.optional": "opcional",
+    "duediligence.form.message.placeholder": "Descreva brevemente o contexto da transação...",
+    "duediligence.form.submit": "Solicitar avaliação",
+    "duediligence.objective.validate": "Validar previsibilidade",
+    "duediligence.objective.reduce": "Reduzir riscos",
+    "duediligence.objective.accelerate": "Acelerar crescimento",
+    "duediligence.objective.integration": "Planejamento de integração",
+    "duediligence.success.title": "Solicitação enviada!",
+    "duediligence.success.description": "Entraremos em contato em breve para agendar sua avaliação.",
   },
 
   EN: {
@@ -285,6 +327,27 @@ const translations: Record<Language, Record<string, string>> = {
     "services.s6.title": "Executive Mentoring",
     "services.s6.desc": "Strategic, confidential and personalized mentoring for leaders who need to decide better, execute faster and scale consistently.",
     "services.s6.highlight": "Executive Leadership",
+    "services.s7.title": "Commercial Due Diligence for M&A",
+    "services.s7.desc": "In-depth assessment of Go-to-Market, pipeline, forecast and commercial execution capability to reduce risks and accelerate value creation in M&A.",
+    "services.s7.highlight": "GTM & Sales",
+    "services.s7.detailContent": `Albatross Consulting conducts Commercial Due Diligence for M&A operations to validate whether the "sales machine" is scalable, predictable and sustainable.
+
+The analysis covers GTM, different commercial strategies and sales organization maturity, focusing on risks, dependencies and value levers that impact valuation, earn-out and integration plan.
+
+SCOPE:
+• GTM Validation: ICP/segmentation, value proposition, pricing, channels and coverage
+• Assessment by commercial strategy (B2B SMB/Mid-Market, B2C, Enterprise/KAM, Green Field, SDR Inbound/Outbound)
+• Rolling Four Quarters (RFQ): pipeline health and coverage for the next 4 quarters
+• Forecast: accuracy, bias, commit reliability and slippage (3-year history)
+• Process, enablement, metrics and CRM: stage criteria, pipeline governance, data quality
+• Incentives (Rewards & Recognition): alignment with margin, quality and sustainable growth
+• People: performance of salespeople and leaders (L1→CRO) over the past 3 years
+
+DELIVERABLES:
+• Executive report with risks and recommendations for the deal
+• Commercial maturity and scale readiness scorecard
+• Analytical appendix with RFQ pipeline/forecast and 3-year performance
+• Recommendations for valuation/earn-out and 100-day plan`,
 
     // Methodology
     "methodology.label": "Our Methodology",
@@ -412,6 +475,27 @@ const translations: Record<Language, Record<string, string>> = {
     "careers.form.error.linkedinInvalid": "Invalid LinkedIn URL",
     "careers.form.error.messageRequired": "Message is required",
     "careers.form.error.messageMin": "Message must have at least 20 characters",
+
+    // Due Diligence Modal
+    "duediligence.cta": "Request assessment",
+    "duediligence.form.title": "Commercial Due Diligence for M&A",
+    "duediligence.form.description": "Fill out the form to request an assessment of your Go-to-Market, pipeline and forecast.",
+    "duediligence.form.role": "Role",
+    "duediligence.form.role.placeholder": "E.g.: CEO, CFO, M&A Director",
+    "duediligence.form.transactionType": "Transaction Type",
+    "duediligence.form.dealStage": "Deal Stage",
+    "duediligence.form.annualRevenue": "Approximate Annual Revenue",
+    "duediligence.form.mainObjective": "Main Objective",
+    "duediligence.form.selectOption": "Select an option",
+    "duediligence.form.optional": "optional",
+    "duediligence.form.message.placeholder": "Briefly describe the transaction context...",
+    "duediligence.form.submit": "Request assessment",
+    "duediligence.objective.validate": "Validate predictability",
+    "duediligence.objective.reduce": "Reduce risks",
+    "duediligence.objective.accelerate": "Accelerate growth",
+    "duediligence.objective.integration": "Integration planning",
+    "duediligence.success.title": "Request sent!",
+    "duediligence.success.description": "We'll get in touch soon to schedule your assessment.",
   },
 
   ES: {
@@ -482,6 +566,27 @@ const translations: Record<Language, Record<string, string>> = {
     "services.s6.title": "Mentoría Ejecutiva",
     "services.s6.desc": "Mentoría estratégica, confidencial y personalizada para líderes que necesitan decidir mejor, ejecutar más rápido y escalar con consistencia.",
     "services.s6.highlight": "Liderazgo Ejecutivo",
+    "services.s7.title": "Due Diligence Comercial para M&A",
+    "services.s7.desc": "Evaluación profunda del Go-to-Market, pipeline, forecast y capacidad de ejecución comercial para reducir riesgos y acelerar creación de valor en M&A.",
+    "services.s7.highlight": "GTM & Ventas",
+    "services.s7.detailContent": `Albatross Consulting conduce Due Diligence Comercial para operaciones de M&A para validar si la "máquina de ventas" es escalable, predecible y sostenible.
+
+El análisis cubre el GTM, diferentes estrategias comerciales y la madurez de la organización de ventas, con enfoque en riesgos, dependencias y palancas de valor que impactan valuación, earn-out y plan de integración.
+
+ALCANCE:
+• Validación del GTM: ICP/segmentación, propuesta de valor, pricing, canales y cobertura
+• Evaluación por estrategia comercial (B2B SMB/Mid-Market, B2C, Enterprise/KAM, Green Field, SDR Inbound/Outbound)
+• Rolling Four Quarters (RFQ): salud del pipeline y cobertura de los próximos 4 trimestres
+• Forecast: precisión, sesgo, commit reliability y slippage (histórico de 3 años)
+• Proceso, enablement, métricas y CRM: criterios de etapas, gobernanza del pipeline, calidad de datos
+• Incentivos (Rewards & Recognition): alineación con margen, calidad y crecimiento sostenible
+• Personas: rendimiento de vendedores y líderes (L1→CRO) en los últimos 3 años
+
+ENTREGABLES:
+• Informe ejecutivo con riesgos y recomendaciones para el deal
+• Scorecard de madurez comercial y preparación para escalar
+• Anexo analítico con RFQ pipeline/forecast y rendimiento 3 años
+• Recomendaciones para valuación/earn-out y plan de 100 días`,
 
     // Methodology
     "methodology.label": "Nuestra Metodología",
@@ -609,6 +714,27 @@ const translations: Record<Language, Record<string, string>> = {
     "careers.form.error.linkedinInvalid": "URL de LinkedIn inválida",
     "careers.form.error.messageRequired": "Mensaje es obligatorio",
     "careers.form.error.messageMin": "Mensaje debe tener al menos 20 caracteres",
+
+    // Due Diligence Modal
+    "duediligence.cta": "Solicitar evaluación",
+    "duediligence.form.title": "Due Diligence Comercial para M&A",
+    "duediligence.form.description": "Complete el formulario para solicitar una evaluación de su Go-to-Market, pipeline y forecast.",
+    "duediligence.form.role": "Cargo",
+    "duediligence.form.role.placeholder": "Ej: CEO, CFO, Director de M&A",
+    "duediligence.form.transactionType": "Tipo de Transacción",
+    "duediligence.form.dealStage": "Etapa del Deal",
+    "duediligence.form.annualRevenue": "Ingresos Anuales Aproximados",
+    "duediligence.form.mainObjective": "Objetivo Principal",
+    "duediligence.form.selectOption": "Seleccione una opción",
+    "duediligence.form.optional": "opcional",
+    "duediligence.form.message.placeholder": "Describa brevemente el contexto de la transacción...",
+    "duediligence.form.submit": "Solicitar evaluación",
+    "duediligence.objective.validate": "Validar previsibilidad",
+    "duediligence.objective.reduce": "Reducir riesgos",
+    "duediligence.objective.accelerate": "Acelerar crecimiento",
+    "duediligence.objective.integration": "Planificación de integración",
+    "duediligence.success.title": "¡Solicitud enviada!",
+    "duediligence.success.description": "Nos pondremos en contacto pronto para agendar su evaluación.",
   },
 };
 
