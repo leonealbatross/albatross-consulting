@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { MessageCircle, X, Send, Calendar, Mail, Loader2, Briefcase, Users, Brain, Phone, ChevronLeft, Check, ArrowRight, Sparkles } from "lucide-react";
+import { MessageCircle, X, Send, Calendar, Mail, Loader2, Briefcase, Users, Brain, Phone, ChevronLeft, Check, ArrowRight, Sparkles, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -77,6 +77,16 @@ const QUICK_ACTIONS = [
 // Intent detection keywords
 const COMMERCIAL_INTENTS = ["preço", "proposta", "reunião", "orçamento", "custo", "quanto custa", "consultor", "especialista", "agendar", "contratar", "investimento", "budget"];
 
+// LocalStorage keys
+const STORAGE_KEYS = {
+  messages: "alba_chat_messages",
+  interactionCount: "alba_interaction_count",
+  sessionId: "alba_session_id",
+};
+
+// Threshold for suggesting meeting
+const MEETING_SUGGESTION_THRESHOLD = 5;
+
 const AlbaChatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
@@ -87,6 +97,7 @@ const AlbaChatbot = () => {
   const [interactionCount, setInteractionCount] = useState(0);
   const [failureCount, setFailureCount] = useState(0);
   const [dynamicSuggestions, setDynamicSuggestions] = useState<string[]>([]);
+  const [hasSuggestedMeeting, setHasSuggestedMeeting] = useState(false);
   
   // Lead capture state
   const [leadStep, setLeadStep] = useState<LeadStep>("idle");
@@ -104,6 +115,50 @@ const AlbaChatbot = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const previousScrollPosition = useRef<number | null>(null);
+
+  // Load persisted data from localStorage
+  useEffect(() => {
+    try {
+      const savedMessages = localStorage.getItem(STORAGE_KEYS.messages);
+      const savedCount = localStorage.getItem(STORAGE_KEYS.interactionCount);
+      
+      if (savedMessages) {
+        const parsed = JSON.parse(savedMessages) as Message[];
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setMessages(parsed);
+        }
+      }
+      
+      if (savedCount) {
+        const count = parseInt(savedCount, 10);
+        if (!isNaN(count)) {
+          setInteractionCount(count);
+        }
+      }
+    } catch (error) {
+      console.error("Error loading chat history:", error);
+    }
+  }, []);
+
+  // Persist messages to localStorage
+  useEffect(() => {
+    if (messages.length > 0) {
+      try {
+        localStorage.setItem(STORAGE_KEYS.messages, JSON.stringify(messages));
+      } catch (error) {
+        console.error("Error saving chat history:", error);
+      }
+    }
+  }, [messages]);
+
+  // Persist interaction count
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEYS.interactionCount, String(interactionCount));
+    } catch (error) {
+      console.error("Error saving interaction count:", error);
+    }
+  }, [interactionCount]);
 
   // Check for reduced motion preference
   useEffect(() => {
@@ -178,6 +233,27 @@ const AlbaChatbot = () => {
     const lowerText = text.toLowerCase();
     return COMMERCIAL_INTENTS.some(intent => lowerText.includes(intent));
   }, []);
+
+  // Suggest meeting after threshold interactions
+  const suggestMeeting = useCallback(() => {
+    if (hasSuggestedMeeting) return;
+    
+    setHasSuggestedMeeting(true);
+    trackEvent("meeting_suggestion_triggered", { interactionCount });
+    
+    setMessages(prev => [...prev, {
+      role: "assistant",
+      content: `Prezado(a), permita-me expressar minha sincera gratidão pelo seu interesse em conhecer a Albatross Consulting. É verdadeiramente um prazer acompanhá-lo(a) nesta jornada de descoberta.
+
+Após nossa rica conversa, percebo que suas necessidades merecem atenção personalizada de nossa equipe de especialistas. Seria uma honra para nós proporcionar-lhe uma consultoria exclusiva.
+
+**Permita-me convidá-lo(a) para um diagnóstico estratégico gratuito**, onde poderemos explorar em profundidade as melhores soluções para sua organização.
+
+[CTA:AGENDAR]
+
+Estou à disposição para quaisquer outras dúvidas, mas confio que uma conversa direta com nosso time trará ainda mais valor à sua experiência.`
+    }]);
+  }, [hasSuggestedMeeting, interactionCount, trackEvent]);
 
   // Start lead capture flow
   const startLeadCapture = useCallback(() => {
@@ -431,6 +507,15 @@ Consentimento LGPD: Sim (${new Date().toISOString()})
       }
       
       setFailureCount(0);
+      
+      // Check if we should suggest a meeting after threshold interactions
+      const newInteractionCount = interactionCount + 1;
+      if (newInteractionCount >= MEETING_SUGGESTION_THRESHOLD && !hasSuggestedMeeting && leadStep === "idle") {
+        // Add a small delay to let the AI response finish displaying
+        setTimeout(() => {
+          suggestMeeting();
+        }, 1500);
+      }
       
     } catch (error) {
       console.error("Chat error:", error);
@@ -718,6 +803,33 @@ Consentimento LGPD: Sim (${new Date().toISOString()})
                       <p>Agendar uma reunião com nossa equipe</p>
                     </TooltipContent>
                   </Tooltip>
+                  {messages.length > 0 && (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => {
+                            setMessages([]);
+                            setInteractionCount(0);
+                            setHasSuggestedMeeting(false);
+                            setLeadStep("idle");
+                            setDynamicSuggestions([]);
+                            localStorage.removeItem(STORAGE_KEYS.messages);
+                            localStorage.removeItem(STORAGE_KEYS.interactionCount);
+                            trackEvent("chat_cleared");
+                          }}
+                          className="h-8 w-8 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted"
+                          aria-label="Limpar conversa"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom" className="bg-popover text-popover-foreground border border-border shadow-lg">
+                        <p>Limpar conversa</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
                 </TooltipProvider>
                 <Button
                   variant="ghost"
