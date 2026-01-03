@@ -89,7 +89,7 @@ const translations: Record<Language, Record<string, string>> = {
     "services.s6.desc": "Mentoria estratégica, confidencial e personalizada para líderes que precisam decidir melhor, executar mais rápido e escalar com consistência.",
     "services.s6.highlight": "Liderança Executiva",
     "services.s7.title": "Due Diligence Comercial para M&A",
-    "services.s7.desc": "Avaliação profunda do Go-to-Market, pipeline, forecast e capacidade de execução comercial para reduzir riscos e acelerar criação de valor em M&A.",
+    "services.s7.desc": "Avaliação profunda da Área Comercial e do GTM da empresa, incluindo validação das expectativas futuras de receita, previsibilidade e acuracidade dos compromissos assumidos (forecast e pipeline), e capacidade de execução comercial para reduzir riscos e acelerar criação de valor em M&A.",
     "services.s7.highlight": "GTM & Vendas",
     "services.s7.detailContent": `A Albatross Consulting conduz Due Diligence Comercial voltado a operações de M&A para validar se a "máquina de vendas" é escalável, previsível e sustentável.
 
