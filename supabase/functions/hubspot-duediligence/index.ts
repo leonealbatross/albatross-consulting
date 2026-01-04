@@ -1,5 +1,6 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { Resend } from "https://esm.sh/resend@2.0.0";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -356,11 +357,95 @@ ${concerns || 'Não informado'}
       console.log('Contact created successfully:', hubspotResult);
     }
 
+    // Send email notification using Resend
+    const resendApiKey = Deno.env.get('RESEND_API_KEY');
+    let emailSent = false;
+    
+    if (resendApiKey) {
+      try {
+        const resend = new Resend(resendApiKey);
+        
+        const emailHtml = `
+          <h2 style="color: #1a365d; margin-bottom: 20px;">Nova Solicitação de Due Diligence Comercial</h2>
+          
+          <div style="background: #f7fafc; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+            <h3 style="color: #2d3748; margin-top: 0;">📋 Identificação</h3>
+            <p><strong>Nome:</strong> ${name}</p>
+            <p><strong>Email:</strong> ${email}</p>
+            <p><strong>Telefone:</strong> ${phone || 'Não informado'}</p>
+            <p><strong>Empresa:</strong> ${company}</p>
+            <p><strong>País:</strong> ${countryLabel}</p>
+            <p><strong>${taxIdLabel}:</strong> ${taxId}</p>
+          </div>
+          
+          <div style="background: #edf2f7; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+            <h3 style="color: #2d3748; margin-top: 0;">💼 Transação</h3>
+            <p><strong>Tipo:</strong> ${transactionTypeLabel}</p>
+            <p><strong>Status:</strong> ${dealStatusLabel}</p>
+          </div>
+          
+          <div style="background: #f7fafc; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+            <h3 style="color: #2d3748; margin-top: 0;">👤 Perfil do Solicitante</h3>
+            <p><strong>Instituição:</strong> ${requesterProfileLabel}</p>
+            <p><strong>Cargo:</strong> ${jobTitleLabel}</p>
+          </div>
+          
+          <div style="background: #edf2f7; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+            <h3 style="color: #2d3748; margin-top: 0;">🎯 Empresa-Alvo</h3>
+            <p><strong>Segmento:</strong> ${marketSegmentLabel}</p>
+            <p><strong>Modelo de Receita:</strong> ${revenueModelLabel}</p>
+            <p><strong>Setor/Geografia:</strong> ${targetCompany || 'Não informado'}</p>
+            <p><strong>Porte:</strong> ${revenueLabel}</p>
+          </div>
+          
+          <div style="background: #f7fafc; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+            <h3 style="color: #2d3748; margin-top: 0;">🎯 Objetivos do DD Comercial</h3>
+            <ul>
+              ${objectivesString ? objectivesString.split('; ').map(o => `<li>${o}</li>`).join('') : '<li>Não especificado</li>'}
+            </ul>
+          </div>
+          
+          <div style="background: #edf2f7; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+            <h3 style="color: #2d3748; margin-top: 0;">📊 Dados Disponíveis</h3>
+            <ul>
+              ${availableDataString ? availableDataString.split('; ').map(d => `<li>${d}</li>`).join('') : '<li>Não informado</li>'}
+            </ul>
+          </div>
+          
+          <div style="background: #fff5f5; padding: 20px; border-radius: 8px; border-left: 4px solid #c53030;">
+            <h3 style="color: #c53030; margin-top: 0;">⚠️ Riscos/Hipóteses</h3>
+            <p>${concerns || 'Não informado'}</p>
+          </div>
+          
+          <hr style="margin: 30px 0; border: none; border-top: 1px solid #e2e8f0;">
+          <p style="color: #718096; font-size: 12px;">
+            Tags: ${service || 'Commercial Due Diligence (M&A)'} | ${segment || 'Tech / LatAm'} | ${source || 'Website'}
+          </p>
+        `;
+
+        const emailResponse = await resend.emails.send({
+          from: 'Albatross Consulting <onboarding@resend.dev>',
+          to: ['leone@albatross.consulting'],
+          subject: `[DD Comercial] Nova Solicitação - ${company} (${name})`,
+          html: emailHtml,
+        });
+
+        console.log('Email notification sent:', emailResponse);
+        emailSent = true;
+      } catch (emailError) {
+        console.error('Error sending email notification:', emailError);
+        // Don't fail the whole request if email fails
+      }
+    } else {
+      console.warn('RESEND_API_KEY not configured, skipping email notification');
+    }
+
     return new Response(
       JSON.stringify({ 
         success: true, 
         message: 'Due Diligence contact sent to HubSpot successfully',
-        hubspotId: hubspotResult?.id 
+        hubspotId: hubspotResult?.id,
+        emailSent 
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
