@@ -146,9 +146,9 @@ const AdminDashboard = () => {
           const eventData = d.event_data as Record<string, unknown> | null;
           return {
             id: d.id,
-            name: (eventData?.name as string) || (eventData?.nome as string) || '-',
-            email: (eventData?.email as string) || '-',
-            phone: (eventData?.phone as string) || (eventData?.telefone as string) || '-',
+            name: (eventData?.lead_name as string) || (eventData?.name as string) || (eventData?.nome as string) || '-',
+            email: (eventData?.lead_email as string) || (eventData?.email as string) || '-',
+            phone: (eventData?.lead_phone as string) || (eventData?.phone as string) || (eventData?.telefone as string) || '-',
             createdAt: d.created_at,
             serviceType: d.service_interest || '-',
             message: (eventData?.message as string) || (eventData?.mensagem as string) || '-',
