@@ -187,6 +187,12 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
             >
               {t("footer.accessibility")}
             </a>
+            <a 
+              href="/admin" 
+              className="text-[10px] text-muted-foreground/40 hover:text-muted-foreground/60 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-card rounded"
+            >
+              admin
+            </a>
           </nav>
         </div>
       </div>
