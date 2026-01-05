@@ -92,6 +92,36 @@ const MEETING_SUGGESTION_THRESHOLD = 5;
 // 24 hours in milliseconds
 const CHAT_EXPIRATION_MS = 24 * 60 * 60 * 1000;
 
+// Phone mask utility function
+const formatPhoneNumber = (value: string): string => {
+  // Remove all non-digits
+  const digits = value.replace(/\D/g, "");
+  
+  // Limit to 11 digits (Brazilian mobile with DDD)
+  const limited = digits.slice(0, 11);
+  
+  // Apply mask based on length
+  if (limited.length === 0) return "";
+  if (limited.length <= 2) return `(${limited}`;
+  if (limited.length <= 6) return `(${limited.slice(0, 2)}) ${limited.slice(2)}`;
+  if (limited.length <= 10) return `(${limited.slice(0, 2)}) ${limited.slice(2, 6)}-${limited.slice(6)}`;
+  return `(${limited.slice(0, 2)}) ${limited.slice(2, 7)}-${limited.slice(7)}`;
+};
+
+// Check if input looks like a phone number edit (starts with "5 " for field 5)
+const isPhoneFieldEdit = (value: string): boolean => {
+  return /^5\s/.test(value.trim());
+};
+
+// Extract and format phone from edit command
+const formatPhoneEditCommand = (value: string): string => {
+  const match = value.match(/^5\s+(.+)$/);
+  if (match) {
+    return `5 ${formatPhoneNumber(match[1])}`;
+  }
+  return value;
+};
+
 const AlbaChatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
@@ -1228,14 +1258,27 @@ Consentimento LGPD: ✅ Aceito em ${new Date().toISOString()}
                   ref={inputRef}
                   type="text"
                   value={input}
-                  onChange={(e) => setInput(e.target.value)}
+                  onChange={(e) => {
+                    let newValue = e.target.value;
+                    
+                    // Auto-format phone when in phone step
+                    if (leadStep === "phone") {
+                      newValue = formatPhoneNumber(newValue);
+                    }
+                    // Auto-format when editing phone field (command "5 ...")
+                    else if (isPhoneFieldEdit(newValue)) {
+                      newValue = formatPhoneEditCommand(newValue);
+                    }
+                    
+                    setInput(newValue);
+                  }}
                   onKeyDown={handleKeyDown}
                   placeholder={
                     leadStep === "name" ? "Seu nome completo..." :
                     leadStep === "email" ? "Seu e-mail corporativo..." :
                     leadStep === "company" ? "Nome da empresa..." :
                     leadStep === "jobTitle" ? "Seu cargo..." :
-                    leadStep === "phone" ? "Telefone/WhatsApp..." :
+                    leadStep === "phone" ? "(11) 99999-9999" :
                     "Digite sua mensagem..."
                   }
                   className="flex-1 rounded-full"
