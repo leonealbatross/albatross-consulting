@@ -371,11 +371,16 @@ Estou à disposição para quaisquer outras dúvidas, mas confio que uma convers
       const utmMedium = urlParams.get("utm_medium") || "";
       const utmCampaign = urlParams.get("utm_campaign") || "";
       
-      // Create chat summary
-      const chatSummary = messages
-        .slice(-10)
-        .map(m => `${m.role === "user" ? "User" : "Alba"}: ${m.content.substring(0, 100)}`)
-        .join("\n");
+      // Create full chat transcript
+      const fullChatTranscript = messages
+        .map(m => `[${m.role === "user" ? "LEAD" : "ALBA"}]: ${m.content}`)
+        .join("\n\n");
+      
+      // Create brief summary for quick reference
+      const briefSummary = messages
+        .filter(m => m.role === "user")
+        .map(m => m.content.substring(0, 150))
+        .join(" | ");
       
       const { data, error } = await supabase.functions.invoke("hubspot-contact", {
         body: {
@@ -383,20 +388,37 @@ Estou à disposição para quaisquer outras dúvidas, mas confio que uma convers
           email: leadData.email,
           company: leadData.company,
           message: `
-Cargo: ${leadData.jobTitle}
-Interesse: ${INTEREST_OPTIONS.find(o => o.value === leadData.interest)?.label || leadData.interest}
-Prazo: ${TIMELINE_OPTIONS.find(o => o.value === leadData.timeline)?.label || "Não informado"}
+══════════════════════════════════════
+📋 INFORMAÇÕES DO LEAD
+══════════════════════════════════════
+Nome: ${leadData.name}
+Email: ${leadData.email}
+Empresa: ${leadData.company || "Não informada"}
+Cargo: ${leadData.jobTitle || "Não informado"}
 Telefone: ${leadData.phone || "Não informado"}
 
---- Chat Summary ---
-${chatSummary}
+📌 Interesse Principal: ${INTEREST_OPTIONS.find(o => o.value === leadData.interest)?.label || leadData.interest}
+⏰ Prazo/Urgência: ${TIMELINE_OPTIONS.find(o => o.value === leadData.timeline)?.label || "Não informado"}
 
---- Metadata ---
-Página: ${currentUrl}
-UTM Source: ${utmSource}
-UTM Medium: ${utmMedium}
-UTM Campaign: ${utmCampaign}
-Consentimento LGPD: Sim (${new Date().toISOString()})
+══════════════════════════════════════
+💬 RESUMO DA CONVERSA
+══════════════════════════════════════
+${briefSummary}
+
+══════════════════════════════════════
+📝 TRANSCRIÇÃO COMPLETA DO CHAT
+══════════════════════════════════════
+${fullChatTranscript}
+
+══════════════════════════════════════
+🔗 METADATA & RASTREAMENTO
+══════════════════════════════════════
+Página de Origem: ${currentUrl}
+UTM Source: ${utmSource || "direto"}
+UTM Medium: ${utmMedium || "orgânico"}
+UTM Campaign: ${utmCampaign || "n/a"}
+Data/Hora: ${new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })}
+Consentimento LGPD: ✅ Aceito em ${new Date().toISOString()}
           `.trim(),
           sectionTitle: "Alba Chatbot - Lead Qualificado",
         },
