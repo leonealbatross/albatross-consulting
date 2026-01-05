@@ -92,6 +92,36 @@ const MEETING_SUGGESTION_THRESHOLD = 5;
 // 24 hours in milliseconds
 const CHAT_EXPIRATION_MS = 24 * 60 * 60 * 1000;
 
+// Lead capture steps configuration
+const LEAD_STEPS_CONFIG = [
+  { key: "name", label: "Nome", icon: "👤" },
+  { key: "email", label: "Email", icon: "📧" },
+  { key: "company", label: "Empresa", icon: "🏢" },
+  { key: "jobTitle", label: "Cargo", icon: "💼" },
+  { key: "interest", label: "Interesse", icon: "🎯" },
+  { key: "timeline", label: "Prazo", icon: "⏰" },
+  { key: "phone", label: "Telefone", icon: "📱" },
+  { key: "consent", label: "Confirmar", icon: "✅" },
+] as const;
+
+// Get current step index for progress
+const getStepIndex = (step: LeadStep): number => {
+  const stepMap: Record<LeadStep, number> = {
+    idle: -1,
+    name: 0,
+    email: 1,
+    company: 2,
+    jobTitle: 3,
+    interest: 4,
+    timeline: 5,
+    phone: 6,
+    consent: 7,
+    submitting: 8,
+    success: 8,
+  };
+  return stepMap[step];
+};
+
 // Phone mask utility function with international support
 const formatPhoneNumber = (value: string): string => {
   // Check if it starts with + (international format)
@@ -983,6 +1013,62 @@ Consentimento LGPD: ✅ Aceito em ${new Date().toISOString()}
                 </Button>
               </div>
             </div>
+
+            {/* Lead Capture Progress Indicator */}
+            {leadStep !== "idle" && leadStep !== "submitting" && leadStep !== "success" && (
+              <div className="px-3 py-2 border-b border-border/30 bg-gradient-to-r from-primary/5 to-primary/10">
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-xs font-medium text-foreground">
+                    Qualificação: {LEAD_STEPS_CONFIG[getStepIndex(leadStep)]?.label}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {getStepIndex(leadStep) + 1} de {LEAD_STEPS_CONFIG.length}
+                  </span>
+                </div>
+                <div className="flex gap-1">
+                  {LEAD_STEPS_CONFIG.map((step, index) => {
+                    const currentIndex = getStepIndex(leadStep);
+                    const isCompleted = index < currentIndex;
+                    const isCurrent = index === currentIndex;
+                    
+                    return (
+                      <div
+                        key={step.key}
+                        className={cn(
+                          "h-1.5 flex-1 rounded-full transition-all duration-300",
+                          isCompleted && "bg-primary",
+                          isCurrent && "bg-primary/60 animate-pulse",
+                          !isCompleted && !isCurrent && "bg-muted"
+                        )}
+                        title={step.label}
+                      />
+                    );
+                  })}
+                </div>
+                <div className="flex justify-between mt-1.5">
+                  {LEAD_STEPS_CONFIG.map((step, index) => {
+                    const currentIndex = getStepIndex(leadStep);
+                    const isCompleted = index < currentIndex;
+                    const isCurrent = index === currentIndex;
+                    
+                    return (
+                      <span
+                        key={step.key}
+                        className={cn(
+                          "text-[10px] transition-all duration-300",
+                          isCompleted && "text-primary",
+                          isCurrent && "text-primary font-medium",
+                          !isCompleted && !isCurrent && "text-muted-foreground/50"
+                        )}
+                        title={step.label}
+                      >
+                        {step.icon}
+                      </span>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* Quick Actions - Fixed at top */}
             <div className="px-3 py-2 border-b border-border/30 bg-muted/30">
