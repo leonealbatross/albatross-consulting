@@ -412,6 +412,26 @@ Estou à disposição para quaisquer outras dúvidas, mas confio que uma convers
     }
   }, [leadStep]);
 
+  // Cancel lead capture and return to normal chat
+  const cancelLeadCapture = useCallback(() => {
+    setLeadStep("idle");
+    setLeadData({
+      name: "",
+      email: "",
+      company: "",
+      jobTitle: "",
+      interest: "",
+      timeline: "",
+      phone: "",
+      consent: false,
+    });
+    setMessages(prev => [...prev, 
+      { role: "user", content: "Cancelar" },
+      { role: "assistant", content: "Sem problemas! O processo foi cancelado. Como posso ajudá-lo de outra forma? 😊" }
+    ]);
+    trackEvent("lead_cancelled");
+  }, [trackEvent]);
+
   // Submit lead to HubSpot
   const submitLead = useCallback(async () => {
     setLeadStep("submitting");
@@ -1327,15 +1347,25 @@ Consentimento LGPD: ✅ Aceito em ${new Date().toISOString()}
                 </Button>
               </div>
               
-              {/* Skip button for optional phone field */}
-              {leadStep === "phone" && (
-                <div className="mt-2 text-center">
+              {/* Cancel and Skip buttons during lead capture */}
+              {leadStep !== "idle" && leadStep !== "submitting" && leadStep !== "success" && (
+                <div className="mt-2 flex items-center justify-center gap-4">
                   <button
-                    onClick={skipOptionalField}
-                    className="text-xs text-muted-foreground hover:text-foreground"
+                    onClick={cancelLeadCapture}
+                    className="text-xs text-destructive hover:text-destructive/80 flex items-center gap-1"
                   >
-                    Pular esta etapa
+                    <X className="w-3 h-3" />
+                    Cancelar
                   </button>
+                  
+                  {(leadStep === "phone" || leadStep === "timeline") && (
+                    <button
+                      onClick={skipOptionalField}
+                      className="text-xs text-muted-foreground hover:text-foreground"
+                    >
+                      Pular esta etapa
+                    </button>
+                  )}
                 </div>
               )}
             </div>
