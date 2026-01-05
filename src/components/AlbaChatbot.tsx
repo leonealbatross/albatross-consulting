@@ -92,15 +92,37 @@ const MEETING_SUGGESTION_THRESHOLD = 5;
 // 24 hours in milliseconds
 const CHAT_EXPIRATION_MS = 24 * 60 * 60 * 1000;
 
-// Phone mask utility function
+// Phone mask utility function with international support
 const formatPhoneNumber = (value: string): string => {
-  // Remove all non-digits
-  const digits = value.replace(/\D/g, "");
+  // Check if it starts with + (international format)
+  const hasPlus = value.startsWith("+");
   
+  // Remove all non-digits
+  let digits = value.replace(/\D/g, "");
+  
+  // If started with +, handle international format
+  if (hasPlus || digits.startsWith("55")) {
+    // Remove leading 55 if present to normalize
+    if (digits.startsWith("55")) {
+      digits = digits.slice(2);
+    }
+    
+    // Limit to 11 digits (DDD + 9 digits)
+    const limited = digits.slice(0, 11);
+    
+    // Apply international mask: +55 (11) 99999-9999
+    if (limited.length === 0) return "+55 ";
+    if (limited.length <= 2) return `+55 (${limited}`;
+    if (limited.length <= 6) return `+55 (${limited.slice(0, 2)}) ${limited.slice(2)}`;
+    if (limited.length <= 10) return `+55 (${limited.slice(0, 2)}) ${limited.slice(2, 6)}-${limited.slice(6)}`;
+    return `+55 (${limited.slice(0, 2)}) ${limited.slice(2, 7)}-${limited.slice(7)}`;
+  }
+  
+  // National format (default)
   // Limit to 11 digits (Brazilian mobile with DDD)
   const limited = digits.slice(0, 11);
   
-  // Apply mask based on length
+  // Apply mask based on length: (11) 99999-9999
   if (limited.length === 0) return "";
   if (limited.length <= 2) return `(${limited}`;
   if (limited.length <= 6) return `(${limited.slice(0, 2)}) ${limited.slice(2)}`;
