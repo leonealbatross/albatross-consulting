@@ -4,6 +4,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { 
   LogOut, 
   MessageSquare, 
   Users, 
@@ -15,8 +23,18 @@ import {
   RefreshCw
 } from "lucide-react";
 import { User } from "@supabase/supabase-js";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, FunnelChart, Funnel, LabelList } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import albatrossLogo from "@/assets/logo-albatross.png";
+
+interface LeadData {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  createdAt: string;
+  serviceType: string;
+  message: string;
+}
 
 interface AnalyticsData {
   totalSessions: number;
@@ -28,6 +46,7 @@ interface AnalyticsData {
   serviceInterests: { name: string; value: number }[];
   funnelData: { name: string; value: number; fill: string }[];
   dailyData: { date: string; sessions: number; leads: number }[];
+  leads: LeadData[];
 }
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
@@ -46,6 +65,7 @@ const AdminDashboard = () => {
     serviceInterests: [],
     funnelData: [],
     dailyData: [],
+    leads: [],
   });
   const navigate = useNavigate();
 
@@ -119,6 +139,23 @@ const AdminDashboard = () => {
         };
       });
 
+      // Extrair leads dos eventos
+      const leadsData: LeadData[] = analyticsData
+        .filter(d => d.lead_submitted === true && d.event_data)
+        .map(d => {
+          const eventData = d.event_data as Record<string, unknown> | null;
+          return {
+            id: d.id,
+            name: (eventData?.name as string) || (eventData?.nome as string) || '-',
+            email: (eventData?.email as string) || '-',
+            phone: (eventData?.phone as string) || (eventData?.telefone as string) || '-',
+            createdAt: d.created_at,
+            serviceType: d.service_interest || '-',
+            message: (eventData?.message as string) || (eventData?.mensagem as string) || '-',
+          };
+        })
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
       setMetrics({
         totalSessions: uniqueSessions,
         totalMessages,
@@ -129,6 +166,7 @@ const AdminDashboard = () => {
         serviceInterests,
         funnelData,
         dailyData,
+        leads: leadsData,
       });
     } catch (error) {
       console.error('Error:', error);
@@ -394,6 +432,62 @@ const AdminDashboard = () => {
             ) : (
               <div className="h-full flex items-center justify-center text-muted-foreground">
                 Dados serão exibidos após interações com o chatbot
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Tabela de Leads */}
+        <Card className="mt-8">
+          <CardHeader>
+            <CardTitle>Leads Capturados</CardTitle>
+            <CardDescription>Lista detalhada de todos os leads</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {metrics.leads.length > 0 ? (
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Nome</TableHead>
+                      <TableHead>Email</TableHead>
+                      <TableHead>Telefone</TableHead>
+                      <TableHead>Data/Hora</TableHead>
+                      <TableHead>Serviço</TableHead>
+                      <TableHead className="max-w-[200px]">Mensagem</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {metrics.leads.map((lead) => (
+                      <TableRow key={lead.id}>
+                        <TableCell className="font-medium">{lead.name}</TableCell>
+                        <TableCell>{lead.email}</TableCell>
+                        <TableCell>{lead.phone}</TableCell>
+                        <TableCell>
+                          {new Date(lead.createdAt).toLocaleDateString('pt-BR', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </TableCell>
+                        <TableCell>
+                          <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
+                            {lead.serviceType}
+                          </span>
+                        </TableCell>
+                        <TableCell className="max-w-[200px] truncate" title={lead.message}>
+                          {lead.message}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            ) : (
+              <div className="h-32 flex items-center justify-center text-muted-foreground">
+                Nenhum lead capturado ainda
               </div>
             )}
           </CardContent>
