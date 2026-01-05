@@ -84,6 +84,8 @@ const STORAGE_KEYS = {
   interactionCount: "alba_interaction_count",
   sessionId: "alba_session_id",
   lastInteraction: "alba_last_interaction",
+  leadDraft: "alba_lead_draft",
+  leadStep: "alba_lead_step",
 };
 
 // Threshold for suggesting meeting
@@ -240,6 +242,62 @@ const AlbaChatbot = () => {
       }
     } catch (error) {
       console.error("Error loading chat history:", error);
+    }
+  }, []);
+
+  // Load lead draft from localStorage
+  useEffect(() => {
+    try {
+      const savedDraft = localStorage.getItem(STORAGE_KEYS.leadDraft);
+      const savedStep = localStorage.getItem(STORAGE_KEYS.leadStep);
+      
+      if (savedDraft && savedStep) {
+        const parsedDraft = JSON.parse(savedDraft) as LeadData;
+        const parsedStep = savedStep as LeadStep;
+        
+        // Only restore if step is valid and not idle/success/submitting
+        if (parsedStep !== "idle" && parsedStep !== "success" && parsedStep !== "submitting") {
+          setLeadData(parsedDraft);
+          setLeadStep(parsedStep);
+          
+          // Add recovery message
+          setMessages(prev => {
+            // Check if recovery message already exists
+            const hasRecoveryMessage = prev.some(m => m.content.includes("rascunho salvo"));
+            if (!hasRecoveryMessage && prev.length > 0) {
+              return [...prev, {
+                role: "assistant",
+                content: `📝 Encontrei seu rascunho salvo! Vamos continuar de onde paramos?\n\n**Dados recuperados:**\n${parsedDraft.name ? `• Nome: ${parsedDraft.name}\n` : ""}${parsedDraft.email ? `• Email: ${parsedDraft.email}\n` : ""}${parsedDraft.company ? `• Empresa: ${parsedDraft.company}\n` : ""}${parsedDraft.jobTitle ? `• Cargo: ${parsedDraft.jobTitle}\n` : ""}${parsedDraft.interest ? `• Interesse: ${parsedDraft.interest}\n` : ""}${parsedDraft.phone ? `• Telefone: ${parsedDraft.phone}\n` : ""}\nContinue preenchendo ou clique em **Cancelar** para começar do zero.`
+              }];
+            }
+            return prev;
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error loading lead draft:", error);
+    }
+  }, []);
+
+  // Persist lead draft to localStorage
+  useEffect(() => {
+    try {
+      if (leadStep !== "idle" && leadStep !== "success") {
+        localStorage.setItem(STORAGE_KEYS.leadDraft, JSON.stringify(leadData));
+        localStorage.setItem(STORAGE_KEYS.leadStep, leadStep);
+      }
+    } catch (error) {
+      console.error("Error saving lead draft:", error);
+    }
+  }, [leadData, leadStep]);
+
+  // Clear lead draft when completed or cancelled
+  const clearLeadDraft = useCallback(() => {
+    try {
+      localStorage.removeItem(STORAGE_KEYS.leadDraft);
+      localStorage.removeItem(STORAGE_KEYS.leadStep);
+    } catch (error) {
+      console.error("Error clearing lead draft:", error);
     }
   }, []);
 
@@ -455,12 +513,13 @@ Estou à disposição para quaisquer outras dúvidas, mas confio que uma convers
       phone: "",
       consent: false,
     });
+    clearLeadDraft(); // Clear saved draft
     setMessages(prev => [...prev, 
       { role: "user", content: "Cancelar" },
       { role: "assistant", content: "Sem problemas! O processo foi cancelado. Como posso ajudá-lo de outra forma? 😊" }
     ]);
     trackEvent("lead_cancelled");
-  }, [trackEvent]);
+  }, [trackEvent, clearLeadDraft]);
 
   // Submit lead to HubSpot
   const submitLead = useCallback(async () => {
@@ -530,6 +589,7 @@ Consentimento LGPD: ✅ Aceito em ${new Date().toISOString()}
       if (error) throw error;
       
       setLeadStep("success");
+      clearLeadDraft(); // Clear saved draft on success
       trackEvent("lead_submitted", { hubspotId: data?.hubspotId });
       
       setMessages(prev => [...prev, {
@@ -553,7 +613,7 @@ Consentimento LGPD: ✅ Aceito em ${new Date().toISOString()}
         content: "Desculpe, houve um erro ao enviar. Você pode tentar novamente ou entrar em contato diretamente."
       }]);
     }
-  }, [leadData, messages, trackEvent]);
+  }, [leadData, messages, trackEvent, clearLeadDraft]);
 
   // Handle quick action click
   const handleQuickAction = useCallback((action: typeof QUICK_ACTIONS[0]) => {
