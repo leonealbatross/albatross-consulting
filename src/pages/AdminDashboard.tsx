@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { 
   LogOut, 
   MessageSquare, 
@@ -20,10 +33,15 @@ import {
   BarChart3,
   Target,
   ArrowLeft,
-  RefreshCw
+  RefreshCw,
+  CalendarIcon,
+  X
 } from "lucide-react";
 import { User } from "@supabase/supabase-js";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { cn } from "@/lib/utils";
 import albatrossLogo from "@/assets/logo-albatross.png";
 
 interface LeadData {
@@ -51,6 +69,15 @@ interface AnalyticsData {
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
 
+const SERVICES = [
+  'Growth Strategy & Go-to-Market',
+  'Governança Corporativa & Advisory Board',
+  'Mentoria Executiva',
+  'M&A para Empresas de Tecnologia',
+  'Due Diligence Comercial',
+  'GenAI & Inovação'
+];
+
 const AdminDashboard = () => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -67,7 +94,48 @@ const AdminDashboard = () => {
     dailyData: [],
     leads: [],
   });
+  const [serviceFilter, setServiceFilter] = useState<string>("all");
+  const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined);
+  const [dateTo, setDateTo] = useState<Date | undefined>(undefined);
   const navigate = useNavigate();
+
+  // Filtrar leads com base nos filtros
+  const filteredLeads = useMemo(() => {
+    return metrics.leads.filter(lead => {
+      // Filtro por serviço
+      if (serviceFilter !== "all" && lead.serviceType !== serviceFilter) {
+        return false;
+      }
+      
+      // Filtro por data inicial
+      if (dateFrom) {
+        const leadDate = new Date(lead.createdAt);
+        const fromDate = new Date(dateFrom);
+        fromDate.setHours(0, 0, 0, 0);
+        if (leadDate < fromDate) {
+          return false;
+        }
+      }
+      
+      // Filtro por data final
+      if (dateTo) {
+        const leadDate = new Date(lead.createdAt);
+        const toDate = new Date(dateTo);
+        toDate.setHours(23, 59, 59, 999);
+        if (leadDate > toDate) {
+          return false;
+        }
+      }
+      
+      return true;
+    });
+  }, [metrics.leads, serviceFilter, dateFrom, dateTo]);
+
+  const clearFilters = () => {
+    setServiceFilter("all");
+    setDateFrom(undefined);
+    setDateTo(undefined);
+  };
 
   const fetchAnalytics = async () => {
     setIsRefreshing(true);
@@ -437,14 +505,93 @@ const AdminDashboard = () => {
           </CardContent>
         </Card>
 
-        {/* Tabela de Leads */}
         <Card className="mt-8">
           <CardHeader>
-            <CardTitle>Leads Capturados</CardTitle>
-            <CardDescription>Lista detalhada de todos os leads</CardDescription>
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div>
+                <CardTitle>Leads Capturados</CardTitle>
+                <CardDescription>
+                  {filteredLeads.length} de {metrics.leads.length} leads
+                </CardDescription>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                {/* Filtro por serviço */}
+                <Select value={serviceFilter} onValueChange={setServiceFilter}>
+                  <SelectTrigger className="w-[200px]">
+                    <SelectValue placeholder="Filtrar por serviço" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos os serviços</SelectItem>
+                    {SERVICES.map((service) => (
+                      <SelectItem key={service} value={service}>
+                        {service.length > 25 ? service.substring(0, 25) + '...' : service}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                {/* Filtro por data inicial */}
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-[140px] justify-start text-left font-normal",
+                        !dateFrom && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {dateFrom ? format(dateFrom, "dd/MM/yyyy") : "De"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={dateFrom}
+                      onSelect={setDateFrom}
+                      locale={ptBR}
+                      className="pointer-events-auto"
+                    />
+                  </PopoverContent>
+                </Popover>
+
+                {/* Filtro por data final */}
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-[140px] justify-start text-left font-normal",
+                        !dateTo && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {dateTo ? format(dateTo, "dd/MM/yyyy") : "Até"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={dateTo}
+                      onSelect={setDateTo}
+                      locale={ptBR}
+                      className="pointer-events-auto"
+                    />
+                  </PopoverContent>
+                </Popover>
+
+                {/* Limpar filtros */}
+                {(serviceFilter !== "all" || dateFrom || dateTo) && (
+                  <Button variant="ghost" size="sm" onClick={clearFilters}>
+                    <X className="h-4 w-4 mr-1" />
+                    Limpar
+                  </Button>
+                )}
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
-            {metrics.leads.length > 0 ? (
+            {filteredLeads.length > 0 ? (
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
@@ -458,7 +605,7 @@ const AdminDashboard = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {metrics.leads.map((lead) => (
+                    {filteredLeads.map((lead) => (
                       <TableRow key={lead.id}>
                         <TableCell className="font-medium">{lead.name}</TableCell>
                         <TableCell>{lead.email}</TableCell>
