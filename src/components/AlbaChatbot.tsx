@@ -82,10 +82,14 @@ const STORAGE_KEYS = {
   messages: "alba_chat_messages",
   interactionCount: "alba_interaction_count",
   sessionId: "alba_session_id",
+  lastInteraction: "alba_last_interaction",
 };
 
 // Threshold for suggesting meeting
 const MEETING_SUGGESTION_THRESHOLD = 5;
+
+// 24 hours in milliseconds
+const CHAT_EXPIRATION_MS = 24 * 60 * 60 * 1000;
 
 const AlbaChatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -116,9 +120,25 @@ const AlbaChatbot = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const previousScrollPosition = useRef<number | null>(null);
 
-  // Load persisted data from localStorage
+  // Load persisted data from localStorage (with 24h expiration)
   useEffect(() => {
     try {
+      const lastInteraction = localStorage.getItem(STORAGE_KEYS.lastInteraction);
+      const now = Date.now();
+      
+      // Check if chat has expired (24 hours since last interaction)
+      if (lastInteraction) {
+        const lastTime = parseInt(lastInteraction, 10);
+        if (!isNaN(lastTime) && now - lastTime > CHAT_EXPIRATION_MS) {
+          // Clear expired data
+          localStorage.removeItem(STORAGE_KEYS.messages);
+          localStorage.removeItem(STORAGE_KEYS.interactionCount);
+          localStorage.removeItem(STORAGE_KEYS.lastInteraction);
+          console.log("Chat history expired after 24h, cleared.");
+          return;
+        }
+      }
+      
       const savedMessages = localStorage.getItem(STORAGE_KEYS.messages);
       const savedCount = localStorage.getItem(STORAGE_KEYS.interactionCount);
       
@@ -140,11 +160,12 @@ const AlbaChatbot = () => {
     }
   }, []);
 
-  // Persist messages to localStorage
+  // Persist messages to localStorage and update last interaction timestamp
   useEffect(() => {
     if (messages.length > 0) {
       try {
         localStorage.setItem(STORAGE_KEYS.messages, JSON.stringify(messages));
+        localStorage.setItem(STORAGE_KEYS.lastInteraction, String(Date.now()));
       } catch (error) {
         console.error("Error saving chat history:", error);
       }
