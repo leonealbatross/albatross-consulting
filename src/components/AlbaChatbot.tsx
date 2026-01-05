@@ -88,6 +88,16 @@ const STORAGE_KEYS = {
   leadStep: "alba_lead_step",
 };
 
+// Generate or retrieve session ID
+const getSessionId = (): string => {
+  let sessionId = localStorage.getItem(STORAGE_KEYS.sessionId);
+  if (!sessionId) {
+    sessionId = `alba_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    localStorage.setItem(STORAGE_KEYS.sessionId, sessionId);
+  }
+  return sessionId;
+};
+
 // Threshold for suggesting meeting
 const MEETING_SUGGESTION_THRESHOLD = 5;
 
@@ -338,15 +348,29 @@ const AlbaChatbot = () => {
     return () => clearTimeout(timer);
   }, [prefersReducedMotion]);
 
-  // Track events
-  const trackEvent = useCallback((event: string, data?: Record<string, unknown>) => {
+  // Track events - now sends to alba_analytics table
+  const trackEvent = useCallback(async (event: string, data?: Record<string, unknown>) => {
     console.log(`Event: ${event}`, data);
-    // Here you could integrate with analytics
+    
+    try {
+      const sessionId = getSessionId();
+      // Using type assertion since types may not be updated yet
+      await (supabase.from('alba_analytics') as any).insert({
+        session_id: sessionId,
+        event_type: event,
+        event_data: data || {},
+        service_interest: (data?.service_interest as string) || null,
+        lead_submitted: event === 'lead_success',
+        messages_count: event === 'message' ? 1 : 0,
+      });
+    } catch (error) {
+      console.error('Error tracking event:', error);
+    }
   }, []);
 
   useEffect(() => {
     if (isOpen) {
-      trackEvent("open_chat");
+      trackEvent("chat_opened");
     }
   }, [isOpen, trackEvent]);
 
@@ -468,13 +492,17 @@ Estou à disposição para quaisquer outras dúvidas, mas confio que uma convers
 
   // Handle interest selection
   const handleInterestSelect = useCallback((interest: string) => {
+    const interestLabel = INTEREST_OPTIONS.find(o => o.value === interest)?.label || interest;
     setLeadData(prev => ({ ...prev, interest }));
     setMessages(prev => [...prev, 
-      { role: "user", content: INTEREST_OPTIONS.find(o => o.value === interest)?.label || interest },
+      { role: "user", content: interestLabel },
       { role: "assistant", content: "Qual é o seu prazo aproximado? (opcional - pode pular)" }
     ]);
     setLeadStep("timeline");
-  }, []);
+    
+    // Track service interest
+    trackEvent("service_interest", { service_interest: interestLabel });
+  }, [trackEvent]);
 
   // Handle timeline selection
   const handleTimelineSelect = useCallback((timeline: string) => {
@@ -590,7 +618,7 @@ Consentimento LGPD: ✅ Aceito em ${new Date().toISOString()}
       
       setLeadStep("success");
       clearLeadDraft(); // Clear saved draft on success
-      trackEvent("lead_submitted", { hubspotId: data?.hubspotId });
+      trackEvent("lead_success", { hubspotId: data?.hubspotId, service_interest: leadData.interest });
       
       setMessages(prev => [...prev, {
         role: "assistant",
@@ -636,6 +664,14 @@ Consentimento LGPD: ✅ Aceito em ${new Date().toISOString()}
     setIsLoading(true);
     setInteractionCount(prev => prev + 1);
     setDynamicSuggestions([]); // Clear previous suggestions
+    
+    // Track message event
+    trackEvent("message", { message_type: "user" });
+    
+    // Track first message for funnel
+    if (messages.length === 0) {
+      trackEvent("first_message");
+    }
 
     // Check for commercial intent
     if (detectCommercialIntent(input) || interactionCount >= 1) {
