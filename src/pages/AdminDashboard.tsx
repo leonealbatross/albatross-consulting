@@ -3,6 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { 
   Table,
   TableBody,
@@ -37,7 +45,8 @@ import {
   CalendarIcon,
   X,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Eye
 } from "lucide-react";
 import { User } from "@supabase/supabase-js";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
@@ -641,8 +650,26 @@ const AdminDashboard = () => {
                             {lead.serviceType}
                           </span>
                         </TableCell>
-                        <TableCell className="max-w-[200px] truncate" title={lead.message}>
-                          {lead.message}
+                        <TableCell>
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button variant="ghost" size="sm" className="h-8 gap-1 text-left">
+                                <Eye className="h-3.5 w-3.5" />
+                                <span className="max-w-[150px] truncate">{lead.message.substring(0, 30)}...</span>
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-lg">
+                              <DialogHeader>
+                                <DialogTitle>Mensagem do Lead</DialogTitle>
+                                <DialogDescription>
+                                  {lead.name} - {lead.serviceType}
+                                </DialogDescription>
+                              </DialogHeader>
+                              <div className="mt-4 p-4 bg-muted rounded-lg">
+                                <p className="text-sm whitespace-pre-wrap">{lead.message}</p>
+                              </div>
+                            </DialogContent>
+                          </Dialog>
                         </TableCell>
                       </TableRow>
                     ))}

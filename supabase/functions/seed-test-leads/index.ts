@@ -82,13 +82,8 @@ const SERVICE_MESSAGES: Record<string, string[]> = {
     'Acabamos de fechar uma aquisição e precisamos de ajuda na integração.',
     'Queremos preparar a empresa para uma eventual venda nos próximos 2 anos.'
   ],
-  'Due Diligence Comercial': [
-    'Somos PE e precisamos de due diligence comercial para uma aquisição em andamento.',
-    'Queremos avaliar a qualidade da receita de uma empresa target.',
-    'Precisamos de análise profunda do modelo comercial antes de investir.',
-    'Buscamos identificar riscos comerciais em um processo de M&A.',
-    'Necessitamos de assessment do time comercial de uma empresa que vamos adquirir.'
-  ],
+  'Due Diligence Comercial': [] // Tratado separadamente com dados completos do formulário
+  ,
   'GenAI & Inovação': [
     'Queremos implementar IA generativa para automatizar nossos processos.',
     'Buscamos criar um chatbot inteligente para nosso atendimento.',
@@ -97,6 +92,75 @@ const SERVICE_MESSAGES: Record<string, string[]> = {
     'Buscamos inovação com IA para ganhar vantagem competitiva.'
   ]
 };
+
+// Dados completos do formulário Due Diligence
+const DUE_DILIGENCE_DATA = [
+  {
+    transactionType: 'Buy-side (Aquisição)',
+    dealStatus: 'Pós-LOI',
+    requesterProfile: 'Private Equity',
+    jobTitle: 'Partner',
+    marketSegment: 'Fintech',
+    revenueModel: 'SaaS (Recorrente)',
+    targetCompany: 'PayTech Brasil',
+    targetRevenue: 'R$ 50M - R$ 200M',
+    objectives: ['Validar ICP e segmentação', 'Avaliar precificação', 'Medir qualidade do pipeline'],
+    availableData: ['Export de CRM', 'Quotas e metas', 'Lista de clientes'],
+    concerns: 'Preocupação com a concentração de receita em poucos clientes e a sustentabilidade do modelo de precificação atual. Precisamos entender se o crescimento é replicável.'
+  },
+  {
+    transactionType: 'Sell-side (Venda)',
+    dealStatus: 'Pré-LOI',
+    requesterProfile: 'Management/Seller',
+    jobTitle: 'CEO',
+    marketSegment: 'Healthtech',
+    revenueModel: 'Marketplace',
+    targetCompany: 'HealthConnect LATAM',
+    targetRevenue: 'R$ 200M - R$ 500M',
+    objectives: ['Vendor Due Diligence', 'Validar sales motions', 'Testar acurácia do forecast'],
+    availableData: ['Export de CRM', 'Snapshots de forecast', 'Organogramas'],
+    concerns: 'Necessidade de demonstrar a qualidade da receita recorrente e a eficiência do time comercial para potenciais compradores. Queremos antecipar objeções de investidores.'
+  },
+  {
+    transactionType: 'M&A Estratégico',
+    dealStatus: 'Exclusividade',
+    requesterProfile: 'Strategic Buyer',
+    jobTitle: 'Head de M&A',
+    marketSegment: 'Retail/E-commerce',
+    revenueModel: 'Transacional',
+    targetCompany: 'RetailTech Pro',
+    targetRevenue: 'Abaixo de R$ 50M',
+    objectives: ['Avaliar Sales Ops e processos', 'Validar ICP e segmentação', 'Avaliar precificação'],
+    availableData: ['Export de CRM', 'Lista de clientes'],
+    concerns: 'Avaliar sinergias comerciais e identificar gaps operacionais que precisarão ser endereçados pós-aquisição. Foco em integração de times.'
+  },
+  {
+    transactionType: 'Rodada Primária (VC)',
+    dealStatus: 'Exploratório',
+    requesterProfile: 'Venture Capital',
+    jobTitle: 'Principal',
+    marketSegment: 'Data/AI/Analytics',
+    revenueModel: 'Usage-based',
+    targetCompany: 'AI Labs Brasil',
+    targetRevenue: 'Startup/Early-stage',
+    objectives: ['Validar sales motions', 'Medir qualidade do pipeline', 'Testar acurácia do forecast'],
+    availableData: ['Export de CRM', 'Quotas e metas'],
+    concerns: 'Entender a maturidade do GTM e a capacidade de escalar vendas enterprise com o modelo de precificação por uso. Avaliar unit economics do modelo comercial.'
+  },
+  {
+    transactionType: 'Secundária',
+    dealStatus: 'Pré-closing',
+    requesterProfile: 'Growth Equity',
+    jobTitle: 'CFO',
+    marketSegment: 'ERP/Backoffice',
+    revenueModel: 'SaaS (Recorrente)',
+    targetCompany: 'ERP Solutions LATAM',
+    targetRevenue: 'Acima de R$ 500M',
+    objectives: ['Validar ICP e segmentação', 'Avaliar Sales Ops e processos', 'Vendor Due Diligence'],
+    availableData: ['Export de CRM', 'Quotas e metas', 'Snapshots de forecast', 'Lista de clientes', 'Organogramas'],
+    concerns: 'Validar a qualidade do ARR reportado e entender riscos de churn em segmentos específicos de clientes. Análise profunda de cohorts e NRR.'
+  }
+];
 
 function randomItem<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -145,6 +209,141 @@ serve(async (req) => {
     for (const service of SERVICES) {
       console.log(`\n📊 Gerando leads para: ${service}`);
       
+      // Due Diligence Comercial - usa dados especiais do formulário
+      if (service === 'Due Diligence Comercial') {
+        for (let i = 0; i < 5; i++) {
+          const firstName = randomItem(FIRST_NAMES);
+          const lastName = randomItem(LAST_NAMES);
+          const company = randomItem(COMPANIES);
+          const email = generateEmail(firstName, lastName, company);
+          const phone = generatePhone();
+          const sessionId = generateSessionId();
+          const ddData = DUE_DILIGENCE_DATA[i];
+
+          console.log(`  → Lead ${i + 1}: ${firstName} ${lastName} (${company}) - Due Diligence`);
+
+          try {
+            // HubSpot - mensagem formatada com dados do formulário
+            const fullMessage = `[Due Diligence Comercial]
+Tipo de Transação: ${ddData.transactionType}
+Status do Deal: ${ddData.dealStatus}
+Perfil do Solicitante: ${ddData.requesterProfile}
+Cargo: ${ddData.jobTitle}
+Empresa Target: ${ddData.targetCompany}
+Segmento: ${ddData.marketSegment}
+Modelo de Receita: ${ddData.revenueModel}
+Faixa de Receita: ${ddData.targetRevenue}
+Objetivos: ${ddData.objectives.join(', ')}
+Dados Disponíveis: ${ddData.availableData.join(', ')}
+Preocupações: ${ddData.concerns}
+Fonte: Alba Chatbot Seed Test`;
+
+            const contactData = {
+              properties: {
+                email: email,
+                firstname: firstName,
+                lastname: lastName,
+                company: company,
+                jobtitle: ddData.jobTitle,
+                phone: phone,
+                message: fullMessage,
+                hs_lead_status: 'NEW',
+                lifecyclestage: 'lead',
+              }
+            };
+
+            const hubspotResponse = await fetch('https://api.hubapi.com/crm/v3/objects/contacts', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${hubspotAccessToken}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(contactData),
+            });
+
+            let hubspotSuccess = hubspotResponse.ok;
+            let hubspotId = null;
+
+            if (hubspotResponse.status === 409) {
+              console.log(`    ⚠️ Contato já existe, atualizando...`);
+              const searchResponse = await fetch('https://api.hubapi.com/crm/v3/objects/contacts/search', {
+                method: 'POST',
+                headers: {
+                  'Authorization': `Bearer ${hubspotAccessToken}`,
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  filterGroups: [{
+                    filters: [{ propertyName: 'email', operator: 'EQ', value: email }]
+                  }]
+                }),
+              });
+              const searchData = await searchResponse.json();
+              if (searchData.results?.length > 0) {
+                hubspotId = searchData.results[0].id;
+                hubspotSuccess = true;
+              }
+            } else if (hubspotResponse.ok) {
+              const hubspotResult = await hubspotResponse.json();
+              hubspotId = hubspotResult.id;
+              console.log(`    ✅ HubSpot ID: ${hubspotId}`);
+            }
+
+            // Analytics - dados completos do formulário
+            const analyticsData = {
+              session_id: sessionId,
+              event_type: 'lead_submitted',
+              lead_submitted: true,
+              messages_count: Math.floor(Math.random() * 8) + 3,
+              service_interest: service,
+              event_data: {
+                lead_name: `${firstName} ${lastName}`,
+                lead_email: email,
+                lead_company: company,
+                lead_phone: phone,
+                hubspot_id: hubspotId,
+                source: 'seed_test',
+                message: ddData.concerns,
+                // Campos específicos do Due Diligence
+                transaction_type: ddData.transactionType,
+                deal_status: ddData.dealStatus,
+                requester_profile: ddData.requesterProfile,
+                job_title: ddData.jobTitle,
+                target_company: ddData.targetCompany,
+                market_segment: ddData.marketSegment,
+                revenue_model: ddData.revenueModel,
+                target_revenue: ddData.targetRevenue,
+                objectives: ddData.objectives,
+                available_data: ddData.availableData
+              }
+            };
+
+            await supabase.from('alba_analytics').insert(analyticsData);
+            console.log(`    ✅ Analytics registrado`);
+
+            // Evento de sessão
+            await supabase.from('alba_analytics').insert({
+              session_id: sessionId,
+              event_type: 'session_start',
+              lead_submitted: false,
+              messages_count: 0,
+              service_interest: service,
+              event_data: { source: 'seed_test' }
+            });
+
+            results.push({ service, name: `${firstName} ${lastName}`, email, success: hubspotSuccess });
+            await new Promise(resolve => setTimeout(resolve, 300));
+
+          } catch (leadError) {
+            const errorMsg = leadError instanceof Error ? leadError.message : 'Unknown error';
+            console.error(`    ❌ Erro no lead:`, errorMsg);
+            results.push({ service, name: `${firstName} ${lastName}`, email, success: false, error: errorMsg });
+          }
+        }
+        continue; // Próximo serviço
+      }
+
+      // Outros serviços - lógica original
       for (let i = 0; i < 5; i++) {
         const firstName = randomItem(FIRST_NAMES);
         const lastName = randomItem(LAST_NAMES);
