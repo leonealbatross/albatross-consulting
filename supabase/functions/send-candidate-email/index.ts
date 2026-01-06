@@ -11,6 +11,55 @@ interface CandidateEmailRequest {
   email: string;
 }
 
+// Input validation
+function validateRequest(data: unknown): { valid: boolean; error?: string; data?: CandidateEmailRequest } {
+  if (!data || typeof data !== 'object') {
+    return { valid: false, error: 'Invalid request body' };
+  }
+  
+  const request = data as Record<string, unknown>;
+  
+  // Validate name
+  if (typeof request.name !== 'string' || request.name.trim().length === 0) {
+    return { valid: false, error: 'Name is required' };
+  }
+  if (request.name.length > 100) {
+    return { valid: false, error: 'Name is too long (max 100 characters)' };
+  }
+  
+  // Validate email
+  if (typeof request.email !== 'string' || request.email.trim().length === 0) {
+    return { valid: false, error: 'Email is required' };
+  }
+  if (request.email.length > 255) {
+    return { valid: false, error: 'Email is too long (max 255 characters)' };
+  }
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(request.email)) {
+    return { valid: false, error: 'Invalid email format' };
+  }
+  
+  return { 
+    valid: true, 
+    data: {
+      name: request.name.trim(),
+      email: request.email.trim().toLowerCase(),
+    }
+  };
+}
+
+// Escape HTML to prevent XSS in email templates
+function escapeHtml(text: string): string {
+  const htmlEntities: Record<string, string> = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  };
+  return text.replace(/[&<>"']/g, (char) => htmlEntities[char] || char);
+}
+
 const handler = async (req: Request): Promise<Response> => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
@@ -18,9 +67,19 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { name, email }: CandidateEmailRequest = await req.json();
-
-    console.log(`Sending confirmation email to candidate: ${name} (${email})`);
+    const rawData = await req.json();
+    
+    // Validate input
+    const validation = validateRequest(rawData);
+    if (!validation.valid || !validation.data) {
+      return new Response(
+        JSON.stringify({ error: validation.error || 'Invalid request' }),
+        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+    
+    const { name, email } = validation.data;
+    const safeName = escapeHtml(name);
 
     const resendApiKey = Deno.env.get("RESEND_API_KEY");
     if (!resendApiKey) {
@@ -39,7 +98,7 @@ const handler = async (req: Request): Promise<Response> => {
         subject: "Agradecemos sua candidatura - Albatross Consulting",
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
-            <h2 style="color: #1a1a1a; margin-bottom: 20px;">Olá, ${name}</h2>
+            <h2 style="color: #1a1a1a; margin-bottom: 20px;">Olá, ${safeName}</h2>
             
             <p style="line-height: 1.6; margin-bottom: 16px;">
               Agradecemos sinceramente pelo seu interesse em fazer parte da Albatross Consulting e por compartilhar seu currículo conosco.
@@ -81,7 +140,6 @@ const handler = async (req: Request): Promise<Response> => {
     });
 
     const data = await emailResponse.json();
-    console.log("Email sent successfully:", data);
 
     if (!emailResponse.ok) {
       throw new Error(data.message || "Failed to send email");
@@ -94,10 +152,10 @@ const handler = async (req: Request): Promise<Response> => {
         ...corsHeaders,
       },
     });
-  } catch (error: any) {
-    console.error("Error in send-candidate-email function:", error);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: 'An error occurred sending the email' }),
       {
         status: 500,
         headers: { "Content-Type": "application/json", ...corsHeaders },

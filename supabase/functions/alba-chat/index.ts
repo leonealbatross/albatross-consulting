@@ -5,6 +5,99 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Simple in-memory rate limiting (per session)
+const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
+const RATE_LIMIT_WINDOW_MS = 60000; // 1 minute
+const MAX_REQUESTS_PER_WINDOW = 15;
+
+function isRateLimited(sessionId: string): boolean {
+  const now = Date.now();
+  const record = rateLimitMap.get(sessionId);
+  
+  if (!record || now > record.resetTime) {
+    rateLimitMap.set(sessionId, { count: 1, resetTime: now + RATE_LIMIT_WINDOW_MS });
+    return false;
+  }
+  
+  if (record.count >= MAX_REQUESTS_PER_WINDOW) {
+    return true;
+  }
+  
+  record.count++;
+  return false;
+}
+
+// Cleanup old rate limit entries periodically
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, value] of rateLimitMap.entries()) {
+    if (now > value.resetTime) {
+      rateLimitMap.delete(key);
+    }
+  }
+}, 60000);
+
+// Input validation
+interface Message {
+  role: "user" | "assistant" | "system";
+  content: string;
+}
+
+interface ChatRequest {
+  messages: Message[];
+  sessionId?: string;
+}
+
+function validateRequest(data: unknown): { valid: boolean; error?: string; data?: ChatRequest } {
+  if (!data || typeof data !== 'object') {
+    return { valid: false, error: 'Invalid request body' };
+  }
+  
+  const request = data as Record<string, unknown>;
+  
+  if (!Array.isArray(request.messages)) {
+    return { valid: false, error: 'Messages must be an array' };
+  }
+  
+  if (request.messages.length === 0) {
+    return { valid: false, error: 'Messages array cannot be empty' };
+  }
+  
+  if (request.messages.length > 50) {
+    return { valid: false, error: 'Too many messages in conversation' };
+  }
+  
+  for (const msg of request.messages) {
+    if (!msg || typeof msg !== 'object') {
+      return { valid: false, error: 'Invalid message format' };
+    }
+    
+    const message = msg as Record<string, unknown>;
+    
+    if (typeof message.role !== 'string' || !['user', 'assistant', 'system'].includes(message.role)) {
+      return { valid: false, error: 'Invalid message role' };
+    }
+    
+    if (typeof message.content !== 'string') {
+      return { valid: false, error: 'Message content must be a string' };
+    }
+    
+    if (message.content.length > 4000) {
+      return { valid: false, error: 'Message content too long (max 4000 characters)' };
+    }
+  }
+  
+  const sessionId = typeof request.sessionId === 'string' ? request.sessionId : 'anonymous';
+  
+  return { 
+    valid: true, 
+    data: { 
+      messages: request.messages as Message[],
+      sessionId 
+    } 
+  };
+}
+
 const SYSTEM_PROMPT = `Você é Alba, a consultora virtual estratégica da Albatross Consulting. Você é sofisticada, tecnicamente profunda e comercialmente orientada. Seu objetivo principal é demonstrar expertise, recomendar serviços adequados e conduzir elegantemente à captura de leads.
 
 ## 🎯 MISSÃO PRINCIPAL:
@@ -227,15 +320,38 @@ serve(async (req) => {
   }
 
   try {
-    const { messages } = await req.json();
+    const rawData = await req.json();
+    
+    // Validate input
+    const validation = validateRequest(rawData);
+    if (!validation.valid || !validation.data) {
+      return new Response(
+        JSON.stringify({ error: validation.error || 'Invalid request' }), 
+        { 
+          status: 400, 
+          headers: { ...corsHeaders, "Content-Type": "application/json" } 
+        }
+      );
+    }
+    
+    const { messages, sessionId } = validation.data;
+    
+    // Check rate limit
+    if (isRateLimited(sessionId || 'anonymous')) {
+      return new Response(
+        JSON.stringify({ error: "Muitas requisições. Por favor, aguarde um momento." }), 
+        { 
+          status: 429, 
+          headers: { ...corsHeaders, "Content-Type": "application/json" } 
+        }
+      );
+    }
+    
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     if (!LOVABLE_API_KEY) {
-      console.error("LOVABLE_API_KEY not configured");
       throw new Error("LOVABLE_API_KEY is not configured");
     }
-
-    console.log("Alba chat request:", { messageCount: messages?.length });
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -250,13 +366,12 @@ serve(async (req) => {
           ...messages,
         ],
         stream: true,
-        max_tokens: 300, // Keep responses short
+        max_tokens: 300,
       }),
     });
 
     if (!response.ok) {
       const status = response.status;
-      console.error("AI gateway error status:", status);
       
       if (status === 429) {
         return new Response(JSON.stringify({ error: "Muitas requisições. Por favor, aguarde alguns segundos." }), {
@@ -271,21 +386,16 @@ serve(async (req) => {
         });
       }
       
-      const errorText = await response.text();
-      console.error("AI gateway error:", errorText);
       return new Response(JSON.stringify({ error: "Erro ao processar sua mensagem." }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    console.log("Alba chat response streaming started");
-
     return new Response(response.body, {
       headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
     });
   } catch (e) {
-    console.error("Alba chat error:", e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Erro desconhecido" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

@@ -14,6 +14,62 @@ interface ContactRequest {
   sectionTitle?: string;
 }
 
+// Input validation
+function validateRequest(data: unknown): { valid: boolean; error?: string; data?: ContactRequest } {
+  if (!data || typeof data !== 'object') {
+    return { valid: false, error: 'Invalid request body' };
+  }
+  
+  const request = data as Record<string, unknown>;
+  
+  // Validate name
+  if (typeof request.name !== 'string' || request.name.trim().length === 0) {
+    return { valid: false, error: 'Name is required' };
+  }
+  if (request.name.length > 100) {
+    return { valid: false, error: 'Name is too long (max 100 characters)' };
+  }
+  
+  // Validate email
+  if (typeof request.email !== 'string' || request.email.trim().length === 0) {
+    return { valid: false, error: 'Email is required' };
+  }
+  if (request.email.length > 255) {
+    return { valid: false, error: 'Email is too long (max 255 characters)' };
+  }
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(request.email)) {
+    return { valid: false, error: 'Invalid email format' };
+  }
+  
+  // Validate message
+  if (typeof request.message !== 'string' || request.message.trim().length === 0) {
+    return { valid: false, error: 'Message is required' };
+  }
+  if (request.message.length > 5000) {
+    return { valid: false, error: 'Message is too long (max 5000 characters)' };
+  }
+  
+  // Validate optional fields
+  if (request.company !== undefined && typeof request.company !== 'string') {
+    return { valid: false, error: 'Company must be a string' };
+  }
+  if (request.company && request.company.length > 200) {
+    return { valid: false, error: 'Company name is too long (max 200 characters)' };
+  }
+  
+  return { 
+    valid: true, 
+    data: {
+      name: request.name.trim(),
+      email: request.email.trim().toLowerCase(),
+      company: typeof request.company === 'string' ? request.company.trim() : undefined,
+      message: request.message.trim(),
+      sectionTitle: typeof request.sectionTitle === 'string' ? request.sectionTitle.trim() : undefined,
+    }
+  };
+}
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -21,14 +77,22 @@ serve(async (req) => {
   }
 
   try {
-    const { name, email, company, message, sectionTitle } = await req.json() as ContactRequest;
-
-    console.log('Received contact form submission:', { name, email, company, sectionTitle });
+    const rawData = await req.json();
+    
+    // Validate input
+    const validation = validateRequest(rawData);
+    if (!validation.valid || !validation.data) {
+      return new Response(
+        JSON.stringify({ success: false, error: validation.error || 'Invalid request' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    const { name, email, company, message } = validation.data;
 
     const hubspotAccessToken = Deno.env.get('HUBSPOT_ACCESS_TOKEN');
     
     if (!hubspotAccessToken) {
-      console.error('HUBSPOT_ACCESS_TOKEN not configured');
       throw new Error('HubSpot access token not configured');
     }
 
@@ -45,8 +109,6 @@ serve(async (req) => {
       }
     };
 
-    console.log('Sending contact to HubSpot:', contactData);
-
     // First, try to create the contact
     const createResponse = await fetch('https://api.hubapi.com/crm/v3/objects/contacts', {
       method: 'POST',
@@ -61,11 +123,7 @@ serve(async (req) => {
     
     if (createResponse.status === 409) {
       // Contact already exists, update it
-      console.log('Contact already exists, updating...');
-      
-      // Get the existing contact ID from the error response
       const errorData = await createResponse.json();
-      console.log('Conflict response:', errorData);
       
       // Search for the existing contact
       const searchResponse = await fetch('https://api.hubapi.com/crm/v3/objects/contacts/search', {
@@ -86,7 +144,6 @@ serve(async (req) => {
       });
 
       const searchData = await searchResponse.json();
-      console.log('Search result:', searchData);
 
       if (searchData.results && searchData.results.length > 0) {
         const contactId = searchData.results[0].id;
@@ -107,15 +164,12 @@ serve(async (req) => {
         });
 
         hubspotResult = await updateResponse.json();
-        console.log('Contact updated:', hubspotResult);
       }
     } else if (!createResponse.ok) {
       const errorData = await createResponse.json();
-      console.error('HubSpot API error:', errorData);
       throw new Error(`HubSpot API error: ${JSON.stringify(errorData)}`);
     } else {
       hubspotResult = await createResponse.json();
-      console.log('Contact created successfully:', hubspotResult);
     }
 
     return new Response(
@@ -131,11 +185,10 @@ serve(async (req) => {
 
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error('Error in hubspot-contact function:', errorMessage);
     return new Response(
       JSON.stringify({ 
         success: false, 
-        error: errorMessage 
+        error: 'An error occurred processing your request' 
       }),
       {
         status: 500,

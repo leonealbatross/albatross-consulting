@@ -31,6 +31,68 @@ interface DueDiligenceRequest {
   source: string;
 }
 
+// Input validation
+function validateRequest(data: unknown): { valid: boolean; error?: string; data?: DueDiligenceRequest } {
+  if (!data || typeof data !== 'object') {
+    return { valid: false, error: 'Invalid request body' };
+  }
+  
+  const request = data as Record<string, unknown>;
+  
+  // Validate required fields
+  if (typeof request.name !== 'string' || request.name.trim().length === 0) {
+    return { valid: false, error: 'Name is required' };
+  }
+  if (request.name.length > 100) {
+    return { valid: false, error: 'Name is too long (max 100 characters)' };
+  }
+  
+  if (typeof request.email !== 'string' || request.email.trim().length === 0) {
+    return { valid: false, error: 'Email is required' };
+  }
+  if (request.email.length > 255) {
+    return { valid: false, error: 'Email is too long (max 255 characters)' };
+  }
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(request.email)) {
+    return { valid: false, error: 'Invalid email format' };
+  }
+  
+  if (typeof request.company !== 'string' || request.company.trim().length === 0) {
+    return { valid: false, error: 'Company is required' };
+  }
+  if (request.company.length > 200) {
+    return { valid: false, error: 'Company is too long (max 200 characters)' };
+  }
+  
+  // Validate optional string fields with length limits
+  const stringFields = ['phone', 'country', 'taxId', 'transactionType', 'dealStatus', 
+    'requesterProfile', 'jobTitle', 'marketSegment', 'revenueModel', 'targetCompany', 
+    'targetRevenue', 'concerns', 'service', 'segment', 'source'];
+  
+  for (const field of stringFields) {
+    if (request[field] !== undefined && typeof request[field] !== 'string') {
+      return { valid: false, error: `${field} must be a string` };
+    }
+    if (typeof request[field] === 'string' && request[field].length > 1000) {
+      return { valid: false, error: `${field} is too long (max 1000 characters)` };
+    }
+  }
+  
+  // Validate arrays
+  if (request.objectives !== undefined && !Array.isArray(request.objectives)) {
+    return { valid: false, error: 'Objectives must be an array' };
+  }
+  if (request.availableData !== undefined && !Array.isArray(request.availableData)) {
+    return { valid: false, error: 'Available data must be an array' };
+  }
+  
+  return { 
+    valid: true, 
+    data: request as unknown as DueDiligenceRequest
+  };
+}
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -38,7 +100,18 @@ serve(async (req) => {
   }
 
   try {
-    const requestData = await req.json() as DueDiligenceRequest;
+    const rawData = await req.json();
+    
+    // Validate input
+    const validation = validateRequest(rawData);
+    if (!validation.valid || !validation.data) {
+      return new Response(
+        JSON.stringify({ success: false, error: validation.error || 'Invalid request' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    const requestData = validation.data;
     
     const { 
       name, 
@@ -62,18 +135,6 @@ serve(async (req) => {
       segment,
       source,
     } = requestData;
-
-    console.log('Received Due Diligence form submission:', { 
-      name, 
-      email, 
-      company,
-      country,
-      transactionType,
-      dealStatus,
-      service,
-      segment,
-      source
-    });
 
     const hubspotAccessToken = Deno.env.get('HUBSPOT_ACCESS_TOKEN');
     
@@ -282,7 +343,6 @@ ${concerns || 'Não informado'}
       }
     };
 
-    console.log('Sending contact to HubSpot with tags:', { service, segment, source });
 
     // First, try to create the contact
     const createResponse = await fetch('https://api.hubapi.com/crm/v3/objects/contacts', {
@@ -298,10 +358,7 @@ ${concerns || 'Não informado'}
     
     if (createResponse.status === 409) {
       // Contact already exists, update it
-      console.log('Contact already exists, updating...');
-      
       const errorData = await createResponse.json();
-      console.log('Conflict response:', errorData);
       
       // Search for the existing contact
       const searchResponse = await fetch('https://api.hubapi.com/crm/v3/objects/contacts/search', {
@@ -322,7 +379,6 @@ ${concerns || 'Não informado'}
       });
 
       const searchData = await searchResponse.json();
-      console.log('Search result:', searchData);
 
       if (searchData.results && searchData.results.length > 0) {
         const contactId = searchData.results[0].id;
@@ -346,15 +402,12 @@ ${concerns || 'Não informado'}
         });
 
         hubspotResult = await updateResponse.json();
-        console.log('Contact updated:', hubspotResult);
       }
     } else if (!createResponse.ok) {
       const errorData = await createResponse.json();
-      console.error('HubSpot API error:', errorData);
-      throw new Error(`HubSpot API error: ${JSON.stringify(errorData)}`);
+      throw new Error(`HubSpot API error`);
     } else {
       hubspotResult = await createResponse.json();
-      console.log('Contact created successfully:', hubspotResult);
     }
 
     // Send email notification using Resend
@@ -430,14 +483,10 @@ ${concerns || 'Não informado'}
           html: emailHtml,
         });
 
-        console.log('Email notification sent:', emailResponse);
         emailSent = true;
       } catch (emailError) {
-        console.error('Error sending email notification:', emailError);
         // Don't fail the whole request if email fails
       }
-    } else {
-      console.warn('RESEND_API_KEY not configured, skipping email notification');
     }
 
     return new Response(
@@ -453,12 +502,10 @@ ${concerns || 'Não informado'}
     );
 
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error('Error in hubspot-duediligence function:', errorMessage);
     return new Response(
       JSON.stringify({ 
         success: false, 
-        error: errorMessage 
+        error: 'An error occurred processing your request'
       }),
       {
         status: 500,
