@@ -245,42 +245,46 @@ const Header = () => {
             </div>
 
             {/* Navigation Links */}
-            <nav className="flex-1 overflow-y-auto py-6 px-6" aria-label="Menu mobile">
-              {navItems.map((item, index) => (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  className={`flex items-center py-4 text-lg font-medium transition-colors border-b border-border/20 min-h-[48px] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-inset rounded ${
-                    activeSection === item.id
-                      ? "text-primary"
-                      : "text-foreground/80 hover:text-primary"
-                  }`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setIsMobileMenuOpen(false);
-                    setTimeout(() => {
-                      scrollToSection(item.id);
-                    }, 300);
-                  }}
-                  style={{ animationDelay: `${index * 50}ms` }}
-                  aria-current={activeSection === item.id ? "page" : undefined}
-                >
-                  {activeSection === item.id && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary mr-3" aria-hidden="true" />
-                  )}
-                  {item.label}
-                </a>
-              ))}
+            <nav className="flex-1 overflow-y-auto py-6 px-6 flex flex-col" aria-label="Menu mobile">
+              <div className="flex-1">
+                {navItems.map((item, index) => (
+                  <a
+                    key={item.href}
+                    href={item.href}
+                    className={`flex items-center py-4 text-lg font-medium transition-colors border-b border-border/20 min-h-[48px] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-inset rounded ${
+                      activeSection === item.id
+                        ? "text-primary"
+                        : "text-foreground/80 hover:text-primary"
+                    }`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setIsMobileMenuOpen(false);
+                      setTimeout(() => {
+                        scrollToSection(item.id);
+                      }, 300);
+                    }}
+                    style={{ animationDelay: `${index * 50}ms` }}
+                    aria-current={activeSection === item.id ? "page" : undefined}
+                  >
+                    {activeSection === item.id && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary mr-3" aria-hidden="true" />
+                    )}
+                    {item.label}
+                  </a>
+                ))}
+              </div>
               
-              {/* Admin Link - Mobile */}
-              <Link
-                to="/admin"
-                className="flex items-center gap-2 py-4 text-sm font-medium transition-colors border-b border-border/20 min-h-[48px] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-inset rounded text-muted-foreground/60 hover:text-muted-foreground"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <Shield className="w-4 h-4" aria-hidden="true" />
-                Admin
-              </Link>
+              {/* Admin Link - Mobile (separated at bottom) */}
+              <div className="mt-auto pt-6 border-t border-border/30">
+                <Link
+                  to="/admin"
+                  className="flex items-center gap-2 py-3 text-sm font-medium transition-colors min-h-[44px] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-inset rounded text-muted-foreground/60 hover:text-muted-foreground"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <Shield className="w-4 h-4" aria-hidden="true" />
+                  Área Administrativa
+                </Link>
+              </div>
             </nav>
 
           </div>
