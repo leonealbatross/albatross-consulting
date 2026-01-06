@@ -68,6 +68,23 @@ const AdminLogin = () => {
     setIsLoading(true);
 
     try {
+      // Check if there are any existing admins
+      const { count: existingAdmins } = await supabase
+        .from('user_roles')
+        .select('*', { count: 'exact', head: true })
+        .eq('role', 'admin');
+
+      // Only allow signup if no admins exist (first user becomes admin)
+      if (existingAdmins && existingAdmins > 0) {
+        toast({
+          title: "Acesso restrito",
+          description: "Já existe um administrador. Faça login ou peça acesso.",
+          variant: "destructive",
+        });
+        setIsLoading(false);
+        return;
+      }
+
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -86,9 +103,18 @@ const AdminLogin = () => {
       }
 
       if (data.user) {
+        // Assign admin role to first user
+        const { error: roleError } = await supabase
+          .from('user_roles')
+          .insert({ user_id: data.user.id, role: 'admin' });
+
+        if (roleError) {
+          console.error('Error assigning admin role:', roleError);
+        }
+
         toast({
-          title: "Conta criada",
-          description: "Login realizado automaticamente.",
+          title: "Conta admin criada",
+          description: "Você é o primeiro administrador.",
         });
         navigate("/admin/dashboard");
       }
