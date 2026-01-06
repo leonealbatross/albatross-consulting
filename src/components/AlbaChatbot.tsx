@@ -720,16 +720,20 @@ Estou à disposição para quaisquer outras dúvidas, mas confio que uma convers
       const utmMedium = urlParams.get("utm_medium") || "";
       const utmCampaign = urlParams.get("utm_campaign") || "";
       
-      // Create full chat transcript
-      const fullChatTranscript = messages
-        .map(m => `[${m.role === "user" ? "LEAD" : "ALBA"}]: ${m.content}`)
-        .join("\n\n");
-      
-      // Create brief summary for quick reference
+      // Create brief summary for quick reference (limit to avoid exceeding HubSpot limits)
       const briefSummary = messages
         .filter(m => m.role === "user")
-        .map(m => m.content.substring(0, 150))
-        .join(" | ");
+        .map(m => m.content.substring(0, 100))
+        .slice(-5) // Only last 5 user messages
+        .join(" | ")
+        .substring(0, 500);
+      
+      // Create truncated chat transcript (max 2000 chars to stay within limits)
+      const fullChatTranscript = messages
+        .slice(-10) // Only last 10 messages
+        .map(m => `[${m.role === "user" ? "LEAD" : "ALBA"}]: ${m.content.substring(0, 200)}`)
+        .join("\n")
+        .substring(0, 2000);
       
       const { data, error } = await supabase.functions.invoke("hubspot-contact", {
         body: {
