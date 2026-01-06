@@ -665,22 +665,19 @@ Estou à disposição para quaisquer outras dúvidas, mas confio que uma convers
     setLeadData(prev => ({ ...prev, timeline }));
     setMessages(prev => [...prev, 
       { role: "user", content: TIMELINE_OPTIONS.find(o => o.value === timeline)?.label || "Prefiro não informar" },
-      { role: "assistant", content: "Qual seu telefone/WhatsApp? (opcional - pode pular)" }
+      { role: "assistant", content: "Qual seu **telefone/WhatsApp** para contato?" }
     ]);
     setLeadStep("phone");
   }, []);
 
-  // Skip optional fields
+  // Skip optional fields (only timeline is optional now)
   const skipOptionalField = useCallback(() => {
     if (leadStep === "timeline") {
       setMessages(prev => [...prev, 
         { role: "user", content: "Pular" },
-        { role: "assistant", content: "Qual seu telefone/WhatsApp? (opcional - pode pular)" }
+        { role: "assistant", content: "Qual seu **telefone/WhatsApp** para contato?" }
       ]);
       setLeadStep("phone");
-    } else if (leadStep === "phone") {
-      setMessages(prev => [...prev, { role: "user", content: "Pular" }]);
-      setLeadStep("consent");
     }
   }, [leadStep]);
 
@@ -1814,7 +1811,7 @@ Consentimento LGPD: ✅ Aceito em ${new Date().toISOString()}
                     Cancelar
                   </button>
                   
-                  {(leadStep === "phone" || leadStep === "timeline") && (
+                  {leadStep === "timeline" && (
                     <button
                       onClick={skipOptionalField}
                       className="text-xs text-muted-foreground hover:text-foreground"
