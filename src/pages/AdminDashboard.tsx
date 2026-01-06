@@ -108,6 +108,7 @@ const SERVICES = [
 
 const AdminDashboard = () => {
   const [user, setUser] = useState<User | null>(null);
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [metrics, setMetrics] = useState<AnalyticsData>({
@@ -321,26 +322,47 @@ const AdminDashboard = () => {
     }
   };
 
+  const checkAdminRole = async (userId: string) => {
+    const { data } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', userId)
+      .eq('role', 'admin')
+      .maybeSingle();
+    
+    return !!data;
+  };
+
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
         setUser(session?.user ?? null);
-        setIsLoading(false);
         
         if (!session?.user) {
+          setIsLoading(false);
           navigate("/admin");
+        } else {
+          const adminStatus = await checkAdminRole(session.user.id);
+          setIsAdmin(adminStatus);
+          setIsLoading(false);
         }
       }
     );
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setUser(session?.user ?? null);
-      setIsLoading(false);
       
       if (!session?.user) {
+        setIsLoading(false);
         navigate("/admin");
       } else {
-        fetchAnalytics();
+        const adminStatus = await checkAdminRole(session.user.id);
+        setIsAdmin(adminStatus);
+        setIsLoading(false);
+        
+        if (adminStatus) {
+          fetchAnalytics();
+        }
       }
     });
 
@@ -378,8 +400,29 @@ const AdminDashboard = () => {
     );
   }
 
-  if (!user) {
+  if (!user || isAdmin === null) {
     return null;
+  }
+
+  if (!isAdmin) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <Card className="w-full max-w-md text-center">
+          <CardHeader>
+            <CardTitle>Acesso Negado</CardTitle>
+            <CardDescription>
+              Você não tem permissão de administrador para acessar este painel.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button variant="outline" onClick={() => navigate("/")}>
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Voltar ao site
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   return (
