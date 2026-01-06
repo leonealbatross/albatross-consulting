@@ -1690,14 +1690,23 @@ Consentimento LGPD: ✅ Aceito em ${new Date().toISOString()}
                     size="sm"
                     className="gap-2"
                     onClick={() => {
-                      setMessages([]);
+                      // Show farewell message
+                      setMessages(prev => [...prev, {
+                        role: "assistant",
+                        content: "Foi um prazer atendê-lo! 🙏\n\nA Albatross Consulting está sempre à disposição. Até breve! 👋"
+                      }]);
                       setLeadStep("idle");
-                      setDynamicSuggestions([]);
-                      setInteractionCount(0);
-                      setHasSuggestedMeeting(false);
-                      localStorage.removeItem(STORAGE_KEYS.messages);
-                      localStorage.removeItem(STORAGE_KEYS.interactionCount);
-                      setIsOpen(false);
+                      
+                      // Close chat after a brief delay to show the message
+                      setTimeout(() => {
+                        setMessages([]);
+                        setDynamicSuggestions([]);
+                        setInteractionCount(0);
+                        setHasSuggestedMeeting(false);
+                        localStorage.removeItem(STORAGE_KEYS.messages);
+                        localStorage.removeItem(STORAGE_KEYS.interactionCount);
+                        setIsOpen(false);
+                      }, 2000);
                     }}
                   >
                     <X className="w-4 h-4" />
