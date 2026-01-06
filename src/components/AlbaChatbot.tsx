@@ -1690,8 +1690,14 @@ Consentimento LGPD: ✅ Aceito em ${new Date().toISOString()}
                     size="sm"
                     className="gap-2"
                     onClick={() => {
-                      setIsOpen(false);
+                      setMessages([]);
                       setLeadStep("idle");
+                      setDynamicSuggestions([]);
+                      setInteractionCount(0);
+                      setHasSuggestedMeeting(false);
+                      localStorage.removeItem(STORAGE_KEYS.messages);
+                      localStorage.removeItem(STORAGE_KEYS.interactionCount);
+                      setIsOpen(false);
                     }}
                   >
                     <X className="w-4 h-4" />
