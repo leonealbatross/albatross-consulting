@@ -1129,58 +1129,62 @@ Consentimento LGPD: ✅ Aceito em ${new Date().toISOString()}
                       <p>Agendar uma reunião com nossa equipe</p>
                     </TooltipContent>
                   </Tooltip>
-                  {messages.length > 0 && (
-                    <AlertDialog>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <AlertDialogTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-                              aria-label="Limpar conversa"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </Button>
-                          </AlertDialogTrigger>
-                        </TooltipTrigger>
-                        <TooltipContent side="bottom" className="bg-popover text-popover-foreground border border-border shadow-lg">
-                          <p>Limpar conversa</p>
-                        </TooltipContent>
-                      </Tooltip>
-                      <AlertDialogContent className="max-w-[90vw] sm:max-w-md">
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Limpar histórico do chat?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Essa ação não pode ser desfeita. Toda a conversa com Alba será apagada permanentemente.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                          <AlertDialogAction
-                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                            onClick={() => {
-                              setMessages([]);
-                              setInteractionCount(0);
-                              setHasSuggestedMeeting(false);
-                              setLeadStep("idle");
-                              setDynamicSuggestions([]);
-                              localStorage.removeItem(STORAGE_KEYS.messages);
-                              localStorage.removeItem(STORAGE_KEYS.interactionCount);
-                              localStorage.removeItem(STORAGE_KEYS.lastInteraction);
-                              trackEvent("chat_cleared");
-                              toast({
-                                title: "Conversa limpa",
-                                description: "O histórico do chat foi apagado com sucesso.",
-                              });
-                            }}
+                  <AlertDialog>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <AlertDialogTrigger asChild disabled={messages.length === 0}>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className={cn(
+                              "h-8 w-8 rounded-full",
+                              messages.length > 0 
+                                ? "text-muted-foreground hover:text-destructive hover:bg-destructive/10" 
+                                : "text-muted-foreground/40 cursor-not-allowed"
+                            )}
+                            aria-label="Limpar conversa"
+                            disabled={messages.length === 0}
                           >
-                            Limpar
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  )}
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </Button>
+                        </AlertDialogTrigger>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom" className="bg-popover text-popover-foreground border border-border shadow-lg">
+                        <p>{messages.length > 0 ? "Limpar conversa" : "Nenhuma conversa para limpar"}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                    <AlertDialogContent className="max-w-[90vw] sm:max-w-md">
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Limpar histórico do chat?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Essa ação não pode ser desfeita. Toda a conversa com Alba será apagada permanentemente.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                        <AlertDialogAction
+                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          onClick={() => {
+                            setMessages([]);
+                            setInteractionCount(0);
+                            setHasSuggestedMeeting(false);
+                            setLeadStep("idle");
+                            setDynamicSuggestions([]);
+                            localStorage.removeItem(STORAGE_KEYS.messages);
+                            localStorage.removeItem(STORAGE_KEYS.interactionCount);
+                            localStorage.removeItem(STORAGE_KEYS.lastInteraction);
+                            trackEvent("chat_cleared");
+                            toast({
+                              title: "Conversa limpa",
+                              description: "O histórico do chat foi apagado com sucesso.",
+                            });
+                          }}
+                        >
+                          Limpar
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </TooltipProvider>
                 <Button
                   variant="ghost"
