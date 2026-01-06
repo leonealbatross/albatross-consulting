@@ -152,9 +152,9 @@ serve(async (req) => {
 
     const results: { name: string; email: string; success: boolean; error?: string }[] = [];
 
-    console.log('📊 Gerando 5 leads de Due Diligence Comercial com dados completos...\n');
+    console.log('📊 Gerando 2 leads de Due Diligence Comercial com dados completos...\n');
 
-    for (let i = 0; i < DUE_DILIGENCE_LEADS.length; i++) {
+    for (let i = 0; i < Math.min(2, DUE_DILIGENCE_LEADS.length); i++) {
       const ddData = DUE_DILIGENCE_LEADS[i];
       const firstName = randomItem(FIRST_NAMES);
       const lastName = randomItem(LAST_NAMES);

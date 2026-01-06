@@ -217,13 +217,13 @@ serve(async (req) => {
 
     const results: { service: string; name: string; email: string; success: boolean; error?: string }[] = [];
 
-    // Gerar 5 leads para cada um dos 6 serviços
+    // Gerar 2 leads para cada um dos 6 serviços
     for (const service of SERVICES) {
       console.log(`\n📊 Gerando leads para: ${service}`);
       
       // Due Diligence Comercial - usa dados especiais do formulário
       if (service === 'Due Diligence Comercial') {
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 2; i++) {
           const firstName = randomItem(FIRST_NAMES);
           const lastName = randomItem(LAST_NAMES);
           const company = randomItem(COMPANIES);
@@ -360,8 +360,8 @@ Fonte: Alba Chatbot Seed Test`;
         continue; // Próximo serviço
       }
 
-      // Outros serviços - lógica original
-      for (let i = 0; i < 5; i++) {
+      // Outros serviços - lógica original (2 leads cada)
+      for (let i = 0; i < 2; i++) {
         const firstName = randomItem(FIRST_NAMES);
         const lastName = randomItem(LAST_NAMES);
         const company = randomItem(COMPANIES);
