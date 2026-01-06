@@ -61,6 +61,8 @@ const SECTION_MAP: Record<string, { id: string; label: string }> = {
   "schedule": { id: "agendamento", label: "Agendamento" },
   "carreiras": { id: "carreiras", label: "Carreiras" },
   "careers": { id: "carreiras", label: "Carreiras" },
+  "diligencia": { id: "servicos", label: "Due Diligence" },
+  "duediligence": { id: "servicos", label: "Due Diligence" },
 };
 
 const INTEREST_OPTIONS = [
