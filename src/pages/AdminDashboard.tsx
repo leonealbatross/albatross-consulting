@@ -194,6 +194,19 @@ const AdminDashboard = () => {
       }
 
       if (!analyticsData || analyticsData.length === 0) {
+        // Reset all metrics to zero when no data
+        setMetrics({
+          totalSessions: 0,
+          totalMessages: 0,
+          leadsCapturados: 0,
+          taxaConversao: 0,
+          tempoMedioSessao: "0m",
+          servicoMaisInteresse: "N/A",
+          serviceInterests: [],
+          funnelData: [],
+          dailyData: [],
+          leads: [],
+        });
         return;
       }
 
