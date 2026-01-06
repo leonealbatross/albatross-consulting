@@ -57,8 +57,11 @@ const SECTION_MAP: Record<string, { id: string; label: string }> = {
 };
 
 const INTEREST_OPTIONS = [
-  { value: "ma", label: "M&A Integrado" },
+  { value: "growth", label: "Growth Strategy & Go-to-Market" },
   { value: "governanca", label: "Governança & Advisory Board" },
+  { value: "mentoria", label: "Mentoria Executiva" },
+  { value: "ma", label: "M&A Integrado" },
+  { value: "duediligence", label: "Due Diligence Comercial" },
   { value: "genai", label: "GenAI & Inovação" },
 ];
 
