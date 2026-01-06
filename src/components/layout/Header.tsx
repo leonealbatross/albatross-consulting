@@ -275,10 +275,10 @@ const Header = () => {
               {/* Admin Link - Mobile */}
               <Link
                 to="/admin"
-                className="flex items-center gap-2 py-4 text-lg font-medium transition-colors border-b border-border/20 min-h-[48px] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-inset rounded text-muted-foreground hover:text-primary"
+                className="flex items-center gap-2 py-4 text-sm font-medium transition-colors border-b border-border/20 min-h-[48px] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-inset rounded text-muted-foreground/60 hover:text-muted-foreground"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                <Shield className="w-5 h-5" aria-hidden="true" />
+                <Shield className="w-4 h-4" aria-hidden="true" />
                 Admin
               </Link>
             </nav>
