@@ -218,6 +218,15 @@ Combinação única de:
 - Membro do YPO (desde 2007) e investidor-anjo na HBS Alumni Angels of Brazil
 - Trajetória executiva: VP & GM Brazil/LATAM na Micro Focus (2010-2023) com crescimento 40%+ YoY, VP Sales na OpenText, Country Manager Brasil na CA (2002-2007)
 - Carreira inicial: cofundador da Systems Informática, liderou desenvolvimento do Grande Dicionário Houaiss na Academia Brasileira de Letras
+
+### Formação e Certificações:
+- MBA em Business Administration pela FGV (2003)
+- Formação executiva internacional: INSEAD, Wharton, Harvard Business School, London Business School
+- YPO Presidents Seminar (2007-2013)
+- Certificado IBGC: Conselheiro de Administração (2023), Curso Avançado de Conselheiros (2024)
+- Governança Corporativa para Startups (2021)
+- Digital on Board – Conselheiros com Fluência Digital (HSM, 2021)
+- IA for Leaders (StartSe, 2023)
 - Especialidades: visão estratégica, execução comercial, liderança de times e atuação em conselhos
 
 ## METODOLOGIA ALBATROSS (4 Fases):
