@@ -93,11 +93,15 @@ const SERVICE_MESSAGES: Record<string, string[]> = {
   ]
 };
 
-// Dados completos do formulário Due Diligence
+// Dados completos do formulário Due Diligence (todos os campos)
 const DUE_DILIGENCE_DATA = [
   {
+    // Step 1 - Dados pessoais e transação
+    country: 'BR',
+    taxId: '12.345.678/0001-90',
     transactionType: 'Buy-side (Aquisição)',
     dealStatus: 'Pós-LOI',
+    // Step 2 - Perfil e qualificação
     requesterProfile: 'Private Equity',
     jobTitle: 'Partner',
     marketSegment: 'Fintech',
@@ -106,9 +110,11 @@ const DUE_DILIGENCE_DATA = [
     targetRevenue: 'R$ 50M - R$ 200M',
     objectives: ['Validar ICP e segmentação', 'Avaliar precificação', 'Medir qualidade do pipeline'],
     availableData: ['Export de CRM', 'Quotas e metas', 'Lista de clientes'],
-    concerns: 'Preocupação com a concentração de receita em poucos clientes e a sustentabilidade do modelo de precificação atual. Precisamos entender se o crescimento é replicável.'
+    concerns: 'Preocupação com a concentração de receita em poucos clientes e a sustentabilidade do modelo de precificação atual. Precisamos entender se o crescimento é replicável e se a base de clientes é diversificada o suficiente para mitigar riscos.'
   },
   {
+    country: 'BR',
+    taxId: '98.765.432/0001-10',
     transactionType: 'Sell-side (Venda)',
     dealStatus: 'Pré-LOI',
     requesterProfile: 'Management/Seller',
@@ -119,22 +125,26 @@ const DUE_DILIGENCE_DATA = [
     targetRevenue: 'R$ 200M - R$ 500M',
     objectives: ['Vendor Due Diligence', 'Validar sales motions', 'Testar acurácia do forecast'],
     availableData: ['Export de CRM', 'Snapshots de forecast', 'Organogramas'],
-    concerns: 'Necessidade de demonstrar a qualidade da receita recorrente e a eficiência do time comercial para potenciais compradores. Queremos antecipar objeções de investidores.'
+    concerns: 'Necessidade de demonstrar a qualidade da receita recorrente e a eficiência do time comercial para potenciais compradores. Queremos antecipar objeções de investidores e preparar um data room comercial completo.'
   },
   {
+    country: 'MX',
+    taxId: 'RFC-XAXX010101000',
     transactionType: 'M&A Estratégico',
     dealStatus: 'Exclusividade',
     requesterProfile: 'Strategic Buyer',
     jobTitle: 'Head de M&A',
     marketSegment: 'Retail/E-commerce',
     revenueModel: 'Transacional',
-    targetCompany: 'RetailTech Pro',
+    targetCompany: 'RetailTech México',
     targetRevenue: 'Abaixo de R$ 50M',
     objectives: ['Avaliar Sales Ops e processos', 'Validar ICP e segmentação', 'Avaliar precificação'],
     availableData: ['Export de CRM', 'Lista de clientes'],
-    concerns: 'Avaliar sinergias comerciais e identificar gaps operacionais que precisarão ser endereçados pós-aquisição. Foco em integração de times.'
+    concerns: 'Avaliar sinergias comerciais e identificar gaps operacionais que precisarão ser endereçados pós-aquisição. Foco em integração de times de vendas e unificação de processos comerciais.'
   },
   {
+    country: 'BR',
+    taxId: '45.678.901/0001-23',
     transactionType: 'Rodada Primária (VC)',
     dealStatus: 'Exploratório',
     requesterProfile: 'Venture Capital',
@@ -145,9 +155,11 @@ const DUE_DILIGENCE_DATA = [
     targetRevenue: 'Startup/Early-stage',
     objectives: ['Validar sales motions', 'Medir qualidade do pipeline', 'Testar acurácia do forecast'],
     availableData: ['Export de CRM', 'Quotas e metas'],
-    concerns: 'Entender a maturidade do GTM e a capacidade de escalar vendas enterprise com o modelo de precificação por uso. Avaliar unit economics do modelo comercial.'
+    concerns: 'Entender a maturidade do GTM e a capacidade de escalar vendas enterprise com o modelo de precificação por uso. Avaliar unit economics do modelo comercial e potencial de expansão de receita.'
   },
   {
+    country: 'AR',
+    taxId: '30-12345678-9',
     transactionType: 'Secundária',
     dealStatus: 'Pré-closing',
     requesterProfile: 'Growth Equity',
@@ -158,7 +170,7 @@ const DUE_DILIGENCE_DATA = [
     targetRevenue: 'Acima de R$ 500M',
     objectives: ['Validar ICP e segmentação', 'Avaliar Sales Ops e processos', 'Vendor Due Diligence'],
     availableData: ['Export de CRM', 'Quotas e metas', 'Snapshots de forecast', 'Lista de clientes', 'Organogramas'],
-    concerns: 'Validar a qualidade do ARR reportado e entender riscos de churn em segmentos específicos de clientes. Análise profunda de cohorts e NRR.'
+    concerns: 'Validar a qualidade do ARR reportado e entender riscos de churn em segmentos específicos de clientes. Análise profunda de cohorts, NRR e CAC payback por segmento.'
   }
 ];
 
@@ -297,16 +309,19 @@ Fonte: Alba Chatbot Seed Test`;
               messages_count: Math.floor(Math.random() * 8) + 3,
               service_interest: service,
               event_data: {
+                // Dados do contato
                 lead_name: `${firstName} ${lastName}`,
                 lead_email: email,
                 lead_company: company,
                 lead_phone: phone,
                 hubspot_id: hubspotId,
                 source: 'seed_test',
-                message: ddData.concerns,
-                // Campos específicos do Due Diligence
+                // Step 1 - Dados da transação
+                country: ddData.country,
+                tax_id: ddData.taxId,
                 transaction_type: ddData.transactionType,
                 deal_status: ddData.dealStatus,
+                // Step 2 - Qualificação
                 requester_profile: ddData.requesterProfile,
                 job_title: ddData.jobTitle,
                 target_company: ddData.targetCompany,
@@ -314,7 +329,9 @@ Fonte: Alba Chatbot Seed Test`;
                 revenue_model: ddData.revenueModel,
                 target_revenue: ddData.targetRevenue,
                 objectives: ddData.objectives,
-                available_data: ddData.availableData
+                available_data: ddData.availableData,
+                // Mensagem/Preocupações
+                message: ddData.concerns
               }
             };
 

@@ -17,3 +17,6 @@ verify_jwt = false
 
 [functions.seed-test-leads]
 verify_jwt = false
+
+[functions.seed-duediligence]
+verify_jwt = false
