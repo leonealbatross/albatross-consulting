@@ -16,6 +16,11 @@ interface Message {
 }
 
 interface LeadData {
+  // Qualification fields (collected FIRST)
+  challenge: string;
+  companySize: string;
+  urgency: string;
+  // Contact fields (collected AFTER qualification)
   name: string;
   email: string;
   company: string;
@@ -26,7 +31,7 @@ interface LeadData {
   consent: boolean;
 }
 
-type LeadStep = "idle" | "name" | "email" | "company" | "jobTitle" | "interest" | "timeline" | "phone" | "consent" | "submitting" | "success";
+type LeadStep = "idle" | "challenge" | "companySize" | "urgency" | "name" | "email" | "company" | "jobTitle" | "interest" | "timeline" | "phone" | "consent" | "submitting" | "success";
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/alba-chat`;
 
@@ -71,6 +76,29 @@ const TIMELINE_OPTIONS = [
   { value: "90+", label: "90+ dias" },
 ];
 
+// Qualification options - BEFORE collecting contact info
+const CHALLENGE_OPTIONS = [
+  { value: "growth", label: "Escalar vendas/crescimento" },
+  { value: "governance", label: "Profissionalizar gestão/governança" },
+  { value: "ma", label: "Comprar/vender empresa" },
+  { value: "efficiency", label: "Melhorar eficiência operacional" },
+  { value: "leadership", label: "Desenvolver liderança" },
+  { value: "other", label: "Outro desafio" },
+];
+
+const COMPANY_SIZE_OPTIONS = [
+  { value: "startup", label: "Startup (até R$5M/ano)" },
+  { value: "scaleup", label: "Scale-up (R$5M-50M/ano)" },
+  { value: "midmarket", label: "Mid-market (R$50M-500M/ano)" },
+  { value: "enterprise", label: "Enterprise (R$500M+/ano)" },
+];
+
+const URGENCY_OPTIONS = [
+  { value: "urgent", label: "🔴 Urgente (preciso resolver agora)" },
+  { value: "planning", label: "🟡 Planejando (próximos 3 meses)" },
+  { value: "exploring", label: "🟢 Explorando (ainda estudando)" },
+];
+
 const QUICK_ACTIONS = [
   { id: "services", label: "Conhecer serviços", icon: Briefcase, section: "servicos" },
   { id: "specialist", label: "Falar com especialista", icon: Users, action: "lead" },
@@ -107,14 +135,17 @@ const MEETING_SUGGESTION_THRESHOLD = 5;
 // 24 hours in milliseconds
 const CHAT_EXPIRATION_MS = 24 * 60 * 60 * 1000;
 
-// Lead capture steps configuration
+// Lead capture steps configuration - qualification FIRST, then contact info
 const LEAD_STEPS_CONFIG = [
+  { key: "challenge", label: "Desafio", icon: "🎯" },
+  { key: "companySize", label: "Porte", icon: "📊" },
+  { key: "urgency", label: "Urgência", icon: "⏰" },
   { key: "name", label: "Nome", icon: "👤" },
   { key: "email", label: "Email", icon: "📧" },
   { key: "company", label: "Empresa", icon: "🏢" },
   { key: "jobTitle", label: "Cargo", icon: "💼" },
-  { key: "interest", label: "Interesse", icon: "🎯" },
-  { key: "timeline", label: "Prazo", icon: "⏰" },
+  { key: "interest", label: "Serviço", icon: "🛠️" },
+  { key: "timeline", label: "Prazo", icon: "📅" },
   { key: "phone", label: "Telefone", icon: "📱" },
   { key: "consent", label: "Confirmar", icon: "✅" },
 ] as const;
@@ -123,16 +154,19 @@ const LEAD_STEPS_CONFIG = [
 const getStepIndex = (step: LeadStep): number => {
   const stepMap: Record<LeadStep, number> = {
     idle: -1,
-    name: 0,
-    email: 1,
-    company: 2,
-    jobTitle: 3,
-    interest: 4,
-    timeline: 5,
-    phone: 6,
-    consent: 7,
-    submitting: 8,
-    success: 8,
+    challenge: 0,
+    companySize: 1,
+    urgency: 2,
+    name: 3,
+    email: 4,
+    company: 5,
+    jobTitle: 6,
+    interest: 7,
+    timeline: 8,
+    phone: 9,
+    consent: 10,
+    submitting: 11,
+    success: 11,
   };
   return stepMap[step];
 };
@@ -204,6 +238,9 @@ const AlbaChatbot = () => {
   // Lead capture state
   const [leadStep, setLeadStep] = useState<LeadStep>("idle");
   const [leadData, setLeadData] = useState<LeadData>({
+    challenge: "",
+    companySize: "",
+    urgency: "",
     name: "",
     email: "",
     company: "",
@@ -280,7 +317,7 @@ const AlbaChatbot = () => {
             if (!hasRecoveryMessage && prev.length > 0) {
               return [...prev, {
                 role: "assistant",
-                content: `📝 Encontrei seu rascunho salvo! Vamos continuar de onde paramos?\n\n**Dados recuperados:**\n${parsedDraft.name ? `• Nome: ${parsedDraft.name}\n` : ""}${parsedDraft.email ? `• Email: ${parsedDraft.email}\n` : ""}${parsedDraft.company ? `• Empresa: ${parsedDraft.company}\n` : ""}${parsedDraft.jobTitle ? `• Cargo: ${parsedDraft.jobTitle}\n` : ""}${parsedDraft.interest ? `• Interesse: ${parsedDraft.interest}\n` : ""}${parsedDraft.phone ? `• Telefone: ${parsedDraft.phone}\n` : ""}\nContinue preenchendo ou clique em **Cancelar** para começar do zero.`
+                content: `📝 Encontrei seu rascunho salvo! Vamos continuar de onde paramos?\n\n**Dados recuperados:**\n${parsedDraft.challenge ? `• Desafio: ${CHALLENGE_OPTIONS.find(o => o.value === parsedDraft.challenge)?.label || parsedDraft.challenge}\n` : ""}${parsedDraft.companySize ? `• Porte: ${COMPANY_SIZE_OPTIONS.find(o => o.value === parsedDraft.companySize)?.label || parsedDraft.companySize}\n` : ""}${parsedDraft.urgency ? `• Urgência: ${URGENCY_OPTIONS.find(o => o.value === parsedDraft.urgency)?.label || parsedDraft.urgency}\n` : ""}${parsedDraft.name ? `• Nome: ${parsedDraft.name}\n` : ""}${parsedDraft.email ? `• Email: ${parsedDraft.email}\n` : ""}${parsedDraft.company ? `• Empresa: ${parsedDraft.company}\n` : ""}${parsedDraft.jobTitle ? `• Cargo: ${parsedDraft.jobTitle}\n` : ""}${parsedDraft.interest ? `• Serviço: ${INTEREST_OPTIONS.find(o => o.value === parsedDraft.interest)?.label || parsedDraft.interest}\n` : ""}${parsedDraft.phone ? `• Telefone: ${parsedDraft.phone}\n` : ""}\nContinue preenchendo ou clique em **Cancelar** para começar do zero.`
               }];
             }
             return prev;
@@ -444,14 +481,48 @@ Estou à disposição para quaisquer outras dúvidas, mas confio que uma convers
     }]);
   }, [hasSuggestedMeeting, interactionCount, trackEvent]);
 
-  // Start lead capture flow
+  // Start lead capture flow - NOW starts with QUALIFICATION
   const startLeadCapture = useCallback(() => {
-    setLeadStep("name");
+    setLeadStep("challenge");
     trackEvent("lead_started");
     setMessages(prev => [...prev, {
       role: "assistant",
-      content: "Ótimo! Para conectá-lo com nosso time, preciso de algumas informações. Qual é o seu nome completo?"
+      content: "Excelente! Para conectá-lo com o especialista certo, vou fazer 3 perguntas rápidas de qualificação. 🎯\n\n**Qual é o seu maior desafio atual?**"
     }]);
+  }, [trackEvent]);
+
+  // Handle qualification step selection
+  const handleChallengeSelect = useCallback((challenge: string) => {
+    const challengeLabel = CHALLENGE_OPTIONS.find(o => o.value === challenge)?.label || challenge;
+    setLeadData(prev => ({ ...prev, challenge }));
+    setMessages(prev => [...prev, 
+      { role: "user", content: challengeLabel },
+      { role: "assistant", content: "📊 **Qual o porte da sua empresa?** (aproximadamente)" }
+    ]);
+    setLeadStep("companySize");
+    trackEvent("qualification_challenge", { challenge: challengeLabel });
+  }, [trackEvent]);
+
+  const handleCompanySizeSelect = useCallback((companySize: string) => {
+    const sizeLabel = COMPANY_SIZE_OPTIONS.find(o => o.value === companySize)?.label || companySize;
+    setLeadData(prev => ({ ...prev, companySize }));
+    setMessages(prev => [...prev, 
+      { role: "user", content: sizeLabel },
+      { role: "assistant", content: "⏰ **Qual a urgência dessa necessidade?**" }
+    ]);
+    setLeadStep("urgency");
+    trackEvent("qualification_size", { companySize: sizeLabel });
+  }, [trackEvent]);
+
+  const handleUrgencySelect = useCallback((urgency: string) => {
+    const urgencyLabel = URGENCY_OPTIONS.find(o => o.value === urgency)?.label || urgency;
+    setLeadData(prev => ({ ...prev, urgency }));
+    setMessages(prev => [...prev, 
+      { role: "user", content: urgencyLabel },
+      { role: "assistant", content: "Perfeito! Agora vou coletar seus dados para nosso especialista entrar em contato. ✨\n\n**Qual é o seu nome completo?**" }
+    ]);
+    setLeadStep("name");
+    trackEvent("qualification_urgency", { urgency: urgencyLabel });
   }, [trackEvent]);
 
   // Handle lead form input
@@ -462,7 +533,7 @@ Estou à disposição para quaisquer outras dúvidas, mas confio que uma convers
       case "name":
         setLeadData(prev => ({ ...prev, name: value }));
         setLeadStep("email");
-        setMessages(prev => [...prev, { role: "assistant", content: "E qual é o seu e-mail corporativo?" }]);
+        setMessages(prev => [...prev, { role: "assistant", content: "E qual é o seu **e-mail corporativo**?" }]);
         break;
         
       case "email":
@@ -472,13 +543,13 @@ Estou à disposição para quaisquer outras dúvidas, mas confio que uma convers
         }
         setLeadData(prev => ({ ...prev, email: value }));
         setLeadStep("company");
-        setMessages(prev => [...prev, { role: "assistant", content: "Em qual empresa você trabalha?" }]);
+        setMessages(prev => [...prev, { role: "assistant", content: "Em qual **empresa** você trabalha?" }]);
         break;
         
       case "company":
         setLeadData(prev => ({ ...prev, company: value }));
         setLeadStep("jobTitle");
-        setMessages(prev => [...prev, { role: "assistant", content: "E qual é o seu cargo?" }]);
+        setMessages(prev => [...prev, { role: "assistant", content: "E qual é o seu **cargo**?" }]);
         break;
         
       case "jobTitle":
@@ -535,6 +606,9 @@ Estou à disposição para quaisquer outras dúvidas, mas confio que uma convers
   const cancelLeadCapture = useCallback(() => {
     setLeadStep("idle");
     setLeadData({
+      challenge: "",
+      companySize: "",
+      urgency: "",
       name: "",
       email: "",
       company: "",
@@ -582,6 +656,13 @@ Estou à disposição para quaisquer outras dúvidas, mas confio que uma convers
           company: leadData.company,
           message: `
 ══════════════════════════════════════
+🎯 QUALIFICAÇÃO DO LEAD
+══════════════════════════════════════
+Desafio Principal: ${CHALLENGE_OPTIONS.find(o => o.value === leadData.challenge)?.label || leadData.challenge || "Não informado"}
+Porte da Empresa: ${COMPANY_SIZE_OPTIONS.find(o => o.value === leadData.companySize)?.label || leadData.companySize || "Não informado"}
+Urgência: ${URGENCY_OPTIONS.find(o => o.value === leadData.urgency)?.label || leadData.urgency || "Não informado"}
+
+══════════════════════════════════════
 📋 INFORMAÇÕES DO LEAD
 ══════════════════════════════════════
 Nome: ${leadData.name}
@@ -590,8 +671,8 @@ Empresa: ${leadData.company || "Não informada"}
 Cargo: ${leadData.jobTitle || "Não informado"}
 Telefone: ${leadData.phone || "Não informado"}
 
-📌 Interesse Principal: ${INTEREST_OPTIONS.find(o => o.value === leadData.interest)?.label || leadData.interest}
-⏰ Prazo/Urgência: ${TIMELINE_OPTIONS.find(o => o.value === leadData.timeline)?.label || "Não informado"}
+📌 Serviço de Interesse: ${INTEREST_OPTIONS.find(o => o.value === leadData.interest)?.label || leadData.interest}
+⏰ Prazo para Decisão: ${TIMELINE_OPTIONS.find(o => o.value === leadData.timeline)?.label || "Não informado"}
 
 ══════════════════════════════════════
 💬 RESUMO DA CONVERSA
@@ -1282,7 +1363,71 @@ Consentimento LGPD: ✅ Aceito em ${new Date().toISOString()}
                 </motion.div>
               )}
 
-              {/* Lead capture UI */}
+              {/* QUALIFICATION STEPS - collect before contact info */}
+              {leadStep === "challenge" && (
+                <motion.div
+                  variants={messageVariants}
+                  initial="hidden"
+                  animate="visible"
+                  className="flex flex-wrap gap-2 ml-10"
+                >
+                  {CHALLENGE_OPTIONS.map((option) => (
+                    <Button
+                      key={option.value}
+                      variant="outline"
+                      size="sm"
+                      className="text-xs"
+                      onClick={() => handleChallengeSelect(option.value)}
+                    >
+                      {option.label}
+                    </Button>
+                  ))}
+                </motion.div>
+              )}
+
+              {leadStep === "companySize" && (
+                <motion.div
+                  variants={messageVariants}
+                  initial="hidden"
+                  animate="visible"
+                  className="flex flex-wrap gap-2 ml-10"
+                >
+                  {COMPANY_SIZE_OPTIONS.map((option) => (
+                    <Button
+                      key={option.value}
+                      variant="outline"
+                      size="sm"
+                      className="text-xs"
+                      onClick={() => handleCompanySizeSelect(option.value)}
+                    >
+                      {option.label}
+                    </Button>
+                  ))}
+                </motion.div>
+              )}
+
+              {leadStep === "urgency" && (
+                <motion.div
+                  variants={messageVariants}
+                  initial="hidden"
+                  animate="visible"
+                  className="flex flex-wrap gap-2 ml-10"
+                >
+                  {URGENCY_OPTIONS.map((option) => (
+                    <Button
+                      key={option.value}
+                      variant="outline"
+                      size="sm"
+                      className="text-xs"
+                      onClick={() => handleUrgencySelect(option.value)}
+                    >
+                      {option.label}
+                    </Button>
+                  ))}
+                </motion.div>
+              )}
+
+              {/* Lead capture UI - SERVICE INTEREST */}
               {leadStep === "interest" && (
                 <motion.div
                   variants={messageVariants}
@@ -1293,7 +1438,7 @@ Consentimento LGPD: ✅ Aceito em ${new Date().toISOString()}
                   <div className="flex gap-2 items-start">
                     <img src={albaAvatar} alt="Alba" className="w-8 h-8 rounded-full" />
                     <div className="bg-muted px-4 py-2.5 rounded-2xl rounded-bl-md text-sm">
-                      Qual o seu principal interesse?
+                      Qual serviço mais se alinha ao seu momento?
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-2 ml-10">
