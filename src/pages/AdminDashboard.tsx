@@ -55,6 +55,22 @@ import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import albatrossLogo from "@/assets/logo-albatross.png";
 
+interface DueDiligenceData {
+  country?: string;
+  taxId?: string;
+  transactionType?: string;
+  dealStatus?: string;
+  requesterProfile?: string;
+  jobTitle?: string;
+  targetCompany?: string;
+  marketSegment?: string;
+  revenueModel?: string;
+  targetRevenue?: string;
+  objectives?: string[];
+  availableData?: string[];
+  concerns?: string;
+}
+
 interface LeadData {
   id: string;
   name: string;
@@ -63,6 +79,7 @@ interface LeadData {
   createdAt: string;
   serviceType: string;
   message: string;
+  dueDiligence?: DueDiligenceData;
 }
 
 interface AnalyticsData {
@@ -238,6 +255,27 @@ const AdminDashboard = () => {
         .filter(d => d.lead_submitted === true && d.event_data)
         .map(d => {
           const eventData = d.event_data as Record<string, unknown> | null;
+          
+          // Extrair dados de Due Diligence se existirem
+          const dueDiligence: DueDiligenceData | undefined = 
+            d.service_interest === 'Due Diligence Comercial' && eventData
+              ? {
+                  country: eventData.country as string | undefined,
+                  taxId: eventData.taxId as string | undefined,
+                  transactionType: eventData.transactionType as string | undefined,
+                  dealStatus: eventData.dealStatus as string | undefined,
+                  requesterProfile: eventData.requesterProfile as string | undefined,
+                  jobTitle: eventData.jobTitle as string | undefined,
+                  targetCompany: eventData.targetCompany as string | undefined,
+                  marketSegment: eventData.marketSegment as string | undefined,
+                  revenueModel: eventData.revenueModel as string | undefined,
+                  targetRevenue: eventData.targetRevenue as string | undefined,
+                  objectives: eventData.objectives as string[] | undefined,
+                  availableData: eventData.availableData as string[] | undefined,
+                  concerns: eventData.concerns as string | undefined,
+                }
+              : undefined;
+          
           return {
             id: d.id,
             name: (eventData?.lead_name as string) || (eventData?.name as string) || (eventData?.nome as string) || '-',
@@ -246,6 +284,7 @@ const AdminDashboard = () => {
             createdAt: d.created_at,
             serviceType: d.service_interest || '-',
             message: (eventData?.message as string) || (eventData?.mensagem as string) || '-',
+            dueDiligence,
           };
         })
         .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
@@ -655,19 +694,144 @@ const AdminDashboard = () => {
                             <DialogTrigger asChild>
                               <Button variant="ghost" size="sm" className="h-8 gap-1 text-left">
                                 <Eye className="h-3.5 w-3.5" />
-                                <span className="max-w-[150px] truncate">{lead.message.substring(0, 30)}...</span>
+                                <span className="max-w-[150px] truncate">
+                                  {lead.dueDiligence ? 'Ver detalhes DD' : lead.message.substring(0, 30) + '...'}
+                                </span>
                               </Button>
                             </DialogTrigger>
-                            <DialogContent className="max-w-lg">
+                            <DialogContent className={lead.dueDiligence ? "max-w-2xl max-h-[80vh] overflow-y-auto" : "max-w-lg"}>
                               <DialogHeader>
-                                <DialogTitle>Mensagem do Lead</DialogTitle>
+                                <DialogTitle>
+                                  {lead.dueDiligence ? 'Detalhes Due Diligence' : 'Mensagem do Lead'}
+                                </DialogTitle>
                                 <DialogDescription>
                                   {lead.name} - {lead.serviceType}
                                 </DialogDescription>
                               </DialogHeader>
-                              <div className="mt-4 p-4 bg-muted rounded-lg">
-                                <p className="text-sm whitespace-pre-wrap">{lead.message}</p>
-                              </div>
+                              
+                              {lead.dueDiligence ? (
+                                <div className="mt-4 space-y-4">
+                                  {/* Informações de Contato */}
+                                  <div className="p-4 bg-muted rounded-lg">
+                                    <h4 className="font-semibold text-sm mb-3 text-primary">Informações de Contato</h4>
+                                    <div className="grid grid-cols-2 gap-3 text-sm">
+                                      <div>
+                                        <span className="text-muted-foreground">Nome:</span>
+                                        <p className="font-medium">{lead.name}</p>
+                                      </div>
+                                      <div>
+                                        <span className="text-muted-foreground">Email:</span>
+                                        <p className="font-medium">{lead.email}</p>
+                                      </div>
+                                      <div>
+                                        <span className="text-muted-foreground">Telefone:</span>
+                                        <p className="font-medium">{lead.phone}</p>
+                                      </div>
+                                      <div>
+                                        <span className="text-muted-foreground">País:</span>
+                                        <p className="font-medium">{lead.dueDiligence.country || '-'}</p>
+                                      </div>
+                                      <div>
+                                        <span className="text-muted-foreground">CNPJ/Tax ID:</span>
+                                        <p className="font-medium">{lead.dueDiligence.taxId || '-'}</p>
+                                      </div>
+                                      <div>
+                                        <span className="text-muted-foreground">Cargo:</span>
+                                        <p className="font-medium">{lead.dueDiligence.jobTitle || '-'}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  {/* Dados da Transação */}
+                                  <div className="p-4 bg-muted rounded-lg">
+                                    <h4 className="font-semibold text-sm mb-3 text-primary">Dados da Transação</h4>
+                                    <div className="grid grid-cols-2 gap-3 text-sm">
+                                      <div>
+                                        <span className="text-muted-foreground">Tipo de Transação:</span>
+                                        <p className="font-medium">{lead.dueDiligence.transactionType || '-'}</p>
+                                      </div>
+                                      <div>
+                                        <span className="text-muted-foreground">Status do Deal:</span>
+                                        <p className="font-medium">{lead.dueDiligence.dealStatus || '-'}</p>
+                                      </div>
+                                      <div>
+                                        <span className="text-muted-foreground">Perfil do Solicitante:</span>
+                                        <p className="font-medium">{lead.dueDiligence.requesterProfile || '-'}</p>
+                                      </div>
+                                      <div>
+                                        <span className="text-muted-foreground">Empresa Alvo:</span>
+                                        <p className="font-medium">{lead.dueDiligence.targetCompany || '-'}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  {/* Dados do Mercado */}
+                                  <div className="p-4 bg-muted rounded-lg">
+                                    <h4 className="font-semibold text-sm mb-3 text-primary">Dados do Mercado</h4>
+                                    <div className="grid grid-cols-2 gap-3 text-sm">
+                                      <div>
+                                        <span className="text-muted-foreground">Segmento de Mercado:</span>
+                                        <p className="font-medium">{lead.dueDiligence.marketSegment || '-'}</p>
+                                      </div>
+                                      <div>
+                                        <span className="text-muted-foreground">Modelo de Receita:</span>
+                                        <p className="font-medium">{lead.dueDiligence.revenueModel || '-'}</p>
+                                      </div>
+                                      <div className="col-span-2">
+                                        <span className="text-muted-foreground">Faturamento Alvo:</span>
+                                        <p className="font-medium">{lead.dueDiligence.targetRevenue || '-'}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  {/* Objetivos e Dados */}
+                                  <div className="p-4 bg-muted rounded-lg">
+                                    <h4 className="font-semibold text-sm mb-3 text-primary">Objetivos & Dados Disponíveis</h4>
+                                    <div className="space-y-3 text-sm">
+                                      <div>
+                                        <span className="text-muted-foreground">Objetivos:</span>
+                                        {lead.dueDiligence.objectives && lead.dueDiligence.objectives.length > 0 ? (
+                                          <div className="flex flex-wrap gap-1 mt-1">
+                                            {lead.dueDiligence.objectives.map((obj, idx) => (
+                                              <span key={idx} className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+                                                {obj}
+                                              </span>
+                                            ))}
+                                          </div>
+                                        ) : (
+                                          <p className="font-medium">-</p>
+                                        )}
+                                      </div>
+                                      <div>
+                                        <span className="text-muted-foreground">Dados Disponíveis:</span>
+                                        {lead.dueDiligence.availableData && lead.dueDiligence.availableData.length > 0 ? (
+                                          <div className="flex flex-wrap gap-1 mt-1">
+                                            {lead.dueDiligence.availableData.map((data, idx) => (
+                                              <span key={idx} className="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
+                                                {data}
+                                              </span>
+                                            ))}
+                                          </div>
+                                        ) : (
+                                          <p className="font-medium">-</p>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  {/* Preocupações */}
+                                  {lead.dueDiligence.concerns && (
+                                    <div className="p-4 bg-muted rounded-lg">
+                                      <h4 className="font-semibold text-sm mb-2 text-primary">Preocupações / Observações</h4>
+                                      <p className="text-sm whitespace-pre-wrap">{lead.dueDiligence.concerns}</p>
+                                    </div>
+                                  )}
+                                </div>
+                              ) : (
+                                <div className="mt-4 p-4 bg-muted rounded-lg">
+                                  <p className="text-sm whitespace-pre-wrap">{lead.message}</p>
+                                </div>
+                              )}
                             </DialogContent>
                           </Dialog>
                         </TableCell>
