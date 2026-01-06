@@ -964,7 +964,7 @@ Consentimento LGPD: ✅ Aceito em ${new Date().toISOString()}
             whileTap="tap"
             onClick={() => setIsOpen(true)}
             className={cn(
-              "fixed bottom-6 right-6 z-50 p-0 rounded-full shadow-2xl",
+              "fixed bottom-20 sm:bottom-6 right-6 z-50 p-0 rounded-full shadow-2xl",
               "bg-gradient-to-br from-primary/20 to-primary/40 border-2 border-primary/50",
               "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background",
               "min-w-[var(--alba-min-touch)] min-h-[var(--alba-min-touch)]"
@@ -1001,7 +1001,7 @@ Consentimento LGPD: ✅ Aceito em ${new Date().toISOString()}
             animate="visible"
             exit="exit"
             className={cn(
-              "fixed bottom-6 right-6 z-50 w-[400px] max-w-[calc(100vw-48px)] h-[600px] max-h-[calc(100vh-100px)]",
+              "fixed bottom-20 sm:bottom-6 right-6 z-50 w-[400px] max-w-[calc(100vw-48px)] h-[600px] max-h-[calc(100vh-100px)]",
               "bg-background/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-border/50",
               "flex flex-col overflow-hidden"
             )}

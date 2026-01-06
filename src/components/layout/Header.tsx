@@ -271,6 +271,15 @@ const Header = () => {
                   {item.label}
                 </a>
               ))}
+              
+              {/* Admin Link - Mobile */}
+              <Link
+                to="/admin"
+                className="flex items-center py-4 text-lg font-medium transition-colors border-b border-border/20 min-h-[48px] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-inset rounded text-muted-foreground hover:text-primary"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Admin
+              </Link>
             </nav>
 
           </div>
