@@ -1012,6 +1012,7 @@ Consentimento LGPD: ✅ Aceito em ${new Date().toISOString()}
 
   // Extract suggestions from message content
   const extractSuggestions = useCallback((content: string): { cleanContent: string; suggestions: string[] } => {
+    // Try with closing tag first
     const suggestionsMatch = content.match(/\[SUGESTOES\]\s*([\s\S]*?)\s*\[\/SUGESTOES\]/);
     if (suggestionsMatch) {
       const suggestionsText = suggestionsMatch[1].trim();
@@ -1019,6 +1020,16 @@ Consentimento LGPD: ✅ Aceito em ${new Date().toISOString()}
       const cleanContent = content.replace(/\[SUGESTOES\][\s\S]*?\[\/SUGESTOES\]/g, "").trim();
       return { cleanContent, suggestions };
     }
+    
+    // Fallback: handle unclosed [SUGESTOES] tag (capture everything after it)
+    const unclosedMatch = content.match(/\[SUGESTOES\]\s*([\s\S]*?)$/);
+    if (unclosedMatch) {
+      const suggestionsText = unclosedMatch[1].trim();
+      const suggestions = suggestionsText.split("|").map(s => s.trim()).filter(s => s.length > 0);
+      const cleanContent = content.replace(/\[SUGESTOES\][\s\S]*$/g, "").trim();
+      return { cleanContent, suggestions };
+    }
+    
     return { cleanContent: content, suggestions: [] };
   }, []);
 
