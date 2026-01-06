@@ -55,79 +55,6 @@ const AdminLogin = () => {
     }
   };
 
-  const handleSignUp = async () => {
-    if (!email || !password) {
-      toast({
-        title: "Campos obrigatórios",
-        description: "Preencha email e senha para criar conta.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setIsLoading(true);
-
-    try {
-      // Check if there are any existing admins
-      const { count: existingAdmins } = await supabase
-        .from('user_roles')
-        .select('*', { count: 'exact', head: true })
-        .eq('role', 'admin');
-
-      // Only allow signup if no admins exist (first user becomes admin)
-      if (existingAdmins && existingAdmins > 0) {
-        toast({
-          title: "Acesso restrito",
-          description: "Já existe um administrador. Faça login ou peça acesso.",
-          variant: "destructive",
-        });
-        setIsLoading(false);
-        return;
-      }
-
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/admin/dashboard`,
-        },
-      });
-
-      if (error) {
-        toast({
-          title: "Erro ao criar conta",
-          description: error.message,
-          variant: "destructive",
-        });
-        return;
-      }
-
-      if (data.user) {
-        // Assign admin role to first user
-        const { error: roleError } = await supabase
-          .from('user_roles')
-          .insert({ user_id: data.user.id, role: 'admin' });
-
-        if (roleError) {
-          console.error('Error assigning admin role:', roleError);
-        }
-
-        toast({
-          title: "Conta admin criada",
-          description: "Você é o primeiro administrador.",
-        });
-        navigate("/admin/dashboard");
-      }
-    } catch (error) {
-      toast({
-        title: "Erro",
-        description: "Ocorreu um erro ao criar conta. Tente novamente.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -177,32 +104,12 @@ const AdminLogin = () => {
                 />
               </div>
             </div>
-            <div className="space-y-2 pt-2">
+            <div className="pt-2">
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? "Entrando..." : "Entrar"}
               </Button>
-              <Button 
-                type="button" 
-                variant="outline" 
-                className="w-full" 
-                onClick={handleSignUp}
-                disabled={isLoading}
-              >
-                Criar primeira conta
-              </Button>
             </div>
           </form>
-          <div className="mt-6 pt-4 border-t border-border">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="w-full text-muted-foreground"
-              onClick={() => navigate("/")}
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Voltar ao site
-            </Button>
-          </div>
         </CardContent>
       </Card>
     </div>
