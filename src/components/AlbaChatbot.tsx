@@ -1555,19 +1555,22 @@ Consentimento LGPD: ✅ Aceito em ${new Date().toISOString()}
                     variant="outline"
                     size="sm"
                     className="gap-2"
-                    onClick={() => navigateToSection("cta")}
+                    onClick={() => navigateToSection("servicos")}
                   >
-                    <Mail className="w-4 h-4" />
-                    Contato
+                    <Briefcase className="w-4 h-4" />
+                    Ver Serviços
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
                     className="gap-2"
-                    onClick={() => navigateToSection("servicos")}
+                    onClick={() => {
+                      setIsOpen(false);
+                      setLeadStep("idle");
+                    }}
                   >
-                    <Briefcase className="w-4 h-4" />
-                    Ver Serviços
+                    <X className="w-4 h-4" />
+                    Encerrar
                   </Button>
                 </motion.div>
               )}
