@@ -640,6 +640,15 @@ Estou à disposição para quaisquer outras dúvidas, mas confio que uma convers
         break;
         
       case "phone":
+        // Validate Brazilian phone format: (XX) XXXXX-XXXX or (XX) XXXX-XXXX or +55 XX XXXXX-XXXX
+        const phoneDigits = value.replace(/\D/g, "");
+        if (phoneDigits.length < 10 || phoneDigits.length > 13) {
+          setMessages(prev => [...prev, { 
+            role: "assistant", 
+            content: "Por favor, informe um telefone válido no formato brasileiro.\n\nExemplos: **(11) 99999-9999** ou **+55 11 99999-9999**" 
+          }]);
+          return;
+        }
         setLeadData(prev => ({ ...prev, phone: value }));
         setLeadStep("consent");
         break;
