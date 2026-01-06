@@ -1058,7 +1058,7 @@ Consentimento LGPD: ✅ Aceito em ${new Date().toISOString()}
   const renderMessageContent = (content: string) => {
     // Remove suggestions block from display
     const { cleanContent } = extractSuggestions(content);
-    const parts = cleanContent.split(/(\*\*[^*]+\*\*|\[CTA:AGENDAR\]|\[CTA:EMAIL\]|\[CTA:LEAD\]|\[NAV:[^\]]+\])/g);
+    const parts = cleanContent.split(/(\*\*[^*]+\*\*|\[CTA:AGENDAR\]|\[CTA:EMAIL\]|\[CTA:LEAD\]|\[CTA:ENCERRAR\]|\[NAV:[^\]]+\])/g);
     
     return parts.map((part, index) => {
       if (part.startsWith("**") && part.endsWith("**")) {
@@ -1101,6 +1101,37 @@ Consentimento LGPD: ✅ Aceito em ${new Date().toISOString()}
           >
             <Users className="w-4 h-4" />
             Falar com Especialista
+          </Button>
+        );
+      }
+      if (part === "[CTA:ENCERRAR]") {
+        return (
+          <Button
+            key={index}
+            variant="outline"
+            size="sm"
+            className="mt-2 mr-2 gap-2"
+            onClick={() => {
+              // Show farewell message
+              setMessages(prev => [...prev, {
+                role: "assistant",
+                content: "Foi um prazer atendê-lo! 🙏\n\nA Albatross Consulting está sempre à disposição. Até breve! 👋"
+              }]);
+              
+              // Close chat after a brief delay to show the message
+              setTimeout(() => {
+                setMessages([]);
+                setDynamicSuggestions([]);
+                setInteractionCount(0);
+                setHasSuggestedMeeting(false);
+                localStorage.removeItem(STORAGE_KEYS.messages);
+                localStorage.removeItem(STORAGE_KEYS.interactionCount);
+                setIsOpen(false);
+              }, 2000);
+            }}
+          >
+            <X className="w-4 h-4" />
+            Encerrar
           </Button>
         );
       }
