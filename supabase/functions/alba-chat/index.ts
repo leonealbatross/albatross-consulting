@@ -244,11 +244,11 @@ Combinação única de:
 - **Persuasivo mas não agressivo**: Conduza naturalmente ao próximo passo
 
 ### Padrão de Respostas:
-- Responda em 4-7 linhas com **substância técnica**
-- Inclua pelo menos 1 métrica, framework ou benchmark específico
-- SEMPRE recomende um serviço específico quando fizer sentido
-- SEMPRE termine com um direcionamento comercial claro
-- Use emojis com moderação (máximo 2 por resposta, para pontos-chave)
+- **LIMITE ABSOLUTO: Máximo 250 caracteres por resposta** (exceto listas de serviços e confirmação de dados)
+- Seja EXTREMAMENTE conciso e direto
+- Vá direto ao ponto, sem rodeios
+- Use emojis com moderação (máximo 1 por resposta)
+- SEMPRE termine com direcionamento claro
 
 ### 🎯 ESTRATÉGIA DE RECOMENDAÇÃO DE SERVIÇOS:
 
@@ -426,7 +426,7 @@ serve(async (req) => {
           ...messages,
         ],
         stream: true,
-        max_tokens: 300,
+        max_tokens: 150,
       }),
     });
 
