@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { MessageCircle, X, Send, Calendar, Mail, Loader2, Briefcase, Users, Brain, Phone, ChevronLeft, Check, ArrowRight, Sparkles, Trash2 } from "lucide-react";
+import { MessageCircle, X, Send, Calendar, Mail, Loader2, Briefcase, Users, Brain, Phone, ChevronLeft, Check, ArrowRight, Sparkles, Trash2, Bug } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -98,6 +98,21 @@ const URGENCY_OPTIONS = [
   { value: "planning", label: "🟡 Planejando (próximos 3 meses)" },
   { value: "exploring", label: "🟢 Explorando (ainda estudando)" },
 ];
+
+// Debug mode test data
+const DEBUG_LEAD_DATA: LeadData = {
+  challenge: "growth",
+  companySize: "scaleup",
+  urgency: "planning",
+  name: "João Teste",
+  email: "joao.teste@empresa.com.br",
+  company: "Empresa Teste LTDA",
+  jobTitle: "Diretor Comercial",
+  interest: "growth",
+  timeline: "31-90",
+  phone: "(11) 99999-9999",
+  consent: true,
+};
 
 const QUICK_ACTIONS = [
   { id: "services", label: "Conhecer serviços", icon: Briefcase, section: "servicos" },
@@ -234,6 +249,7 @@ const AlbaChatbot = () => {
   const [failureCount, setFailureCount] = useState(0);
   const [dynamicSuggestions, setDynamicSuggestions] = useState<string[]>([]);
   const [hasSuggestedMeeting, setHasSuggestedMeeting] = useState(false);
+  const [isDebugMode, setIsDebugMode] = useState(false);
   
   // Lead capture state
   const [leadStep, setLeadStep] = useState<LeadStep>("idle");
@@ -382,6 +398,28 @@ const AlbaChatbot = () => {
     return () => mediaQuery.removeEventListener("change", handler);
   }, []);
 
+  // Debug mode keyboard shortcut (Ctrl+Shift+D)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey && e.key === "D") {
+        e.preventDefault();
+        setIsDebugMode(prev => {
+          const newValue = !prev;
+          toast({
+            title: newValue ? "🧪 Modo Debug ATIVO" : "Modo Debug desativado",
+            description: newValue 
+              ? "Use o botão 'Auto-preencher' para testar o fluxo rapidamente" 
+              : "Voltando ao modo normal",
+          });
+          return newValue;
+        });
+      }
+    };
+    
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   // Entry animation
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), prefersReducedMotion ? 0 : 1000);
@@ -407,6 +445,48 @@ const AlbaChatbot = () => {
       console.error('Error tracking event:', error);
     }
   }, []);
+
+  // Auto-fill debug data function
+  const autoFillDebugData = useCallback(() => {
+    if (!isDebugMode) return;
+    
+    // Fill all lead data at once
+    setLeadData(DEBUG_LEAD_DATA);
+    
+    // Jump to consent step with all previous messages
+    setMessages(prev => [...prev,
+      { role: "assistant", content: "🧪 **[DEBUG] Auto-preenchendo dados de teste...**" },
+      { role: "user", content: CHALLENGE_OPTIONS.find(o => o.value === DEBUG_LEAD_DATA.challenge)?.label || "" },
+      { role: "assistant", content: "📊 **Qual o porte da sua empresa?**" },
+      { role: "user", content: COMPANY_SIZE_OPTIONS.find(o => o.value === DEBUG_LEAD_DATA.companySize)?.label || "" },
+      { role: "assistant", content: "⏰ **Qual a urgência dessa necessidade?**" },
+      { role: "user", content: URGENCY_OPTIONS.find(o => o.value === DEBUG_LEAD_DATA.urgency)?.label || "" },
+      { role: "assistant", content: "Perfeito! Agora vou coletar seus dados. ✨\n\n**Qual é o seu nome completo?**" },
+      { role: "user", content: DEBUG_LEAD_DATA.name },
+      { role: "assistant", content: "E qual é o seu **e-mail corporativo**?" },
+      { role: "user", content: DEBUG_LEAD_DATA.email },
+      { role: "assistant", content: "Em qual **empresa** você trabalha?" },
+      { role: "user", content: DEBUG_LEAD_DATA.company },
+      { role: "assistant", content: "E qual é o seu **cargo**?" },
+      { role: "user", content: DEBUG_LEAD_DATA.jobTitle },
+      { role: "assistant", content: "📋 **Qual serviço mais te interessa?**" },
+      { role: "user", content: INTEREST_OPTIONS.find(o => o.value === DEBUG_LEAD_DATA.interest)?.label || "" },
+      { role: "assistant", content: "⏱️ **Qual o prazo para tomada de decisão?**" },
+      { role: "user", content: TIMELINE_OPTIONS.find(o => o.value === DEBUG_LEAD_DATA.timeline)?.label || "" },
+      { role: "assistant", content: "📱 **Qual seu telefone para contato?** (com DDD)" },
+      { role: "user", content: DEBUG_LEAD_DATA.phone },
+      { role: "assistant", content: "✅ **Por favor, confirme seu consentimento** para que possamos entrar em contato:\n\n*Autorizo a Albatross Consulting a entrar em contato comigo com informações sobre serviços e conteúdos relevantes, conforme a LGPD.*" },
+    ]);
+    
+    setLeadStep("consent");
+    
+    toast({
+      title: "🧪 Dados preenchidos!",
+      description: "Clique em 'Sim, autorizo' para testar o envio.",
+    });
+    
+    trackEvent("debug_autofill");
+  }, [isDebugMode, trackEvent]);
 
   useEffect(() => {
     if (isOpen) {
@@ -1111,6 +1191,26 @@ Consentimento LGPD: ✅ Aceito em ${new Date().toISOString()}
                 <p className="text-xs text-muted-foreground truncate">Assistente Albatross Consulting</p>
               </div>
               <div className="flex items-center gap-1 flex-shrink-0">
+                {/* Debug mode button */}
+                {isDebugMode && leadStep === "idle" && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="flex gap-1.5 text-xs text-yellow-500 hover:text-yellow-400 hover:bg-yellow-500/10 px-2 h-8 animate-pulse"
+                        onClick={autoFillDebugData}
+                        aria-label="Auto-preencher dados de teste"
+                      >
+                        <Bug className="w-3.5 h-3.5" />
+                        <span className="hidden sm:inline">Auto-fill</span>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="bg-popover text-popover-foreground border border-border shadow-lg">
+                      <p>🧪 Preencher dados automaticamente (modo debug)</p>
+                    </TooltipContent>
+                  </Tooltip>
+                )}
                 <TooltipProvider delayDuration={300}>
                   <Tooltip>
                     <TooltipTrigger asChild>
