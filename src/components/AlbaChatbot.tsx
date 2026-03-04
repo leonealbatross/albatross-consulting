@@ -430,20 +430,21 @@ const AlbaChatbot = () => {
     return () => clearTimeout(timer);
   }, [prefersReducedMotion]);
 
-  // Track events - now sends to alba_analytics table
+  // Track events - sends to edge function (server-side insert)
   const trackEvent = useCallback(async (event: string, data?: Record<string, unknown>) => {
     console.log(`Event: ${event}`, data);
     
     try {
       const sessionId = getSessionId();
-      // Using type assertion since types may not be updated yet
-      await (supabase.from('alba_analytics') as any).insert({
-        session_id: sessionId,
-        event_type: event,
-        event_data: data || {},
-        service_interest: (data?.service_interest as string) || null,
-        lead_submitted: event === 'lead_success',
-        messages_count: event === 'message' ? 1 : 0,
+      await supabase.functions.invoke('track-analytics', {
+        body: {
+          session_id: sessionId,
+          event_type: event,
+          event_data: data || {},
+          service_interest: (data?.service_interest as string) || null,
+          lead_submitted: event === 'lead_success',
+          messages_count: event === 'message' ? 1 : 0,
+        },
       });
     } catch (error) {
       console.error('Error tracking event:', error);
