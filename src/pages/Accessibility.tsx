@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import accessibilityIcon from "@/assets/accessibility-icon.jpeg";
 import { 
   ArrowLeft, 
    

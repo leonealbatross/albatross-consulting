@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
+import accessibilityIcon from "@/assets/accessibility-icon.jpeg";
 import { Button } from "@/components/ui/button";
 import { 
   X, 
