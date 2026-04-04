@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Globe, Accessibility, Shield } from "lucide-react";
+import { Menu, X, Globe, Shield } from "lucide-react";
+import accessibilityIcon from "@/assets/accessibility-icon.jpeg";
 import {
   DropdownMenu,
   DropdownMenuContent,
