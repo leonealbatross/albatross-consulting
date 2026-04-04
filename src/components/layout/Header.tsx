@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Globe, Accessibility, Shield } from "lucide-react";
+import { Menu, X, Globe, Shield } from "lucide-react";
+import accessibilityIcon from "@/assets/accessibility-icon.jpeg";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -123,7 +124,7 @@ const Header = () => {
                     className="p-2 text-muted-foreground hover:text-primary transition-colors rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background min-w-[44px] min-h-[44px] flex items-center justify-center"
                     aria-label="Configurações de acessibilidade"
                   >
-                    <Accessibility className="w-5 h-5" aria-hidden="true" />
+                    <img src={accessibilityIcon} alt="" className="w-5 h-5 object-contain" aria-hidden="true" />
                   </button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -206,7 +207,7 @@ const Header = () => {
                   className="p-2 text-muted-foreground hover:text-primary transition-colors rounded-lg focus:outline-none focus:ring-2 focus:ring-primary min-w-[44px] min-h-[44px] flex items-center justify-center"
                   aria-label="Configurações de acessibilidade"
                 >
-                  <Accessibility className="w-5 h-5" aria-hidden="true" />
+                  <img src={accessibilityIcon} alt="" className="w-5 h-5 object-contain" aria-hidden="true" />
                 </button>
 
                 {/* Language Selector - Simple like desktop */}
