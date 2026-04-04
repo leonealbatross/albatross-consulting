@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { 
   ArrowLeft, 
-  Accessibility as AccessibilityIcon, 
+   
   Mail, 
   CheckCircle2, 
   Keyboard,
