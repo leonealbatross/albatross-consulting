@@ -281,7 +281,7 @@ const AccessibilityPanel = ({ isOpen, onClose, triggerRef }: AccessibilityPanelP
               <div className="flex items-center justify-between p-4 sm:p-6 border-b border-border bg-card">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                    <Accessibility className="w-5 h-5 text-primary" aria-hidden="true" />
+                    <img src={accessibilityIcon} alt="" className="w-5 h-5 object-contain" aria-hidden="true" />
                   </div>
                   <div>
                     <h2 id="accessibility-panel-title" className="font-heading font-semibold text-foreground">

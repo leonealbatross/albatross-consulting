@@ -82,7 +82,7 @@ const Accessibility = () => {
               <span className="text-sm font-medium">Voltar ao site</span>
             </Link>
             <div className="flex items-center gap-2">
-              <AccessibilityIcon className="w-5 h-5 text-primary" aria-hidden="true" />
+              <img src={accessibilityIcon} alt="" className="w-5 h-5 object-contain" aria-hidden="true" />
               <span className="font-heading font-semibold text-foreground">Albatross Consulting</span>
             </div>
           </nav>
