@@ -1337,7 +1337,7 @@ Consentimento LGPD: ✅ Aceito em ${new Date().toISOString()}
                         variant="ghost"
                         size="sm"
                         className="flex gap-1.5 text-xs text-primary hover:text-primary hover:bg-primary/10 px-2 h-8"
-                        onClick={() => navigateToSection("agendamento")}
+                        onClick={handleScheduleClick}
                         aria-label="Agendar reunião"
                       >
                         <Calendar className="w-3.5 h-3.5" />
