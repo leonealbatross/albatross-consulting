@@ -808,14 +808,44 @@ Consentimento LGPD: ✅ Aceito em ${new Date().toISOString()}
       
       if (error) throw error;
       
+      // Send lead notification + confirmation emails
+      const { error: emailError } = await supabase.functions.invoke("send-lead-email", {
+        body: {
+          name: leadData.name,
+          email: leadData.email,
+          company: leadData.company,
+          jobTitle: leadData.jobTitle,
+          phone: leadData.phone,
+          interest: INTEREST_OPTIONS.find(o => o.value === leadData.interest)?.label || leadData.interest,
+          challenge: CHALLENGE_OPTIONS.find(o => o.value === leadData.challenge)?.label || leadData.challenge,
+          companySize: COMPANY_SIZE_OPTIONS.find(o => o.value === leadData.companySize)?.label || leadData.companySize,
+          urgency: URGENCY_OPTIONS.find(o => o.value === leadData.urgency)?.label || leadData.urgency,
+          timeline: TIMELINE_OPTIONS.find(o => o.value === leadData.timeline)?.label || leadData.timeline,
+          summary: briefSummary,
+          wantsScheduling,
+          calendlyUrl: CALENDLY_URL,
+        },
+      });
+      if (emailError) {
+        console.error("Lead email error:", emailError);
+      }
+
       setLeadStep("success");
       clearLeadDraft(); // Clear saved draft on success
       trackEvent("lead_success", { hubspotId: data?.hubspotId, service_interest: leadData.interest });
       
       setMessages(prev => [...prev, {
         role: "assistant",
-        content: "Perfeito! ✅ Suas informações foram enviadas. Nossa equipe entrará em contato em breve. O que gostaria de fazer agora?"
+        content: wantsScheduling
+          ? "Perfeito! ✅ Suas informações foram enviadas e a agenda foi aberta em uma nova aba para você escolher o melhor horário."
+          : "Perfeito! ✅ Suas informações foram enviadas. Nossa equipe entrará em contato em breve. O que gostaria de fazer agora?"
       }]);
+
+      if (wantsScheduling) {
+        openCalendly({ name: leadData.name, email: leadData.email });
+        setWantsScheduling(false);
+      }
+      
       
     } catch (error) {
       console.error("Lead submission error:", error);
