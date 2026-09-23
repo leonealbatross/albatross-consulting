@@ -25,8 +25,8 @@ const Leadership = () => {
       <div className="container-wide px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           {/* Left - Image */}
-          <div className="relative flex justify-center lg:justify-start">
-            <div className="aspect-[4/3] sm:aspect-[4/5] rounded-2xl sm:rounded-3xl overflow-hidden w-full sm:w-1/2">
+          <div className="relative flex justify-center lg:justify-start items-start">
+            <div className="aspect-[4/3] sm:aspect-[4/5] rounded-2xl sm:rounded-3xl overflow-hidden w-full sm:w-1/2 self-start">
               <img 
                 src={marcoLeonePhoto} 
                 alt="Marco Leone - Founder & Strategic Advisor" 
