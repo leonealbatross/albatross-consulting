@@ -540,6 +540,15 @@ const AlbaChatbot = () => {
     }
   }, [prefersReducedMotion, trackEvent]);
 
+  // Open Calendly with lead data prefilled
+  const openCalendly = useCallback((lead?: { name?: string; email?: string }) => {
+    const url = new URL(CALENDLY_URL);
+    if (lead?.name) url.searchParams.set("name", lead.name);
+    if (lead?.email) url.searchParams.set("email", lead.email);
+    window.open(url.toString(), "_blank", "noopener,noreferrer");
+    trackEvent("calendly_opened");
+  }, [trackEvent]);
+
   // Detect commercial intent
   const detectCommercialIntent = useCallback((text: string): boolean => {
     const lowerText = text.toLowerCase();
