@@ -9,10 +9,14 @@ const corsHeaders = {
 const VALID_EVENT_TYPES = [
   "message",
   "chat_opened",
+  "chat_cleared",
   "first_message",
   "service_interest",
   "lead_success",
   "lead_error",
+  "lead_started",
+  "lead_submitting",
+  "lead_cancelled",
   "session_start",
   "cta_click",
   "nav_click",
@@ -22,6 +26,16 @@ const VALID_EVENT_TYPES = [
   "lead_form_abandoned",
   "bgaas_modal_opened",
   "bgaas_interest",
+  "calendly_opened",
+  "click_quick_action",
+  "click_schedule",
+  "debug_autofill",
+  "handoff_requested",
+  "meeting_suggestion_triggered",
+  "qualification_challenge",
+  "qualification_size",
+  "qualification_urgency",
+  "route_to_section",
 ];
 
 serve(async (req) => {
