@@ -128,6 +128,9 @@ const QUICK_ACTIONS = [
 // Intent detection keywords
 const COMMERCIAL_INTENTS = ["preço", "proposta", "reunião", "orçamento", "custo", "quanto custa", "consultor", "especialista", "agendar", "contratar", "investimento", "budget"];
 
+// Calendly scheduling link
+const CALENDLY_URL = "https://calendly.com/leone-albatross";
+
 // LocalStorage keys
 const STORAGE_KEYS = {
   messages: "alba_chat_messages",
@@ -254,6 +257,7 @@ const AlbaChatbot = () => {
   const [dynamicSuggestions, setDynamicSuggestions] = useState<string[]>([]);
   const [hasSuggestedMeeting, setHasSuggestedMeeting] = useState(false);
   const [isDebugMode, setIsDebugMode] = useState(false);
+  const [wantsScheduling, setWantsScheduling] = useState(false);
   
   // Lead capture state
   const [leadStep, setLeadStep] = useState<LeadStep>("idle");
@@ -539,6 +543,15 @@ const AlbaChatbot = () => {
     }
   }, [prefersReducedMotion, trackEvent]);
 
+  // Open Calendly with lead data prefilled
+  const openCalendly = useCallback((lead?: { name?: string; email?: string }) => {
+    const url = new URL(CALENDLY_URL);
+    if (lead?.name) url.searchParams.set("name", lead.name);
+    if (lead?.email) url.searchParams.set("email", lead.email);
+    window.open(url.toString(), "_blank", "noopener,noreferrer");
+    trackEvent("calendly_opened");
+  }, [trackEvent]);
+
   // Detect commercial intent
   const detectCommercialIntent = useCallback((text: string): boolean => {
     const lowerText = text.toLowerCase();
@@ -795,14 +808,44 @@ Consentimento LGPD: ✅ Aceito em ${new Date().toISOString()}
       
       if (error) throw error;
       
+      // Send lead notification + confirmation emails
+      const { error: emailError } = await supabase.functions.invoke("send-lead-email", {
+        body: {
+          name: leadData.name,
+          email: leadData.email,
+          company: leadData.company,
+          jobTitle: leadData.jobTitle,
+          phone: leadData.phone,
+          interest: INTEREST_OPTIONS.find(o => o.value === leadData.interest)?.label || leadData.interest,
+          challenge: CHALLENGE_OPTIONS.find(o => o.value === leadData.challenge)?.label || leadData.challenge,
+          companySize: COMPANY_SIZE_OPTIONS.find(o => o.value === leadData.companySize)?.label || leadData.companySize,
+          urgency: URGENCY_OPTIONS.find(o => o.value === leadData.urgency)?.label || leadData.urgency,
+          timeline: TIMELINE_OPTIONS.find(o => o.value === leadData.timeline)?.label || leadData.timeline,
+          summary: briefSummary,
+          wantsScheduling,
+          calendlyUrl: CALENDLY_URL,
+        },
+      });
+      if (emailError) {
+        console.error("Lead email error:", emailError);
+      }
+
       setLeadStep("success");
       clearLeadDraft(); // Clear saved draft on success
       trackEvent("lead_success", { hubspotId: data?.hubspotId, service_interest: leadData.interest });
       
       setMessages(prev => [...prev, {
         role: "assistant",
-        content: "Perfeito! ✅ Suas informações foram enviadas. Nossa equipe entrará em contato em breve. O que gostaria de fazer agora?"
+        content: wantsScheduling
+          ? "Perfeito! ✅ Suas informações foram enviadas e a agenda foi aberta em uma nova aba para você escolher o melhor horário."
+          : "Perfeito! ✅ Suas informações foram enviadas. Nossa equipe entrará em contato em breve. O que gostaria de fazer agora?"
       }]);
+
+      if (wantsScheduling) {
+        openCalendly({ name: leadData.name, email: leadData.email });
+        setWantsScheduling(false);
+      }
+      
       
     } catch (error) {
       console.error("Lead submission error:", error);
@@ -820,7 +863,26 @@ Consentimento LGPD: ✅ Aceito em ${new Date().toISOString()}
         content: "Desculpe, houve um erro ao enviar. Você pode tentar novamente ou entrar em contato diretamente."
       }]);
     }
-  }, [leadData, messages, trackEvent, clearLeadDraft]);
+  }, [leadData, messages, trackEvent, clearLeadDraft, wantsScheduling, openCalendly]);
+
+  // Schedule CTA: capture lead first (if needed), then open Calendly
+  const handleScheduleClick = useCallback(() => {
+    trackEvent("click_schedule");
+
+    if (leadData.name && leadData.email) {
+      openCalendly({ name: leadData.name, email: leadData.email });
+      return;
+    }
+
+    setWantsScheduling(true);
+    if (leadStep === "idle") {
+      startLeadCapture();
+      setMessages(prev => [...prev, {
+        role: "assistant",
+        content: "Ótimo! Após estas perguntas rápidas, abrirei a agenda para você escolher o melhor horário. 📅"
+      }]);
+    }
+  }, [leadData.name, leadData.email, leadStep, openCalendly, startLeadCapture, trackEvent]);
 
   // Handle quick action click
   const handleQuickAction = useCallback((action: typeof QUICK_ACTIONS[0]) => {
@@ -1074,7 +1136,7 @@ Consentimento LGPD: ✅ Aceito em ${new Date().toISOString()}
             variant="outline"
             size="sm"
             className="mt-2 mr-2 gap-2 bg-primary/10 border-primary/30 hover:bg-primary/20"
-            onClick={() => navigateToSection("agendamento")}
+            onClick={handleScheduleClick}
           >
             <Calendar className="w-4 h-4" />
             Agendar Conversa
@@ -1275,7 +1337,7 @@ Consentimento LGPD: ✅ Aceito em ${new Date().toISOString()}
                         variant="ghost"
                         size="sm"
                         className="flex gap-1.5 text-xs text-primary hover:text-primary hover:bg-primary/10 px-2 h-8"
-                        onClick={() => navigateToSection("agendamento")}
+                        onClick={handleScheduleClick}
                         aria-label="Agendar reunião"
                       >
                         <Calendar className="w-3.5 h-3.5" />
@@ -1705,7 +1767,7 @@ Consentimento LGPD: ✅ Aceito em ${new Date().toISOString()}
                     variant="default"
                     size="sm"
                     className="gap-2"
-                    onClick={() => navigateToSection("agendamento")}
+                    onClick={() => openCalendly({ name: leadData.name, email: leadData.email })}
                   >
                     <Calendar className="w-4 h-4" />
                     Agendar
