@@ -254,6 +254,7 @@ const AlbaChatbot = () => {
   const [dynamicSuggestions, setDynamicSuggestions] = useState<string[]>([]);
   const [hasSuggestedMeeting, setHasSuggestedMeeting] = useState(false);
   const [isDebugMode, setIsDebugMode] = useState(false);
+  const [wantsScheduling, setWantsScheduling] = useState(false);
   
   // Lead capture state
   const [leadStep, setLeadStep] = useState<LeadStep>("idle");
