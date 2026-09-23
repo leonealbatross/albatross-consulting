@@ -128,6 +128,9 @@ const QUICK_ACTIONS = [
 // Intent detection keywords
 const COMMERCIAL_INTENTS = ["preço", "proposta", "reunião", "orçamento", "custo", "quanto custa", "consultor", "especialista", "agendar", "contratar", "investimento", "budget"];
 
+// Calendly scheduling link
+const CALENDLY_URL = "https://calendly.com/leone-albatross";
+
 // LocalStorage keys
 const STORAGE_KEYS = {
   messages: "alba_chat_messages",
