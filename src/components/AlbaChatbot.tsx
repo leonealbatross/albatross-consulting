@@ -863,7 +863,26 @@ Consentimento LGPD: ✅ Aceito em ${new Date().toISOString()}
         content: "Desculpe, houve um erro ao enviar. Você pode tentar novamente ou entrar em contato diretamente."
       }]);
     }
-  }, [leadData, messages, trackEvent, clearLeadDraft]);
+  }, [leadData, messages, trackEvent, clearLeadDraft, wantsScheduling, openCalendly]);
+
+  // Schedule CTA: capture lead first (if needed), then open Calendly
+  const handleScheduleClick = useCallback(() => {
+    trackEvent("click_schedule");
+
+    if (leadData.name && leadData.email) {
+      openCalendly({ name: leadData.name, email: leadData.email });
+      return;
+    }
+
+    setWantsScheduling(true);
+    if (leadStep === "idle") {
+      startLeadCapture();
+      setMessages(prev => [...prev, {
+        role: "assistant",
+        content: "Ótimo! Após estas perguntas rápidas, abrirei a agenda para você escolher o melhor horário. 📅"
+      }]);
+    }
+  }, [leadData.name, leadData.email, leadStep, openCalendly, startLeadCapture, trackEvent]);
 
   // Handle quick action click
   const handleQuickAction = useCallback((action: typeof QUICK_ACTIONS[0]) => {
