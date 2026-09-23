@@ -1136,7 +1136,7 @@ Consentimento LGPD: ✅ Aceito em ${new Date().toISOString()}
             variant="outline"
             size="sm"
             className="mt-2 mr-2 gap-2 bg-primary/10 border-primary/30 hover:bg-primary/20"
-            onClick={() => navigateToSection("agendamento")}
+            onClick={handleScheduleClick}
           >
             <Calendar className="w-4 h-4" />
             Agendar Conversa
