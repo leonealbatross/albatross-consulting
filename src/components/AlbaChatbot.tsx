@@ -1767,7 +1767,7 @@ Consentimento LGPD: ✅ Aceito em ${new Date().toISOString()}
                     variant="default"
                     size="sm"
                     className="gap-2"
-                    onClick={() => navigateToSection("agendamento")}
+                    onClick={() => openCalendly({ name: leadData.name, email: leadData.email })}
                   >
                     <Calendar className="w-4 h-4" />
                     Agendar
