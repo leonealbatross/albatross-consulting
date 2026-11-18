@@ -2,7 +2,7 @@ import {
   TrendingUp, 
   GitMerge, 
   Building2, 
-  Sparkles, 
+  ShieldCheck,
   Users,
   ArrowRight,
   Search
@@ -271,55 +271,54 @@ Nossa análise vai além dos números, mergulhando em processos, pessoas, tecnol
       accent: "from-amber-400 to-primary",
       isDueDiligence: true,
     },
-    // 6. GenAI & Inovação
+    // 6. Governança de IA & IA Agêntica
     {
-      icon: Sparkles,
+      icon: ShieldCheck,
       title: t("services.s5.title"),
       description: t("services.s5.desc"),
       highlight: t("services.s5.highlight"),
-      detailContent: `GENAI & INOVAÇÃO
-Transformamos IA generativa em resultados concretos de negócio.
+      detailContent: `GOVERNANÇA DE IA & IA AGÊNTICA
+Guarda-corpos para escalar IA com velocidade e segurança.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 🎯 O QUE FAZEMOS
 
-A Albatross Consulting apoia empresas na aplicação prática de IA generativa por meio da criação de automações focadas em eficiência operacional, redução de custos e ganho de produtividade.
+A Albatross Consulting estrutura a governança de IA com base nas normas ISO/IEC 42001, 23894 e 42005, no PL 2338/2023 e na LGPD, cobrindo o ciclo completo: avaliar e delimitar riscos, definir responsabilidade humana, implantar controles técnicos e preparar usuários e conselho.
 
-Desenvolvemos dashboards avançados de Sales Intelligence para melhorar previsibilidade, acuracidade de forecast e qualidade da tomada de decisão comercial, conectando dados, execução e crescimento sustentável.
+Atuamos do board à operação, conectando estratégia de IA, apetite a risco e execução, para que a IA, inclusive agentes autônomos, gere valor com controle.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ✅ BENEFÍCIOS ENTREGUES
 
-• Automação de tarefas repetitivas e operacionais
-• Redução significativa de custos operacionais
-• Ganhos de produtividade em toda organização
-• Insights acionáveis com Sales Intelligence
-• Melhor previsibilidade e acuracidade de forecast
-• Vantagem competitiva através de inovação
+• IA escalada com segurança, sem travar a inovação
+• Redução de riscos de vazamento de dados, decisões enviesadas e ações não autorizadas de agentes
+• Conformidade com a LGPD e prontidão para o PL 2338
+• Conselho preparado para supervisionar IA com fluência
+• Aprovação humana nos pontos certos, sem burocracia
+• Maior confiança de clientes, investidores e reguladores
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 📋 CASOS DE USO TÍPICOS
 
-• Automação de propostas comerciais e contratos
-• Chatbots inteligentes para atendimento e vendas
-• Análise automatizada de calls de vendas
-• Dashboards de Sales Intelligence e forecasting
-• Enriquecimento automático de leads e dados
-• Automação de relatórios e análises recorrentes
+• Empresas colocando agentes de IA em produção
+• SaaS com IA embarcada que precisam provar segurança aos clientes enterprise
+• Conselhos que precisam supervisionar IA e não sabem por onde começar
+• Empresas reguladas ou preparando IPO, rodada ou M&A
+• Times usando IA sem política, inventário ou controle
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 🔧 ENTREGÁVEIS
 
-• Diagnóstico de oportunidades de automação
-• MVP de solução GenAI customizada
-• Dashboards de Sales Intelligence
-• Integração com CRM e ferramentas existentes
-• Treinamento de times para adoção
-• Suporte e evolução contínua da solução`,
+• Diagnóstico de maturidade em Governança de IA e IA Agêntica
+• Inventário de casos de uso e matriz de riscos
+• Mapa de autonomia dos agentes (operado, colaborativo, aprovado, observado) com pontos de aprovação humana
+• Teste de segurança e confiabilidade de aplicações com LLM, antes e depois da implantação
+• Políticas, comitê de IA e modelo de monitoramento contínuo (logs e alertas)
+• Letramento em IA para conselho, executivos e usuários`,
       accent: "from-violet-400 to-primary",
     },
   ];

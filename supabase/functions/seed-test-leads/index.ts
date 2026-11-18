@@ -14,7 +14,7 @@ const SERVICES = [
   'Mentoria Executiva',
   'M&A para Empresas de Tecnologia',
   'Due Diligence Comercial',
-  'GenAI & Inovação'
+  'Governança de IA & IA Agêntica'
 ];
 
 // Nomes brasileiros fictícios
@@ -84,12 +84,12 @@ const SERVICE_MESSAGES: Record<string, string[]> = {
   ],
   'Due Diligence Comercial': [] // Tratado separadamente com dados completos do formulário
   ,
-  'GenAI & Inovação': [
-    'Queremos implementar IA generativa para automatizar nossos processos.',
-    'Buscamos criar um chatbot inteligente para nosso atendimento.',
-    'Precisamos de dashboards de Sales Intelligence para melhorar forecast.',
-    'Queremos automatizar a geração de propostas comerciais com IA.',
-    'Buscamos inovação com IA para ganhar vantagem competitiva.'
+  'Governança de IA & IA Agêntica': [
+    'Queremos estruturar a governança dos agentes de IA antes de colocá-los em produção.',
+    'Nosso conselho precisa de letramento para supervisionar IA com segurança.',
+    'Precisamos de um inventário de casos de uso de IA e uma matriz de riscos.',
+    'Queremos testar a segurança e confiabilidade das nossas aplicações com LLM.',
+    'Buscamos políticas de IA, aprovação humana e monitoramento contínuo.'
   ]
 };
 

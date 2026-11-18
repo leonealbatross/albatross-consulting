@@ -15,7 +15,7 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
       { label: "M&A Tecnologia", href: "#servicos" },
       { label: "Business Intelligence", href: "#servicos" },
       { label: t("services.s4.highlight"), href: "#servicos" },
-      { label: "GenAI & Inovação", href: "#servicos" },
+      { label: t("services.s5.title"), href: "#servicos" },
       { label: t("services.s6.title"), href: "#servicos" },
     ],
     company: [

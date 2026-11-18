@@ -45,9 +45,9 @@ const SECTION_MAP: Record<string, { id: string; label: string }> = {
   "governança": { id: "servicos", label: "Governança Corporativa" },
   "governance": { id: "servicos", label: "Governança Corporativa" },
   "advisory": { id: "servicos", label: "Advisory Board" },
-  "genai": { id: "servicos", label: "GenAI & Inovação" },
-  "ia": { id: "servicos", label: "GenAI & Inovação" },
-  "ai": { id: "servicos", label: "GenAI & Inovação" },
+  "governanca-ia": { id: "servicos", label: "Governança de IA & IA Agêntica" },
+  "ia": { id: "servicos", label: "Governança de IA & IA Agêntica" },
+  "ai": { id: "servicos", label: "Governança de IA & IA Agêntica" },
   "contato": { id: "contato", label: "Contato" },
   "contact": { id: "contato", label: "Contato" },
   "sobre": { id: "sobre", label: "Sobre" },
@@ -71,7 +71,7 @@ const INTEREST_OPTIONS = [
   { value: "mentoria", label: "Mentoria Executiva" },
   { value: "ma", label: "M&A Integrado" },
   { value: "duediligence", label: "Due Diligence Comercial" },
-  { value: "genai", label: "GenAI & Inovação" },
+  { value: "governanca-ia", label: "Governança de IA & IA Agêntica" },
 ];
 
 const TIMELINE_OPTIONS = [

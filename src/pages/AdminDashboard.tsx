@@ -103,7 +103,7 @@ const SERVICES = [
   'Mentoria Executiva',
   'M&A para Empresas de Tecnologia',
   'Due Diligence Comercial',
-  'GenAI & Inovação'
+  'Governança de IA & IA Agêntica'
 ];
 
 const AdminDashboard = () => {
