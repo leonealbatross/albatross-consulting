@@ -298,6 +298,7 @@ Atuamos do board à operação, conectando estratégia de IA, apetite a risco e 
 • Conselho preparado para supervisionar IA com fluência
 • Aprovação humana nos pontos certos, sem burocracia
 • Maior confiança de clientes, investidores e reguladores
+• Evidências prontas para due diligence, auditorias e questionários de clientes enterprise
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -308,16 +309,17 @@ Atuamos do board à operação, conectando estratégia de IA, apetite a risco e 
 • Conselhos que precisam supervisionar IA e não sabem por onde começar
 • Empresas reguladas ou preparando IPO, rodada ou M&A
 • Times usando IA sem política, inventário ou controle
+• Investidores e compradores avaliando riscos de IA em due diligence de M&A
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 🔧 ENTREGÁVEIS
 
-• Diagnóstico de maturidade em Governança de IA e IA Agêntica
-• Inventário de casos de uso e matriz de riscos
-• Mapa de autonomia dos agentes (operado, colaborativo, aprovado, observado) com pontos de aprovação humana
-• Teste de segurança e confiabilidade de aplicações com LLM, antes e depois da implantação
-• Políticas, comitê de IA e modelo de monitoramento contínuo (logs e alertas)
+• Diagnóstico de maturidade em Governança de IA e IA Agêntica, com base em princípios internacionais de IA responsável
+• Inventário de casos de uso, matriz de riscos e mapa de autonomia dos agentes
+• Testes de segurança e confiabilidade de aplicações com LLM: alucinação, viés, conteúdo indesejado, vazamento de dados e injeção de prompt, com red teaming e critérios de go/no-go para produção
+• Dossiê de evidências de IA responsável para clientes, auditores e investidores
+• Políticas, comitê de IA e monitoramento contínuo com re-teste periódico
 • Letramento em IA para conselho, executivos e usuários`,
       accent: "from-violet-400 to-primary",
     },

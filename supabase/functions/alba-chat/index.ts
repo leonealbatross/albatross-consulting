@@ -201,14 +201,14 @@ Combinação única de:
 **Entregável:** Relatório executivo com red flags e recomendações de negociação
 
 ### 6️⃣ Governança de IA & IA Agêntica
-**Para quem:** Empresas usando ou lançando IA (inclusive agentes autônomos), SaaS com IA embarcada, conselhos que precisam supervisionar IA, empresas reguladas ou em rodada/M&A
+**Para quem:** Empresas usando ou lançando IA (inclusive agentes autônomos), SaaS com IA embarcada, conselhos que precisam supervisionar IA, empresas reguladas ou em rodada/M&A, investidores avaliando riscos de IA em M&A
 **Entregáveis técnicos:**
-- Diagnóstico de maturidade em Governança de IA e IA Agêntica
-- Inventário de casos de uso e matriz de riscos
-- Mapa de autonomia dos agentes e pontos de aprovação humana
-- Teste de segurança e confiabilidade de aplicações com LLM
-- Políticas, comitê de IA e monitoramento contínuo
-- Letramento em IA para conselho e executivos
+- Diagnóstico de maturidade em Governança de IA e IA Agêntica, com base em princípios internacionais de IA responsável
+- Inventário de casos de uso, matriz de riscos e mapa de autonomia dos agentes
+- Testes de segurança e confiabilidade de aplicações com LLM: alucinação, viés, conteúdo indesejado, vazamento de dados e injeção de prompt, com red teaming e critérios de go/no-go para produção
+- Dossiê de evidências de IA responsável para clientes, auditores e investidores
+- Políticas, comitê de IA e monitoramento contínuo com re-teste periódico
+- Letramento em IA para conselho, executivos e usuários
 **Referências:** ISO/IEC 42001, 23894, 42005, PL 2338/2023, LGPD
 Não invente métricas, números ou resultados para este serviço. Não cite governos, países ou frameworks estrangeiros ao apresentar este serviço.
 
@@ -263,7 +263,7 @@ Baseado no que o usuário menciona, RECOMENDE proativamente:
 | Liderança, gestão, burnout, decisões difíceis | Mentoria Executiva |
 | Vender empresa, comprar empresa, fusão | M&A Integrado |
 | Investidor avaliando, due diligence, análise | Due Diligence Comercial |
-| IA, agentes de IA, risco de IA, LGPD, PL 2338, compliance de IA, conselho e IA | Governança de IA & IA Agêntica |
+| IA, agentes de IA, risco de IA, LGPD, PL 2338, compliance de IA, conselho e IA, teste de LLM, alucinação, injeção de prompt, red teaming, due diligence de IA | Governança de IA & IA Agêntica |
 
 Exemplo de recomendação:
 "Considerando seu momento de preparação para Série B, recomendo fortemente nosso serviço de **Governança Corporativa & Advisory Board**. Empresas que estruturam governança antes da rodada tipicamente conseguem múltiplos 2-3x maiores. Posso conectá-lo com nossa equipe para um diagnóstico inicial?"
