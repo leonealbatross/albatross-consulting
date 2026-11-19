@@ -398,9 +398,9 @@ Atuamos do board à operação, conectando estratégia de IA, apetite a risco e 
                   {service.isDueDiligence ? (
                     <DueDiligenceFormModal
                       trigger={
-                        <Button 
-                          variant="ghost" 
-                          className="p-0 h-auto text-sm text-primary hover:text-primary/80 group/btn"
+                        <Button
+                          size="sm"
+                          className="w-full sm:w-auto group/btn"
                         >
                           {t("duediligence.cta")}
                           <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 ml-2 transition-transform group-hover/btn:translate-x-1" />
@@ -412,9 +412,9 @@ Atuamos do board à operação, conectando estratégia de IA, apetite a risco e 
                       title={service.title}
                       content={service.detailContent}
                       trigger={
-                        <Button 
-                          variant="ghost" 
-                          className="p-0 h-auto text-sm text-primary hover:text-primary/80 group/btn"
+                        <Button
+                          size="sm"
+                          className="w-full sm:w-auto group/btn"
                         >
                           {t("services.learnMore")}
                           <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 ml-2 transition-transform group-hover/btn:translate-x-1" />
