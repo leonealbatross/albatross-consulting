@@ -1,516 +1,163 @@
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { Resend } from "https://esm.sh/resend@2.0.0";
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
+const json = (b: unknown, status = 200) =>
+  new Response(JSON.stringify(b), { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
 
-interface DueDiligenceRequest {
-  name: string;
-  email: string;
-  phone: string;
-  company: string;
-  country: string;
-  taxId: string;
-  transactionType: string;
-  dealStatus: string;
-  requesterProfile: string;
-  jobTitle: string;
-  marketSegment: string;
-  revenueModel: string;
-  targetCompany: string;
-  targetRevenue: string;
-  objectives: string[];
-  availableData: string[];
-  concerns: string;
-  // Tags
-  service: string;
-  segment: string;
-  source: string;
+const SERVICE = "Commercial Due Diligence (M&A)";
+const SEGMENT = "Tech / LatAm";
+const SOURCE = "Website / Solicitar avaliação";
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const uuidRegex = /^[0-9a-f-]{36}$/i;
+
+const str = (v: unknown, max = 300) => (typeof v === "string" ? v.trim().slice(0, max) : "");
+const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
+
+const LABELS: Record<string, string> = {
+  partner: "Sócio/Partner", principal: "Principal/Associate", ceo: "CEO", cfo: "CFO", head_ma: "Head de M&A/Corp Dev", other: "Outro",
+  strategic_buyer: "Comprador estratégico", private_equity: "Private Equity", vc_growth: "Venture Capital / Growth", cvc: "CVC",
+  family_office: "Family Office", search_fund: "Search Fund", seller_management: "Vendedor / Management", advisor: "Assessor M&A",
+  buy_side: "Buy-side", sell_side: "Sell-side (vendor DD)", primary: "Investimento primário", secondary: "Secundária",
+  exploratory: "Exploratório", pre_loi: "Pré-LOI", post_loi: "Pós-LOI / exclusividade", pre_closing: "Pré-closing", post_closing: "Pós-closing (100 dias)",
+  "2w": "Até 2 semanas", "30d": "Até 30 dias", "30_90d": "30 a 90 dias", none: "Sem prazo definido",
+  under_20m: "Até R$20M", "20m_100m": "R$20M a 100M", "100m_500m": "R$100M a 500M", above_500m: "Acima de R$500M", unknown: "Não sei ainda",
+  icp_retention: "ICP e retenção", pricing_nrr: "Pricing e NRR", pipeline_forecast: "Pipeline e forecast",
+  sales_efficiency: "Eficiência de vendas (CAC/payback)", team_salesops: "Time e SalesOps", plan_100d: "Plano de 100 dias",
+};
+const L = (v?: string | null) => (v ? LABELS[v] || v : "Não informado");
+
+export function scoreLead(d: { deal_stage?: string; decision_timeline?: string; target_revenue?: string }) {
+  if (["post_loi", "pre_closing"].includes(d.deal_stage || "")) return "hot";
+  if (["2w", "30d"].includes(d.decision_timeline || "")) return "hot";
+  if (["100m_500m", "above_500m"].includes(d.target_revenue || "")) return "hot";
+  return "warm";
 }
 
-// Input validation
-function validateRequest(data: unknown): { valid: boolean; error?: string; data?: DueDiligenceRequest } {
-  if (!data || typeof data !== 'object') {
-    return { valid: false, error: 'Invalid request body' };
-  }
-  
-  const request = data as Record<string, unknown>;
-  
-  // Validate required fields
-  if (typeof request.name !== 'string' || request.name.trim().length === 0) {
-    return { valid: false, error: 'Name is required' };
-  }
-  if (request.name.length > 100) {
-    return { valid: false, error: 'Name is too long (max 100 characters)' };
-  }
-  
-  if (typeof request.email !== 'string' || request.email.trim().length === 0) {
-    return { valid: false, error: 'Email is required' };
-  }
-  if (request.email.length > 255) {
-    return { valid: false, error: 'Email is too long (max 255 characters)' };
-  }
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(request.email)) {
-    return { valid: false, error: 'Invalid email format' };
-  }
-  
-  if (typeof request.company !== 'string' || request.company.trim().length === 0) {
-    return { valid: false, error: 'Company is required' };
-  }
-  if (request.company.length > 200) {
-    return { valid: false, error: 'Company is too long (max 200 characters)' };
-  }
-  
-  // Validate optional string fields with length limits
-  const stringFields = ['phone', 'country', 'taxId', 'transactionType', 'dealStatus', 
-    'requesterProfile', 'jobTitle', 'marketSegment', 'revenueModel', 'targetCompany', 
-    'targetRevenue', 'concerns', 'service', 'segment', 'source'];
-  
-  for (const field of stringFields) {
-    if (request[field] !== undefined && typeof request[field] !== 'string') {
-      return { valid: false, error: `${field} must be a string` };
-    }
-    if (typeof request[field] === 'string' && request[field].length > 1000) {
-      return { valid: false, error: `${field} is too long (max 1000 characters)` };
-    }
-  }
-  
-  // Validate arrays
-  if (request.objectives !== undefined && !Array.isArray(request.objectives)) {
-    return { valid: false, error: 'Objectives must be an array' };
-  }
-  if (request.availableData !== undefined && !Array.isArray(request.availableData)) {
-    return { valid: false, error: 'Available data must be an array' };
-  }
-  
-  return { 
-    valid: true, 
-    data: request as unknown as DueDiligenceRequest
-  };
+async function syncHubspot(lead: Record<string, any>): Promise<{ ok: boolean; error?: string }> {
+  const token = Deno.env.get("HUBSPOT_ACCESS_TOKEN");
+  if (!token) return { ok: false, error: "HUBSPOT_ACCESS_TOKEN not configured" };
+  const jobTitle = lead.job_title === "other" && lead.job_title_other ? lead.job_title_other : L(lead.job_title);
+  const message = `=== DUE DILIGENCE COMERCIAL PARA M&A (Tech / LatAm) ===
+TAGS: Service: ${SERVICE} | Segment: ${SEGMENT} | Source: ${SOURCE}
+Status: ${lead.status} | Score: ${lead.lead_score || "-"}
+Perfil: ${L(lead.requester_profile)} | Lado: ${L(lead.transaction_side)}
+Estágio: ${L(lead.deal_stage)} | Prazo: ${L(lead.decision_timeline)}
+Porte alvo: ${L(lead.target_revenue)} | Segmento: ${L(lead.market_segment)}
+Validar: ${(lead.validation_needs || []).map(L).join("; ") || "-"}
+NDA antes: ${lead.nda_requested ? "Sim" : "Não"}
+Contexto: ${lead.context || "-"}
+UTM: ${lead.utm_source || "-"}/${lead.utm_medium || "-"}/${lead.utm_campaign || "-"} | Ref: ${lead.referrer || "-"}`.slice(0, 2500);
+  const [first, ...rest] = String(lead.name).split(" ");
+  const props = { email: lead.email, firstname: first, lastname: rest.join(" "), company: lead.company, phone: lead.phone || "", jobtitle: jobTitle, message, hs_lead_status: "NEW", lifecyclestage: "lead" };
+  const h = { Authorization: `Bearer ${token}`, "Content-Type": "application/json" };
+  const c = await fetch("https://api.hubapi.com/crm/v3/objects/contacts", { method: "POST", headers: h, body: JSON.stringify({ properties: props }) });
+  if (c.ok) return { ok: true };
+  if (c.status !== 409) return { ok: false, error: `[${c.status}] ${(await c.text()).slice(0, 500)}` };
+  await c.text();
+  const u = await fetch(`https://api.hubapi.com/crm/v3/objects/contacts/${encodeURIComponent(lead.email)}?idProperty=email`, {
+    method: "PATCH", headers: h,
+    body: JSON.stringify({ properties: { message, company: props.company, phone: props.phone, jobtitle: jobTitle } }),
+  });
+  if (u.ok) { await u.text(); return { ok: true }; }
+  return { ok: false, error: `[${u.status}] ${(await u.text()).slice(0, 500)}` };
 }
 
-serve(async (req) => {
-  // Handle CORS preflight requests
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
-  }
-
+async function sendEmail(lead: Record<string, any>): Promise<boolean> {
+  const key = Deno.env.get("RESEND_API_KEY");
+  if (!key) return false;
+  const row = (k: string, v: string) => `<p><strong>${k}:</strong> ${esc(v || "-")}</p>`;
+  const html = `<h2>Nova solicitação de Due Diligence Comercial ${lead.lead_score === "hot" ? "🔥 QUENTE" : ""}</h2>
+${row("Nome", lead.name)}${row("Email", lead.email)}${row("Empresa/fundo", lead.company)}
+${row("Cargo", lead.job_title === "other" ? lead.job_title_other : L(lead.job_title))}${row("Telefone", lead.phone)}
+${row("Perfil", L(lead.requester_profile))}${row("Lado", L(lead.transaction_side))}${row("Estágio", L(lead.deal_stage))}
+${row("Prazo", L(lead.decision_timeline))}${row("Porte alvo", L(lead.target_revenue))}${row("Segmento", L(lead.market_segment))}
+${row("Validar", (lead.validation_needs || []).map(L).join("; "))}${row("NDA antes", lead.nda_requested ? "Sim" : "Não")}
+${row("Contexto", lead.context)}${row("Idioma", lead.language)}${row("UTM", `${lead.utm_source || "-"} / ${lead.utm_medium || "-"} / ${lead.utm_campaign || "-"}`)}
+${row("Referrer", lead.referrer)}${row("HubSpot", `${lead.hubspot_sync_status}${lead.hubspot_error ? " " + lead.hubspot_error : ""}`)}
+<p style="color:#718096;font-size:12px">Tags: ${SERVICE} | ${SEGMENT} | ${SOURCE}</p>`;
   try {
-    const rawData = await req.json();
-    
-    // Validate input
-    const validation = validateRequest(rawData);
-    if (!validation.valid || !validation.data) {
-      return new Response(
-        JSON.stringify({ success: false, error: validation.error || 'Invalid request' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-    
-    const requestData = validation.data;
-    
-    const { 
-      name, 
-      email, 
-      phone,
-      company, 
-      country,
-      taxId,
-      transactionType,
-      dealStatus,
-      requesterProfile,
-      jobTitle,
-      marketSegment,
-      revenueModel,
-      targetCompany,
-      targetRevenue,
-      objectives,
-      availableData,
-      concerns,
-      service,
-      segment,
-      source,
-    } = requestData;
-
-    const hubspotAccessToken = Deno.env.get('HUBSPOT_ACCESS_TOKEN');
-    
-    if (!hubspotAccessToken) {
-      console.error('HUBSPOT_ACCESS_TOKEN not configured');
-      throw new Error('HubSpot access token not configured');
-    }
-
-    // Map country codes to readable labels
-    const countryLabels: Record<string, string> = {
-      'BR': 'Brasil',
-      'MX': 'México',
-      'AR': 'Argentina',
-      'CO': 'Colômbia',
-      'CL': 'Chile',
-      'PE': 'Peru',
-      'EC': 'Equador',
-      'UY': 'Uruguai',
-      'PY': 'Paraguai',
-      'BO': 'Bolívia',
-      'VE': 'Venezuela',
-      'CR': 'Costa Rica',
-      'PA': 'Panamá',
-      'OTHER': 'Outro',
-    };
-
-    // Map transaction type values to readable labels
-    const transactionTypeLabels: Record<string, string> = {
-      'buy_side': 'Buy-side (aquisição / investimento)',
-      'sell_side': 'Sell-side (vendor DD / preparação para venda)',
-      'ma_strategic': 'M&A estratégico / Corp Dev',
-      'primary_vc': 'Captação primária (VC / Growth)',
-      'secondary': 'Secundária / Liquidez (secondary)',
-      'other': 'Outro',
-    };
-
-    // Map deal status values to readable labels
-    const dealStatusLabels: Record<string, string> = {
-      'pre_loi': 'Pré-LOI',
-      'post_loi': 'Pós-LOI',
-      'exclusivity': 'Exclusividade',
-      'pre_closing': 'Pré-closing',
-      'post_closing': 'Pós-closing (Plano 100 dias)',
-      'exploratory': 'Exploratório / ainda sem datas',
-      'other': 'Outro',
-    };
-
-    // Map requester profile values to readable labels
-    const requesterProfileLabels: Record<string, string> = {
-      'strategic_buyer': 'Comprador estratégico (corporate)',
-      'private_equity': 'Private Equity (PE)',
-      'venture_capital': 'Venture Capital (VC)',
-      'growth_equity': 'Growth Equity',
-      'cvc': 'Corporate Venture Capital (CVC)',
-      'family_office': 'Family Office',
-      'search_fund': 'Search Fund',
-      'seller_management': 'Vendedor / Management',
-      'advisor': 'Advisor (IB / M&A)',
-      'other': 'Outro',
-    };
-
-    // Map job title values to readable labels
-    const jobTitleLabels: Record<string, string> = {
-      'partner': 'Sócio/Partner',
-      'principal': 'Principal / Diretor',
-      'ceo': 'CEO',
-      'cfo': 'CFO',
-      'cro_vp_sales': 'CRO / VP Sales',
-      'head_ma': 'Head de M&A / Corp Dev',
-      'other': 'Outro',
-    };
-
-    // Map market segment values to readable labels
-    const marketSegmentLabels: Record<string, string> = {
-      'fintech': 'Fintech',
-      'healthtech': 'Healthtech',
-      'retail_commerce': 'Retail/Commerce (e-commerce/marketplace)',
-      'logistics': 'Logística/Supply Chain',
-      'martech': 'Martech/Adtech',
-      'erp_backoffice': 'ERP/Backoffice',
-      'cybersecurity': 'Cybersecurity',
-      'data_ai': 'Data/AI/Analytics',
-      'edtech': 'Edtech',
-      'saas_horizontal': 'SaaS horizontal (cross-industry)',
-      'other': 'Outro',
-    };
-
-    // Map revenue model values to readable labels
-    const revenueModelLabels: Record<string, string> = {
-      'saas': 'SaaS (assinatura/ARR)',
-      'usage_based': 'Usage-based / consumo',
-      'marketplace': 'Marketplace (take rate)',
-      'transactional': 'Transactional / pagamento por transação',
-      'services': 'Serviços / projetos',
-      'hardware_software': 'Hardware + software',
-      'other': 'Outro / híbrido',
-    };
-
-    // Map target revenue values to readable labels
-    const revenueLabels: Record<string, string> = {
-      'startup': 'Startup (pré-escala / Seed–Series B)',
-      'under_50m': 'Receita anual <R$50M',
-      '50m_200m': 'R$50–200M',
-      '200m_500m': 'R$200–500M',
-      'above_500m': '>R$500M',
-      'unknown': 'Não sei informar',
-    };
-
-    // Map objective values to readable labels
-    const objectiveLabels: Record<string, string> = {
-      'validate_icp': 'Validar ICP/segmentação e proposta de valor',
-      'evaluate_pricing': 'Avaliar pricing/discounting e margem',
-      'validate_sales_motions': 'Validar sales motions (SMB/Mid, Enterprise/KAM, PLG, SDR inbound/outbound)',
-      'measure_pipeline': 'Medir saúde de pipeline (Rolling Four Quarters)',
-      'test_forecast': 'Testar previsibilidade de forecast (3 anos)',
-      'evaluate_sales_ops': 'Avaliar Sales Operations (CRM, métricas, enablement, incentivos)',
-      'vendor_dd': 'Preparar vendor DD (sell-side) e data room comercial',
-    };
-
-    // Map available data values to readable labels
-    const dataLabels: Record<string, string> = {
-      'crm_export': 'Export do CRM com histórico',
-      'quotas': 'Metas/quotas (12 trimestres)',
-      'forecast_snapshots': 'Snapshots de forecast (semanal/mensal)',
-      'client_list': 'Lista de clientes/contratos/renovações',
-      'org_charts': 'Org charts e comp plan',
-    };
-
-    // Get readable labels
-    const countryLabel = countryLabels[country] || country;
-    const transactionTypeLabel = transactionTypeLabels[transactionType] || transactionType;
-    const dealStatusLabel = dealStatusLabels[dealStatus] || dealStatus;
-    const requesterProfileLabel = requesterProfileLabels[requesterProfile] || requesterProfile;
-    const jobTitleLabel = jobTitleLabels[jobTitle] || jobTitle;
-    const marketSegmentLabel = marketSegmentLabels[marketSegment] || marketSegment;
-    const revenueModelLabel = revenueModelLabels[revenueModel] || revenueModel;
-    const revenueLabel = revenueLabels[targetRevenue] || targetRevenue;
-
-    // Build objectives string
-    const objectivesString = objectives 
-      ? objectives.map(o => objectiveLabels[o] || o).join('; ')
-      : '';
-
-    // Build available data string
-    const availableDataString = availableData 
-      ? availableData.map(d => dataLabels[d] || d).join('; ')
-      : '';
-
-    // Get Tax ID label based on country
-    const taxIdLabel = country === 'BR' ? 'CNPJ' : 'Company Tax ID / ID Fiscal';
-
-    // Build detailed message for HubSpot
-    const fullMessage = `
-=== DUE DILIGENCE COMERCIAL PARA M&A (Tech / LatAm) ===
-
-TAGS:
-• Service: ${service || 'Commercial Due Diligence (M&A)'}
-• Segment: ${segment || 'Tech / LatAm'}
-• Source: ${source || 'Website / Solicitar avaliação'}
-
---- IDENTIFICAÇÃO ---
-Nome: ${name}
-Email: ${email}
-Telefone: ${phone}
-Empresa: ${company}
-País: ${countryLabel}
-${taxIdLabel}: ${taxId}
-
---- TRANSAÇÃO ---
-Tipo de transação: ${transactionTypeLabel}
-Status e janela do deal: ${dealStatusLabel}
-
---- PERFIL DO SOLICITANTE ---
-Instituição: ${requesterProfileLabel}
-Cargo: ${jobTitleLabel}
-
---- EMPRESA-ALVO ---
-Segmento de mercado (vertical): ${marketSegmentLabel}
-Modelo de receita: ${revenueModelLabel}
-Setor e geografia principal: ${targetCompany || 'Não informado'}
-Porte aproximado: ${revenueLabel}
-
---- OBJETIVOS DO DUE DILIGENCE COMERCIAL ---
-${objectivesString ? objectivesString.split('; ').map(o => `• ${o}`).join('\n') : '• Não especificado'}
-
---- DADOS DISPONÍVEIS (até 5 dias úteis) ---
-${availableDataString ? availableDataString.split('; ').map(d => `• ${d}`).join('\n') : '• Não informado'}
-
---- RISCOS/HIPÓTESES QUE PREOCUPAM O COMITÊ ---
-${concerns || 'Não informado'}
-    `.trim();
-
-    // Create or update contact in HubSpot with custom properties
-    const contactData = {
-      properties: {
-        email: email,
-        firstname: name.split(' ')[0],
-        lastname: name.split(' ').slice(1).join(' ') || '',
-        company: company,
-        phone: phone || '',
-        jobtitle: jobTitleLabel,
-        country: countryLabel,
-        message: fullMessage,
-        hs_lead_status: 'NEW',
-        lifecyclestage: 'lead',
-      }
-    };
-
-
-    // First, try to create the contact
-    const createResponse = await fetch('https://api.hubapi.com/crm/v3/objects/contacts', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${hubspotAccessToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(contactData),
+    const r = await new Resend(key).emails.send({
+      from: "Albatross Consulting <onboarding@resend.dev>",
+      to: ["leone@albatross.consulting"],
+      subject: `[DD Comercial]${lead.lead_score === "hot" ? " [QUENTE]" : ""} ${lead.company} (${lead.name})`,
+      html,
     });
+    if ((r as any)?.error) { console.error("Resend error", JSON.stringify((r as any).error)); return false; }
+    return true;
+  } catch (e) { console.error("Resend exception", e); return false; }
+}
 
-    let hubspotResult;
-    
-    if (createResponse.status === 409) {
-      // Contact already exists, update it
-      const errorData = await createResponse.json();
-      
-      // Search for the existing contact
-      const searchResponse = await fetch('https://api.hubapi.com/crm/v3/objects/contacts/search', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${hubspotAccessToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          filterGroups: [{
-            filters: [{
-              propertyName: 'email',
-              operator: 'EQ',
-              value: email,
-            }]
-          }]
-        }),
-      });
+const pick = (v: unknown, allowed: string[]) => (typeof v === "string" && allowed.includes(v) ? v : null);
 
-      const searchData = await searchResponse.json();
+Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  try {
+    const b = await req.json().catch(() => null);
+    if (!b || typeof b !== "object") return json({ success: false, error: "Invalid body" }, 400);
+    const stage = b.stage === "complete" ? "complete" : "partial";
+    const name = str(b.name, 100), email = str(b.email, 255).toLowerCase(), company = str(b.company, 200);
+    if (!name || !emailRegex.test(email) || !company) return json({ success: false, error: "name, email and company are required" }, 400);
 
-      if (searchData.results && searchData.results.length > 0) {
-        const contactId = searchData.results[0].id;
-        
-        // Update the existing contact
-        const updateResponse = await fetch(`https://api.hubapi.com/crm/v3/objects/contacts/${contactId}`, {
-          method: 'PATCH',
-          headers: {
-            'Authorization': `Bearer ${hubspotAccessToken}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            properties: {
-              message: fullMessage,
-              company: company,
-              phone: phone || '',
-              jobtitle: jobTitleLabel,
-              country: countryLabel,
-            }
-          }),
-        });
-
-        hubspotResult = await updateResponse.json();
-      }
-    } else if (!createResponse.ok) {
-      const errorData = await createResponse.json();
-      throw new Error(`HubSpot API error`);
-    } else {
-      hubspotResult = await createResponse.json();
+    const contact = {
+      name, email, company,
+      job_title: pick(b.jobTitle, ["partner", "principal", "ceo", "cfo", "head_ma", "other"]),
+      job_title_other: str(b.jobTitleOther, 100) || null,
+      phone: str(b.phone, 30) || null,
+      phone_country: str(b.phoneCountry, 10) || null,
+      utm_source: str(b.utmSource, 200) || null, utm_medium: str(b.utmMedium, 200) || null, utm_campaign: str(b.utmCampaign, 200) || null,
+      referrer: str(b.referrer, 500) || null, language: str(b.language, 5) || null,
+    };
+    let fields: Record<string, unknown> = { ...contact };
+    if (stage === "complete") {
+      if (b.consent !== true) return json({ success: false, error: "Consent required" }, 400);
+      const tx = {
+        requester_profile: pick(b.requesterProfile, ["strategic_buyer", "private_equity", "vc_growth", "cvc", "family_office", "search_fund", "seller_management", "advisor", "other"]),
+        transaction_side: pick(b.transactionSide, ["buy_side", "sell_side", "primary", "secondary"]),
+        deal_stage: pick(b.dealStage, ["exploratory", "pre_loi", "post_loi", "pre_closing", "post_closing"]),
+        decision_timeline: pick(b.decisionTimeline, ["2w", "30d", "30_90d", "none"]),
+        target_revenue: pick(b.targetRevenue, ["under_20m", "20m_100m", "100m_500m", "above_500m", "unknown"]),
+      };
+      if (Object.values(tx).some((v) => !v)) return json({ success: false, error: "Missing transaction fields" }, 400);
+      const needs = Array.isArray(b.validationNeeds) ? b.validationNeeds.filter((x: unknown) => typeof x === "string" && LABELS[x as string]).slice(0, 10) : [];
+      fields = {
+        ...fields, ...tx, status: "complete",
+        market_segment: str(b.marketSegment, 50) || null,
+        validation_needs: needs, context: str(b.context, 2000) || null,
+        nda_requested: b.ndaRequested === true, consent_lgpd: true,
+        lead_score: scoreLead(tx as any), updated_at: new Date().toISOString(),
+      };
     }
 
-    // Send email notification using Resend
-    const resendApiKey = Deno.env.get('RESEND_API_KEY');
-    let emailSent = false;
-    
-    if (resendApiKey) {
-      try {
-        const resend = new Resend(resendApiKey);
-        
-        const emailHtml = `
-          <h2 style="color: #1a365d; margin-bottom: 20px;">Nova Solicitação de Due Diligence Comercial</h2>
-          
-          <div style="background: #f7fafc; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-            <h3 style="color: #2d3748; margin-top: 0;">📋 Identificação</h3>
-            <p><strong>Nome:</strong> ${name}</p>
-            <p><strong>Email:</strong> ${email}</p>
-            <p><strong>Telefone:</strong> ${phone || 'Não informado'}</p>
-            <p><strong>Empresa:</strong> ${company}</p>
-            <p><strong>País:</strong> ${countryLabel}</p>
-            <p><strong>${taxIdLabel}:</strong> ${taxId}</p>
-          </div>
-          
-          <div style="background: #edf2f7; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-            <h3 style="color: #2d3748; margin-top: 0;">💼 Transação</h3>
-            <p><strong>Tipo:</strong> ${transactionTypeLabel}</p>
-            <p><strong>Status:</strong> ${dealStatusLabel}</p>
-          </div>
-          
-          <div style="background: #f7fafc; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-            <h3 style="color: #2d3748; margin-top: 0;">👤 Perfil do Solicitante</h3>
-            <p><strong>Instituição:</strong> ${requesterProfileLabel}</p>
-            <p><strong>Cargo:</strong> ${jobTitleLabel}</p>
-          </div>
-          
-          <div style="background: #edf2f7; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-            <h3 style="color: #2d3748; margin-top: 0;">🎯 Empresa-Alvo</h3>
-            <p><strong>Segmento:</strong> ${marketSegmentLabel}</p>
-            <p><strong>Modelo de Receita:</strong> ${revenueModelLabel}</p>
-            <p><strong>Setor/Geografia:</strong> ${targetCompany || 'Não informado'}</p>
-            <p><strong>Porte:</strong> ${revenueLabel}</p>
-          </div>
-          
-          <div style="background: #f7fafc; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-            <h3 style="color: #2d3748; margin-top: 0;">🎯 Objetivos do DD Comercial</h3>
-            <ul>
-              ${objectivesString ? objectivesString.split('; ').map(o => `<li>${o}</li>`).join('') : '<li>Não especificado</li>'}
-            </ul>
-          </div>
-          
-          <div style="background: #edf2f7; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-            <h3 style="color: #2d3748; margin-top: 0;">📊 Dados Disponíveis</h3>
-            <ul>
-              ${availableDataString ? availableDataString.split('; ').map(d => `<li>${d}</li>`).join('') : '<li>Não informado</li>'}
-            </ul>
-          </div>
-          
-          <div style="background: #fff5f5; padding: 20px; border-radius: 8px; border-left: 4px solid #c53030;">
-            <h3 style="color: #c53030; margin-top: 0;">⚠️ Riscos/Hipóteses</h3>
-            <p>${concerns || 'Não informado'}</p>
-          </div>
-          
-          <hr style="margin: 30px 0; border: none; border-top: 1px solid #e2e8f0;">
-          <p style="color: #718096; font-size: 12px;">
-            Tags: ${service || 'Commercial Due Diligence (M&A)'} | ${segment || 'Tech / LatAm'} | ${source || 'Website'}
-          </p>
-        `;
-
-        const emailResponse = await resend.emails.send({
-          from: 'Albatross Consulting <onboarding@resend.dev>',
-          to: ['leone@albatross.consulting'],
-          subject: `[DD Comercial] Nova Solicitação - ${company} (${name})`,
-          html: emailHtml,
-        });
-
-        emailSent = true;
-      } catch (emailError) {
-        // Don't fail the whole request if email fails
-      }
+    const sb = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+    const leadId = typeof b.leadId === "string" && uuidRegex.test(b.leadId) ? b.leadId : null;
+    let lead: Record<string, any> | null = null;
+    if (leadId) {
+      // only partial rows can be completed, and only by the same email
+      const { data } = await sb.from("dd_leads").update(fields).eq("id", leadId).eq("status", "partial").eq("email", email).select().maybeSingle();
+      lead = data;
+    }
+    if (!lead) {
+      const { data, error } = await sb.from("dd_leads").insert({ ...fields, status: stage }).select().single();
+      if (error || !data) { console.error("dd_leads insert failed", error); return json({ success: false, error: "Could not save lead" }, 500); }
+      lead = data;
     }
 
-    return new Response(
-      JSON.stringify({ 
-        success: true, 
-        message: 'Due Diligence contact sent to HubSpot successfully',
-        hubspotId: hubspotResult?.id,
-        emailSent 
-      }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
-    );
+    if (stage === "partial") return json({ success: true, leadId: lead.id });
 
-  } catch (error) {
-    return new Response(
-      JSON.stringify({ 
-        success: false, 
-        error: 'An error occurred processing your request'
-      }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
-    );
+    const hs = await syncHubspot(lead);
+    lead.hubspot_sync_status = hs.ok ? "success" : "error";
+    lead.hubspot_error = hs.error || null;
+    if (!hs.ok) console.error("HubSpot sync failed", hs.error);
+    const emailSent = await sendEmail(lead);
+    await sb.from("dd_leads").update({ hubspot_sync_status: lead.hubspot_sync_status, hubspot_error: lead.hubspot_error, email_sent: emailSent }).eq("id", lead.id);
+
+    return json({ success: true, leadId: lead.id, leadScore: lead.lead_score, hubspotSync: lead.hubspot_sync_status, hubspotError: lead.hubspot_error, emailSent });
+  } catch (e) {
+    console.error("hubspot-duediligence error", e);
+    return json({ success: false, error: "Internal error" }, 500);
   }
 });

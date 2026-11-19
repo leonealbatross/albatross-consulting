@@ -47,6 +47,105 @@ export type Database = {
         }
         Relationships: []
       }
+      dd_leads: {
+        Row: {
+          company: string
+          consent_lgpd: boolean
+          context: string | null
+          created_at: string
+          deal_stage: string | null
+          decision_timeline: string | null
+          email: string
+          email_sent: boolean
+          hubspot_error: string | null
+          hubspot_sync_status: string
+          id: string
+          job_title: string | null
+          job_title_other: string | null
+          language: string | null
+          lead_score: string | null
+          market_segment: string | null
+          name: string
+          nda_requested: boolean
+          phone: string | null
+          phone_country: string | null
+          referrer: string | null
+          requester_profile: string | null
+          status: string
+          target_revenue: string | null
+          transaction_side: string | null
+          updated_at: string
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          validation_needs: string[]
+        }
+        Insert: {
+          company: string
+          consent_lgpd?: boolean
+          context?: string | null
+          created_at?: string
+          deal_stage?: string | null
+          decision_timeline?: string | null
+          email: string
+          email_sent?: boolean
+          hubspot_error?: string | null
+          hubspot_sync_status?: string
+          id?: string
+          job_title?: string | null
+          job_title_other?: string | null
+          language?: string | null
+          lead_score?: string | null
+          market_segment?: string | null
+          name: string
+          nda_requested?: boolean
+          phone?: string | null
+          phone_country?: string | null
+          referrer?: string | null
+          requester_profile?: string | null
+          status?: string
+          target_revenue?: string | null
+          transaction_side?: string | null
+          updated_at?: string
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          validation_needs?: string[]
+        }
+        Update: {
+          company?: string
+          consent_lgpd?: boolean
+          context?: string | null
+          created_at?: string
+          deal_stage?: string | null
+          decision_timeline?: string | null
+          email?: string
+          email_sent?: boolean
+          hubspot_error?: string | null
+          hubspot_sync_status?: string
+          id?: string
+          job_title?: string | null
+          job_title_other?: string | null
+          language?: string | null
+          lead_score?: string | null
+          market_segment?: string | null
+          name?: string
+          nda_requested?: boolean
+          phone?: string | null
+          phone_country?: string | null
+          referrer?: string | null
+          requester_profile?: string | null
+          status?: string
+          target_revenue?: string | null
+          transaction_side?: string | null
+          updated_at?: string
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          validation_needs?: string[]
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
