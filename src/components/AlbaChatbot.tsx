@@ -1508,9 +1508,12 @@ Consentimento LGPD: ✅ Aceito em ${new Date().toISOString()}
                     className="rounded-full mx-auto mb-4 border-2 border-primary/30"
                     style={{ width: "var(--alba-avatar-welcome)", height: "var(--alba-avatar-welcome)" }}
                   />
-                  <h4 className="font-medium text-foreground mb-2">Olá! Eu sou o Alba 👋</h4>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    O consultor virtual da Albatross. Como posso ajudá-lo?
+                  <h4 className="text-lg font-semibold tracking-tight text-foreground mb-1.5">Olá! Eu sou o Alba 👋</h4>
+                  <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-primary/80 mb-2">
+                    O consultor virtual da Albatross
+                  </p>
+                  <p className="text-sm text-muted-foreground leading-relaxed max-w-[240px] mx-auto mb-5">
+                    Como posso ajudá-lo?
                   </p>
                   <div className="flex flex-wrap justify-center gap-2">
                     {[
