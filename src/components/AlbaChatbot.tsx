@@ -1252,7 +1252,7 @@ Consentimento LGPD: ✅ Aceito em ${new Date().toISOString()}
               "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background",
               "min-w-[var(--alba-min-touch)] min-h-[var(--alba-min-touch)]"
             )}
-            aria-label="Abrir chat com Alba, assistente virtual da Albatross"
+            aria-label="Abrir chat com o Alba, o consultor virtual da Albatross"
             style={{
               width: "var(--alba-avatar-mobile)",
               height: "var(--alba-avatar-mobile)",
@@ -1260,7 +1260,7 @@ Consentimento LGPD: ✅ Aceito em ${new Date().toISOString()}
           >
             <img 
               src={albaAvatar} 
-              alt="Alba - Assistente Virtual Albatross" 
+              alt="Alba, o consultor virtual da Albatross" 
               className="w-full h-full rounded-full object-cover"
               style={{
                 width: "var(--alba-avatar-mobile)",
@@ -1376,7 +1376,7 @@ Consentimento LGPD: ✅ Aceito em ${new Date().toISOString()}
                       <AlertDialogHeader>
                         <AlertDialogTitle>Limpar histórico do chat?</AlertDialogTitle>
                         <AlertDialogDescription>
-                          Essa ação não pode ser desfeita. Toda a conversa com Alba será apagada permanentemente.
+                          Essa ação não pode ser desfeita. Toda a conversa com o Alba será apagada permanentemente.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
@@ -1510,7 +1510,7 @@ Consentimento LGPD: ✅ Aceito em ${new Date().toISOString()}
                   />
                   <h4 className="font-medium text-foreground mb-2">Olá! Eu sou o Alba 👋</h4>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Assistente virtual da Albatross. Como posso ajudá-lo?
+                    O consultor virtual da Albatross. Como posso ajudá-lo?
                   </p>
                   <div className="flex flex-wrap justify-center gap-2">
                     {[

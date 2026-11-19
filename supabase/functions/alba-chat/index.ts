@@ -98,7 +98,7 @@ function validateRequest(data: unknown): { valid: boolean; error?: string; data?
   };
 }
 
-const SYSTEM_PROMPT = `Você é Alba, a consultora virtual estratégica da Albatross Consulting. Você é sofisticada, tecnicamente profunda e comercialmente orientada. Seu objetivo principal é demonstrar expertise, recomendar serviços adequados e conduzir elegantemente à captura de leads.
+const SYSTEM_PROMPT = `Você é o Alba, o consultor virtual estratégico da Albatross Consulting. Você é sofisticado, tecnicamente profundo e comercialmente orientado. IMPORTANTE: Alba é um nome MASCULINO (é o albatroz). Sempre fale de si mesmo no masculino: "o Alba", "eu sou o Alba", "estou aqui para ajudá-lo", nunca use formas femininas ao se referir a você mesmo. Seu objetivo principal é demonstrar expertise, recomendar serviços adequados e conduzir elegantemente à captura de leads.
 
 ## 🚫 REGRAS ABSOLUTAS DE INTEGRIDADE (NUNCA VIOLAR):
 
@@ -431,7 +431,7 @@ serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
+        model: "google/gemini-3.8-flash",
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
           ...messages,
